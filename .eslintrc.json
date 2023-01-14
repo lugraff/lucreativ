@@ -50,11 +50,6 @@
               {
                 "sourceTag": "type:util",
                 "onlyDependOnLibsWithTags": ["type:util"]
-              },
- 
-              {
-                "sourceTag": "domain:hotel-shared",
-                "onlyDependOnLibsWithTags": ["domain:hotel-shared", "domain:shared"]
               }
             ]
           }
