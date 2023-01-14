@@ -1,0 +1,39 @@
+<div
+  id="toolTipWindow"
+  [ngClass]="text.length ? '' : 'hidden'"
+  [class.flex-col]="arrowDirection === 'top' || arrowDirection === 'bottom'"
+  [class.flex-row]="arrowDirection === 'left' || arrowDirection === 'right'"
+  class="flex items-center justify-center fixed z-50 pointer-events-none top-0 left-0 w-fit animate-fadeIn">
+  <div [class.invisible]="!visible">
+    <div
+      *ngIf="arrowDirection === 'bottom'"
+      class="w-0 h-0 border-l-[12px] border-l-transparent border-b-subtle border-r-[12px] border-r-transparent"
+      [ngStyle]="{ borderBottomWidth: arrowOffset + 'px' }"></div>
+    <div
+      *ngIf="arrowDirection === 'right'"
+      class="w-0 h-0 border-t-[12px] border-t-transparent border-r-subtle border-b-[12px] border-b-transparent"
+      [ngStyle]="{ borderRightWidth: arrowOffset + 'px' }"></div>
+  </div>
+  <div
+    [class.invisible]="!visible"
+    class="flex items-center select-none px-2 py-1 shadow-bgA shadow-lg bg-gradient-to-b from-bgB to-bgA border border-subtle text-base text-secondary font-semibold">
+    <global-standard-icons
+      [icon]="icon"
+      class="pr-1"></global-standard-icons>
+    <div
+      class="max-w-[10vw]"
+      [ngClass]="text.length > 16 && !text.includes(' ') ? 'break-all' : 'break-word'">
+      {{ text }}
+    </div>
+  </div>
+  <div [class.invisible]="!visible">
+    <div
+      *ngIf="arrowDirection === 'top'"
+      class="w-0 h-0 border-l-[12px] border-l-transparent border-t-subtle border-r-[12px] border-r-transparent"
+      [ngStyle]="{ borderTopWidth: arrowOffset + 'px' }"></div>
+    <div
+      *ngIf="arrowDirection === 'left'"
+      class="w-0 h-0 border-t-[12px] border-t-transparent border-l-subtle border-b-[12px] border-b-transparent"
+      [ngStyle]="{ borderLeftWidth: arrowOffset + 'px' }"></div>
+  </div>
+</div>

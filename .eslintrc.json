@@ -1,0 +1,75 @@
+{
+  "root": true,
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nrwl/nx"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "type:app",
+                "onlyDependOnLibsWithTags": [
+                  "type:api",
+                  "type:shell",
+                  "type:feature",
+                  "type:ui",
+                  "type:domain-logic",
+                  "type:util"
+                ]
+              },
+              {
+                "sourceTag": "type:api",
+                "onlyDependOnLibsWithTags": ["type:ui", "type:domain-logic", "type:util"]
+              },
+              {
+                "sourceTag": "type:shell",
+                "onlyDependOnLibsWithTags": ["type:feature", "type:util"]
+              },
+              {
+                "sourceTag": "type:feature",
+                "onlyDependOnLibsWithTags": ["type:ui", "type:domain-logic", "type:util"]
+              },
+              {
+                "sourceTag": "type:ui",
+                "onlyDependOnLibsWithTags": ["type:domain-logic", "type:util"]
+              },
+              {
+                "sourceTag": "type:domain-logic",
+                "onlyDependOnLibsWithTags": ["type:util"]
+              },
+              {
+                "sourceTag": "domain:shared",
+                "onlyDependOnLibsWithTags": ["domain:shared"]
+              },
+              {
+                "sourceTag": "type:util",
+                "onlyDependOnLibsWithTags": ["type:util"]
+              },
+ 
+              {
+                "sourceTag": "domain:hotel-shared",
+                "onlyDependOnLibsWithTags": ["domain:hotel-shared", "domain:shared"]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nrwl/nx/typescript"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nrwl/nx/javascript"],
+      "rules": {}
+    }
+  ]
+}

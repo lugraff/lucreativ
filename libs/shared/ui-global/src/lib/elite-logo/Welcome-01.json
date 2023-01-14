@@ -1,0 +1,155 @@
+{
+    "animationMode": "one-shot",
+    "durationOffset": 7,
+    "frameInterval": 111,
+    "showLogo": true,
+    "showLogoText": true,
+    "staticClasses": [
+        "fill-primary ease-out origin-right",
+        "fill-textA origin-bottom-left ease-out",
+        "fill-textA origin-top-left ease-out",
+        "fill-primary",
+        "fill-primary",
+        "fill-primary",
+        "fill-primary",
+        "fill-primary",
+        "fill-textA",
+        "fill-textA",
+        "fill-textA",
+        "fill-textA",
+        "fill-textA",
+        "fill-textA",
+        "fill-textA",
+        "fill-textA",
+        "fill-textA"
+    ],
+    "stepsPrimary": [
+        "hidden opacity-0",
+        "opacity-0 scale-0",
+        "scale-0",
+        "scale-0",
+        "scale-0"
+    ],
+    "stepsSecTop": [
+        "hidden opacity-0",
+        "opacity-0 scale-0",
+        "scale-0"
+    ],
+    "stepsSecBottom": [
+        "hidden opacity-0",
+        "opacity-0 scale-0",
+        "scale-0",
+        "scale-0"
+    ],
+    "stepsElite1": [
+        "hidden opacity-0",
+        "opacity-0 -translate-y-96"
+    ],
+    "stepsElite2": [
+        "hidden opacity-0",
+        "opacity-0 -translate-y-96"
+    ],
+    "stepsElite3": [
+        "hidden opacity-0",
+        "opacity-0 -translate-y-96"
+    ],
+    "stepsElite4": [
+        "hidden opacity-0",
+        "opacity-0 -translate-y-96"
+    ],
+    "stepsElite5": [
+        "hidden opacity-0",
+        "opacity-0 -translate-y-96"
+    ],
+    "stepsSolution1": [
+        "translate-x-96 hidden opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0"
+    ],
+    "stepsSolution2": [
+        "translate-x-96 hidden opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0"
+    ],
+    "stepsSolution3": [
+        "translate-x-96 hidden opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0"
+    ],
+    "stepsSolution4": [
+        "translate-x-96 hidden opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0"
+    ],
+    "stepsSolution5": [
+        "translate-x-96 hidden opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0"
+    ],
+    "stepsSolution6": [
+        "translate-x-96 hidden opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0"
+    ],
+    "stepsSolution7": [
+        "translate-x-96 hidden opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0"
+    ],
+    "stepsSolution8": [
+        "translate-x-96 hidden opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0"
+    ],
+    "stepsSolution9": [
+        "translate-x-96 hidden opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        "translate-x-96 opacity-0",
+        ""
+    ]
+}

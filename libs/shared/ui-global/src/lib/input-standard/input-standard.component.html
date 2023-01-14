@@ -1,0 +1,32 @@
+<div
+  (click)="InputField.focus()"
+  class="relative flex w-full min-h-[2rem] text-lg rounded-md text-textB"
+  [ngClass]="{ 'h-[3rem]': height === 'large', 'h-[2.5rem]': height === 'medium', 'h-[2rem]': height === 'small' }">
+  <div
+    *ngIf="icon.length"
+    class="flex items-center stroke-current fill-transparent px-1 rounded-l-md bg-secondary"
+    [ngClass]="{ 'h-[3rem]': height === 'large', 'h-[2.5rem]': height === 'medium', 'h-[2rem]': height === 'small' }">
+    <global-standard-icons
+      [icon]="icon"
+      [ownColor]="ownColor"></global-standard-icons>
+  </div>
+
+  <input
+    #InputField
+    [disabled]="disabled"
+    [type]="inputType"
+    [(ngModel)]="inputText"
+    (change)="emitInputText()"
+    [size]="width"
+    autocomplete="off"
+    autocorrect="off"
+    [spellcheck]="false"
+    [maxlength]="maxLength"
+    (ngModelChange)="onChange($event)"
+    [readonly]="readonly"
+    (blur)="onTouched()"
+    (focus)="onGetFocus()"
+    class="w-full outline-none bg-secondary placeholder:text-textB placeholder:font-thin"
+    [ngClass]="icon.length ? 'rounded-r-md' : 'rounded-md pl-2'"
+    placeholder="{{ placeholderText }}" />
+</div>

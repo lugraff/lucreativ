@@ -1,0 +1,29 @@
+<div
+  *ngIf="timeWithDaysList"
+  class="w-full h-full flex flex-col animate-fadeIn">
+  <div
+    class="mx-auto sm:w-[40rem] w-full elite_v_scrollbar max-h-0"
+    [ngClass]="{ 'max-h-screen transition-all duration-500': timeWithDaysList.length }">
+    <div
+      *ngFor="let backupEntry of timeWithDaysList; let i = index"
+      class="py-1 {{ uiSettings.AnimationType }}">
+      <global-time-panel
+        [disabled]="disabled"
+        [data]="backupEntry"
+        [entryIndex]="i"
+        (deleteItemEvent)="deleteItemEvent($event)">
+      </global-time-panel>
+    </div>
+  </div>
+
+  <div class="mx-auto w-full sm:w-[40rem] pr-3 pt-2">
+    <global-button-standard
+      [disabled]="disabled"
+      icon="add"
+      height="large"
+      (click)="onNewBackupTimer()"
+      class="mt-3">
+      Neue Zeit hinzufügen
+    </global-button-standard>
+  </div>
+</div>

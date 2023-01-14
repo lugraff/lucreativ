@@ -1,0 +1,21 @@
+<div class="relative pb-1 w-{{ width }} text-secondary rounded-md h-full">
+  <ng-content></ng-content>
+  <div class="flex flex-col gap-1 text-md font-thin bg-bgA rounded-md elite_v_scrollbar mt-2 h-full">
+    <div *ngFor="let item of data; let i = index">
+      <div class="flex gap-1 justify-end">
+        <global-button-list
+          height="small"
+          (click)="emitselectedOption(item)"
+          class="grow"
+          >{{ item }}</global-button-list
+        >
+        <global-button-list
+          icon="delete"
+          height="small"
+          (click)="onDelete(i)"
+          [ngClass]="{ invisible: item === notAvailableText }">
+        </global-button-list>
+      </div>
+    </div>
+  </div>
+</div>

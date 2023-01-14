@@ -1,0 +1,12 @@
+<div class="relative bg-bgB border border-secondary text-textA text-center rounded-md">
+  <div class="pt-2">
+    <div
+      *ngIf="myTitle.length"
+      class="text-primary text-xl px-2">
+      {{ myTitle }}
+    </div>
+    <div class="px-4 pb-4">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

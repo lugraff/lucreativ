@@ -1,0 +1,101 @@
+<div
+  class="flex flex-col max-h-full min-w-fit elite_v_scrollbar border border-subtle"
+  [ngStyle]="{ 'max-height': maxWindowHeight.toString(), 'max-width': maxWindowWidth.toString() }">
+  <table
+    mat-sort
+    cdk-table
+    [dataSource]="data">
+    <ng-container
+      *ngFor="let column of tableData.columns"
+      [cdkColumnDef]="column.keyName">
+      <th
+        class="relative bg-subtle p-1 cursor-pointer font-semibold !z-[5]"
+        (click)="onTitleClick(column.keyName)"
+        [ngStyle]="{ width: column.width ?? ' ' }"
+        cdk-header-cell
+        *cdkHeaderCellDef>
+        <div
+          class="overflow-clip max-h-6 break-all"
+          [globalTooltip]="column.displayName"
+          ttIcon="info">
+          <div class="flex justify-center">
+            <div>{{ column.displayName }}</div>
+            <div [ngClass]="sortedBy === column.keyName ? '' : 'invisible'">
+              {{ asc ? '▼' : '▲' }}
+            </div>
+          </div>
+        </div>
+      </th>
+      <td
+        cdk-cell
+        *cdkCellDef="let row"
+        class="border-r border-subtle p-1">
+        <!-- check for different displaying versions -->
+        <div *ngIf="row[column.keyName] !== undefined">
+          <container-element
+            [ngSwitch]="column.type"
+            (click)="onCellClick(row, column)">
+            <div *ngSwitchCase="'nativeIcon'">
+              <global-standard-icons
+                [icon]="row[column.keyName]"
+                [ownColor]="column.colored ?? false"
+                [ngStyle]="
+                  column.colored && row['ColorCode'] ? { stroke: row['ColorCode'] } : {}
+                "></global-standard-icons>
+            </div>
+
+            <div *ngSwitchCase="'urlIcon'">
+              <img [src]="row[column.keyName]" />
+            </div>
+
+            <div *ngSwitchCase="'boolIcon'">
+              <div
+                [ngSwitch]="true"
+                class="flex justify-center">
+                <global-standard-icons
+                  *ngSwitchCase="boolTrueValues.includes(row[column.keyName])"
+                  icon="confirm"
+                  [ownColor]="true"
+                  class="stroke-primary">
+                </global-standard-icons>
+                <global-standard-icons
+                  *ngSwitchCase="boolFalseValues.includes(row[column.keyName])"
+                  icon="fail"
+                  [ownColor]="true"
+                  class="stroke-danger">
+                </global-standard-icons>
+                <div *ngSwitchDefault>
+                  {{ row[column.keyName] | json }}
+                </div>
+              </div>
+            </div>
+
+            <div
+              *ngSwitchDefault
+              class="font-light"
+              [ngClass]="
+                row[column.keyName].length <= 10 || row[column.keyName]?.toString().includes(' ')
+                  ? 'break-words'
+                  : 'break-all'
+              "
+              [ngStyle]="column.colored && row['ColorCode'] ? { color: row['ColorCode'] } : {}">
+              {{ row[column.keyName] }}
+              <!-- {{ (row[def.keyName]).toString().length }} -->
+            </div>
+          </container-element>
+        </div>
+      </td>
+      <!-- <td class="bg-warning" cdk-footer-cell *cdkFooterCellDef="">{{ def.title }}</td> -->
+    </ng-container>
+
+    <tr
+      cdk-header-row
+      *cdkHeaderRowDef="displayedCols; sticky: true"></tr>
+    <tr
+      cdk-row
+      *cdkRowDef="let row; columns: displayedCols"
+      class="even:bg-bgB odd:bg-bgA"></tr>
+    <!-- <tr cdk-footer-row *cdkFooterRowDef="displayedCols; sticky: true"></tr> -->
+  </table>
+</div>
+<div class="text-warning h-6">{{ copyMessage }}</div>

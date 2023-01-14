@@ -1,0 +1,14 @@
+<div
+  class="relative flex items-start bg-tertiary text-textB font-normal text-lg rounded-md"
+  [ngClass]="animate ? globalUISettings.AnimationType : ''">
+  <div class="flex p-2">
+    <div class="pr-1">
+      <global-standard-icons
+        [icon]="icon"
+        [ownColor]="ownColor"></global-standard-icons>
+    </div>
+    <div class="my-auto break-normal whitespace-pre-line">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

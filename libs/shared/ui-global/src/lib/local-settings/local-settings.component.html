@@ -1,0 +1,77 @@
+<div class="flex flex-col gap-4 p-2 truncate h-full">
+  <div class="mx-4 w-fit">
+    <global-input-checkbox
+      (inputCheckedChange)="globalsUI.LowCPU = $event"
+      [checked]="globalsUI.LowCPU"
+      height="small"
+      elementId="LowCPUID"
+      globalTooltip="App wird auf Leistung optimiert."
+      ttPosition="right">
+      Low CPU Mode
+    </global-input-checkbox>
+  </div>
+  <hr class="text-subtle" />
+
+  <div
+    *ngIf="!isMobileScreen"
+    class="mx-4">
+    <div class="flex gap-2">
+      <global-input-checkbox
+        (inputCheckedChange)="globalsUI.ShowTooltips = $event"
+        [checked]="globalsUI.ShowTooltips"
+        height="small"
+        globalTooltip="Das ist ein Tooltip"
+        ttPosition="left">
+        Tooltips
+      </global-input-checkbox>
+      <global-input-checkbox
+        (inputCheckedChange)="globalsUI.TooltipKeyControl = $event"
+        [checked]="globalsUI.TooltipKeyControl"
+        height="small"
+        globalTooltip="Tooltip nur bei gedrückter STRG-Taste zeigen.">
+        Tastenmodus
+      </global-input-checkbox>
+    </div>
+    <div
+      class="flex gap-2 items-center text-sm pt-2"
+      [ngClass]="globalsUI.TooltipKeyControl ? 'opacity-40' : ''">
+      Anzeigeverzögerung in ms:
+      <global-input-standard
+        inputType="number"
+        [disabled]="globalsUI.TooltipKeyControl"
+        class="max-w-[4rem]"
+        height="small"
+        [inputText]="globalsUI.TooltipDelay.toString()"
+        (inputTextChange)="ChangeTTDelay($event)"
+        globalTooltip="Verzögerungszeit in Millisekunden"
+        ttPosition="bottom">
+      </global-input-standard>
+    </div>
+  </div>
+  <hr
+    *ngIf="!isMobileScreen"
+    class="text-subtle" />
+
+  <div class="flex mx-4">
+    <div class="grow">Animation:</div>
+    <select
+      class="bg-bgA text-primary outline-none pl-2"
+      (change)="globalsUI.AnimationType = $event.target">
+      <option
+        *ngFor="let animation of globalsUI.animations"
+        [value]="animation"
+        [selected]="globalsUI.AnimationType.substring(8, globalsUI.AnimationType.length - 2) === animation">
+        {{ animation }}
+      </option>
+    </select>
+  </div>
+  <hr class="text-subtle" />
+
+  <div class="grow"></div>
+
+  <global-button-standard
+    icon="reset"
+    (click)="onResetSettings()"
+    >Alle Einstellungen zurücksetzen
+  </global-button-standard>
+</div>

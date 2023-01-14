@@ -1,0 +1,24 @@
+<div
+  (click)="InputField.focus()"
+  class="relative flex w-fit text-lg bg-bgB text-secondary rounded-md"
+  [ngClass]="{ 'h-[3rem]': height === 'large', 'h-[2.5rem]': height === 'medium', 'h-[2rem]': height === 'small' }">
+  <div class="flex px-1">
+    <div class="stroke-current fill-transparent self-center">
+      <global-standard-icons
+        [icon]="icon"
+        [ownColor]="ownColor"></global-standard-icons>
+    </div>
+    <div class="whitespace-nowrap self-center pr-1">
+      <ng-content></ng-content>
+    </div>
+    <input
+      #InputField
+      type="checkbox"
+      [attr.id]="elementId"
+      [(ngModel)]="checked"
+      (ngModelChange)="onChange($event)"
+      (blur)="onTouched()"
+      (focus)="onGetFocus()"
+      class="w-5 h-5 m-1 self-center outline-none rounded-md accent-primary" />
+  </div>
+</div>

@@ -1,0 +1,12 @@
+# Add files here to ignore them from prettier formatting
+
+/dist
+/coverage
+/doku
+
+node_modules
+.angular
+.vscode
+
+*.json
+*.md

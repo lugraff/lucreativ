@@ -1,0 +1,29 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/ui-global": ["libs/shared/ui-global/src/index.ts"],
+      "@shared/util-connector": ["libs/shared/util-connector/src/index.ts"],
+      "@shared/util-global": ["libs/shared/util-global/src/index.ts"],
+      "@shared/util-screen": ["libs/shared/util-screen/src/index.ts"],
+      "@shared/util-settings": ["libs/shared/util-settings/src/index.ts"],
+      "@shared/util-strings": ["libs/shared/util-strings/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

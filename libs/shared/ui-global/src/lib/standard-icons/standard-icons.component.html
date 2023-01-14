@@ -1,0 +1,424 @@
+<div *ngIf="icon !== undefined">
+  <div *ngIf="icon.startsWith('http'); else nativeIcon">
+    <img [src]="icon" />
+  </div>
+  <ng-template #nativeIcon>
+    <div
+      *ngIf="icon && icon.length"
+      [ngSwitch]="icon"
+      class="flex my-auto"
+      [ngClass]="{ 'stroke-current fill-transparent': !ownColor }">
+      <div>
+        {{ text }}
+      </div>
+      <div>
+        <svg
+          *ngSwitchCase="'info'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.7rem] w-[1.7rem] stroke-[1.8]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'question'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.6rem] w-[1.6rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'add'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.7rem] w-[1.7rem] stroke-1">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 4v16m8-8H4" />
+        </svg>
+        <svg
+          *ngSwitchCase="'sub'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.7rem] w-[1.7rem] stroke-1">
+          <line
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            x1="4"
+            y1="12"
+            x2="20"
+            y2="12"></line>
+        </svg>
+        <svg
+          *ngSwitchCase="'delete'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.5rem] w-[1.5rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+        </svg>
+        <svg
+          *ngSwitchCase="'calendar'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.7rem] w-[1.7rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'power'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.6rem] w-[1.6rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
+        </svg>
+        <svg
+          *ngSwitchCase="'gear'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.7rem] w-[1.7rem] stroke-[1.5]"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path
+            stroke="none"
+            d="M0 0h24v24H0z"></path>
+          <path
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+          <circle
+            cx="12"
+            cy="12"
+            r="3"></circle>
+        </svg>
+        <svg
+          *ngSwitchCase="'search'"
+          xmlns="http://www.w3.org/2000/svg"
+          class="min-w-[1.6rem] w-[1.6rem] stroke-2"
+          viewBox="0 0 24 24"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path
+            stroke="none"
+            d="M0 0h24v24H0z"></path>
+          <circle
+            cx="10"
+            cy="10"
+            r="7"></circle>
+          <line
+            x1="21"
+            y1="21"
+            x2="15"
+            y2="15"></line>
+        </svg>
+        <svg
+          *ngSwitchCase="'time'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.65rem] w-[1.65rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'wrench'"
+          xmlns="http://www.w3.org/2000/svg"
+          class="min-w-[1.6rem] w-[1.6rem] stroke-[1.5]"
+          viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21.75 6.75a4.5 4.5 0 01-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 11-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 016.336-4.486l-3.276 3.276a3.004 3.004 0 002.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4.867 19.125h.008v.008h-.008v-.008z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'user'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.6rem] w-[1.6rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'database'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="ml-auto min-w-[1.6rem] w-[1.6rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+        </svg>
+        <svg
+          *ngSwitchCase="'phone'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.6rem] w-[1.6rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'chevron-down'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.7rem] w-[1.7rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+        <svg
+          *ngSwitchCase="'chevron-up'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.7rem] w-[1.7rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+        </svg>
+
+        <svg
+          *ngSwitchCase="'fingerprint'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.5rem] w-[1.5rem] stroke-[1.25]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M7.864 4.243A7.5 7.5 0 0119.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 004.5 10.5a7.464 7.464 0 01-1.15 3.993m1.989 3.559A11.209 11.209 0 008.25 10.5a3.75 3.75 0 117.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 01-3.6 9.75m6.633-4.596a18.666 18.666 0 01-2.485 5.33" />
+        </svg>
+        <svg
+          *ngSwitchCase="'confirm'"
+          xmlns="http://www.w3.org/2000/svg"
+          class="min-w-[1.6rem] w-[1.6rem] stroke-[1.5]"
+          viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'fail'"
+          xmlns="http://www.w3.org/2000/svg"
+          class="min-w-[1.6rem] w-[1.6rem] stroke-[1.5]"
+          viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'warning'"
+          xmlns="http://www.w3.org/2000/svg"
+          class="min-w-[1.7rem] w-[1.7rem] stroke-[1.8]"
+          viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'key'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.7rem] w-[1.7rem] stroke-[1.3]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'x'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        <svg
+          *ngSwitchCase="'reset'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+        </svg>
+        <svg
+          *ngSwitchCase="'login'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+        </svg>
+        <svg
+          *ngSwitchCase="'logout'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+        </svg>
+        <svg
+          *ngSwitchCase="'menu'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'maintenance'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'write-text'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+        </svg>
+        <svg
+          *ngSwitchCase="'play'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'pause'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M14.25 9v6m-4.5 0V9M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'stop'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 019 14.437V9.564z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'scale'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem] stroke-[1.5] -rotate-45">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M18 12H6" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M14 16H9" />
+        </svg>
+        <svg
+          *ngSwitchCase="'full'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" />
+        </svg>
+        <svg
+          *ngSwitchCase="'minimize'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M19.5 18h-15" />
+        </svg>
+        <svg
+          *ngSwitchCase="'windowed'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-[1.5rem] h-[1.5rem] stroke-[1.5]">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6" />
+        </svg>
+        <svg
+          *ngSwitchCase="'t-char'"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 16"
+          class="w-[1.7rem] h-[1.7rem] stroke-0 fill-current">
+          <path
+            d="M12.258 3h-8.51l-.083 2.46h.479c.26-1.544.758-1.783 2.693-1.845l.424-.013v7.827c0 .663-.144.82-1.3.923v.52h4.082v-.52c-1.162-.103-1.306-.26-1.306-.923V3.602l.431.013c1.934.062 2.434.301 2.693 1.846h.479L12.258 3z" />
+        </svg>
+
+        <svg
+          *ngSwitchDefault
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="min-w-[1.6rem] w-[1.6rem] stroke-[1.5] stroke-subtle">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+        </svg>
+      </div>
+    </div>
+  </ng-template>
+</div>

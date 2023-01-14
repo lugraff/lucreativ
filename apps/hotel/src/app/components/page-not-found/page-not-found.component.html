@@ -1,0 +1,35 @@
+<div class="h-full w-screen sm:w-[calc(100vw-16rem)] overflow-hidden bg-bgA">
+  <div class="flex flex-col w-full max-w-[100vw] h-full max-h-full pt-64">
+    <div class="mt-4 flex justify-center">
+      <!-- TODO EliteLogo Component verwenden. -->
+      <svg
+        class="h-32 transition-all duration-[2000ms] ease-in absolute max-w-full"
+        [ngClass]="animationTicker ? 'pl-48' : 'pr-48'"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 2991.84 1572.24">
+        <path
+          class="fill-textA"
+          d="M1884.91,582.67H666.97c-41.13,0-77.88-25.71-91.98-64.36L433.89,131.45C410.6,67.58,457.89,0,525.87,0H1743.81c41.13,0,77.88,25.71,91.98,64.36l141.1,386.86c23.29,63.87-24,131.45-91.98,131.45Z" />
+      </svg>
+      <svg
+        class="h-32 transition-all duration-[2000ms] ease-out absolute max-w-full"
+        [ngClass]="animationTicker ? 'pl-48' : 'pr-48'"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 2991.84 1572.24">
+        <path
+          class="fill-primary"
+          d="M841.03,1280.9H239.09c-41.13,0-77.88-25.71-91.98-64.36L6.01,829.68c-23.29-63.87,24-131.45,91.98-131.45H699.93c41.13,0,77.88,25.71,91.98,64.36l141.1,386.86c23.29,63.87-24,131.45-91.98,131.45Z" />
+      </svg>
+      <svg
+        class="h-32 transition-all duration-[2000ms] ease-in-out absolute max-w-full"
+        [ngClass]="animationTicker ? 'pl-48' : 'pr-48'"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 2991.84 1572.24">
+        <path
+          class="fill-textA"
+          d="M2893.85,1572.24H1259.7c-41.13,0-77.88-25.71-91.98-64.36l-141.1-386.86c-23.29-63.87,24-131.45,91.98-131.45h1634.16c41.13,0,77.88,25.71,91.98,64.36l141.1,386.86c23.29,63.87-24,131.45-91.98,131.45Z" />
+      </svg>
+    </div>
+    <p class="text-center pt-40 text-secondary font-semibold text-2xl">Seite konnte nicht gefunden werden!</p>
+  </div>
+</div>

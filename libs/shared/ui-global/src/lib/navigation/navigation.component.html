@@ -1,0 +1,56 @@
+<div
+  id="navContainer"
+  (wheel)="onWheel($event)"
+  class="flex gap-2 mb-2 pt-3 h-16 elite_h_scrollbar whitespace-nowrap px-40 sm:px-8">
+  <div *ngFor="let menuPoint of menuPoints; let i = index">
+    <div
+      *ngIf="menuPoints.includes(menuPoint)"
+      class="flex gap-2 text-secondary"
+      [id]="menuPoint.route">
+      <button
+        class="text-2xl transition-all duration-200 hover:text-primary hover:pt-1"
+        [ngClass]="{
+          'text-primary': actualFullRoute === '/' + menuPoint.route + '/' + menuPoint.viewModelHref
+        }"
+        [routerLink]="['/' + menuPoint.route, menuPoint.viewModelHref]">
+        {{ menuPoint.shortName }}
+      </button>
+      <!-- *{{ actualFullRoute }} : {{ menuPoint.route }} - {{ menuPoint.viewModelHref }}* -->
+      <p
+        *ngIf="i !== menuPoints.length - 1"
+        class="text-secondary text-2xl">
+        |
+      </p>
+    </div>
+  </div>
+</div>
+
+<global-popup
+  *ngIf="errorGetDataInfo.length"
+  myTitle="Information"
+  elementId="ErrorMessagePopup1"
+  [closeable]="false"
+  popupWidth="48rem"
+  [backCovered]="true"
+  (whenClosing)="errorGetDataInfo = ''">
+  <global-notification-card
+    icon="warning"
+    class="fill-danger">
+    {{ errorGetDataInfo }}
+  </global-notification-card>
+  <div class="flex justify-end gap-2 mt-2">
+    <global-button-standard
+      height="small"
+      width="medium"
+      [autofocus]="true"
+      (click)="loadRoutes()"
+      >Erneut versuchen
+    </global-button-standard>
+    <global-button-standard
+      height="small"
+      width="medium"
+      (click)="errorGetDataInfo = ''"
+      >Abbrechen
+    </global-button-standard>
+  </div>
+</global-popup>

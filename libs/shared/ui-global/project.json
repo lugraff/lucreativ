@@ -1,0 +1,58 @@
+{
+  "name": "shared-ui-global",
+  "projectType": "library",
+  "sourceRoot": "libs/shared/ui-global/src",
+  "prefix": "global",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:ng-packagr-lite",
+      "outputs": [
+        "dist/libs/shared/ui-global"
+      ],
+      "options": {
+        "project": "libs/shared/ui-global/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/shared/ui-global/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/shared/ui-global/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/shared/ui-global"
+      ],
+      "options": {
+        "jestConfig": "libs/shared/ui-global/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/shared/ui-global/**/*.ts",
+          "libs/shared/ui-global/**/*.html"
+        ]
+      }
+    },
+    "component-test": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "libs/shared/ui-global/cypress.config.ts",
+        "testingType": "component",
+        "skipServe": true,
+        "devServerTarget": "hotel:build:development"
+      }
+    }
+  },
+  "tags": [
+    "domain:shared",
+    "type:ui"
+  ]
+}
