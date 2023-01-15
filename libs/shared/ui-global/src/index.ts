@@ -18,3 +18,5 @@ export * from './lib/time-panel/time-panel.component';
 export * from './lib/time-panel/time-panel-list.component';
 export * from './lib/loading-spinner/loading-spinner.component';
 export * from './lib/tooltip/tooltip.component';
+
+export * from './lib/navigation/navigation.component';

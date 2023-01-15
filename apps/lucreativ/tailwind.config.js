@@ -34,7 +34,7 @@ module.exports = {
       tertiary: '#CBCCD0',
       warning: '#A3C832',
       danger: '#f54b4c',
-      selection: '#32A3C8',
+      selection: '#30A1C6',
       bgB: '#3E3042',
       bgA: '#303442',
       subtle: '#646464',

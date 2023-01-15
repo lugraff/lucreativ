@@ -5,6 +5,6 @@ import { CommonModule } from '@angular/common';
   selector: 'lucreativ-base',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './base.component.html',
+  templateUrl: './welcome.component.html',
 })
-export class BaseComponent {}
+export class WelcomeComponent {}

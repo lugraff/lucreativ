@@ -1,0 +1,17 @@
+<div class="fixed flex flex-col h-full transition-all duration-200 from-transparent to-selection bg-gradient-to-l"
+    [ngClass]="expanded ? 'w-72':'w-16'">
+    <div (click)="expanded = !expanded" class="my-4 mx-2">
+        <img src="../../../assets/Logo.jpg" class="rounded-3xl border-2 border-textB pointer-events-none select-none" />
+    </div>
+    <div class="grow">
+        <ng-container *ngFor="let route of router.config">
+            <ng-container *ngIf="route.path !== undefined && route.path !== '**' && route.path !== '' && route.path !== 'page-not-found'">
+              <global-button-link
+                class="w-fit"
+                [routerLink]="route.path"
+                >{{ route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component' }}
+              </global-button-link>
+            </ng-container>
+          </ng-container>
+    </div>
+</div>

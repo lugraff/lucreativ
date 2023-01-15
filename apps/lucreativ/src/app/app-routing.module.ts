@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BaseComponent } from './components/base/base.component';
+import { WelcomeComponent } from './components/base/welcome.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
-const BASE_ROUTES: Routes = [
+const ROUTES: Routes = [
   {
     path: '',
-    component: BaseComponent,
+    component: WelcomeComponent,
   },
   {
-    path: 'lucreativ-page-not-found',
+    path: 'page-not-found',
     component: PageNotFoundComponent,
   },
   {
@@ -19,7 +19,7 @@ const BASE_ROUTES: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(BASE_ROUTES)],
+  imports: [RouterModule.forRoot(ROUTES)],
   exports: [RouterModule],
   providers: [],
 })
