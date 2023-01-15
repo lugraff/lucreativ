@@ -1,12 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { WelcomeComponent } from './components/base/welcome.component';
+import { HomeComponent } from './components/base/home.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { TextEditorComponent } from './components/text-editor/text-editor.component';
 
 const ROUTES: Routes = [
   {
-    path: '',
-    component: WelcomeComponent,
+    path: 'home',
+    component: HomeComponent,
+  },
+  {
+    path: 'text-editor',
+    component: TextEditorComponent,
   },
   {
     path: 'page-not-found',
@@ -14,7 +19,7 @@ const ROUTES: Routes = [
   },
   {
     path: '**',
-    redirectTo: '',
+    redirectTo: 'page-not-found',
   },
 ];
 

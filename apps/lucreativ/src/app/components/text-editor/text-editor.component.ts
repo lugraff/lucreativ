@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'lucreativ-base',
+  selector: 'lucreativ-text-editor',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './welcome.component.html',
+  templateUrl: './text-editor.component.html',
 })
-export class WelcomeComponent {}
+export class TextEditorComponent {}
