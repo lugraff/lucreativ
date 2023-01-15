@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["**/*.ts", "../system-infos/src/app/app-global-service.ts"],
+  "include": ["**/*.ts"],
   "compilerOptions": {
     "types": []
   }

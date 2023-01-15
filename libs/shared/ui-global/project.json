@@ -47,7 +47,7 @@
         "cypressConfig": "libs/shared/ui-global/cypress.config.ts",
         "testingType": "component",
         "skipServe": true,
-        "devServerTarget": "hotel:build:development"
+        "devServerTarget": "lucreativ:build:development"
       }
     }
   },

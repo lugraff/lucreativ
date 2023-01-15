@@ -6,7 +6,7 @@
   "supportFile": "./src/support/index.ts",
   "pluginsFile": false,
   "video": true,
-  "videosFolder": "../../dist/cypress/apps/hotel-e2e/videos",
-  "screenshotsFolder": "../../dist/cypress/apps/hotel-e2e/screenshots",
+  "videosFolder": "../../dist/cypress/apps/lucreativ-e2e/videos",
+  "screenshotsFolder": "../../dist/cypress/apps/lucreativ-e2e/screenshots",
   "chromeWebSecurity": false
 }

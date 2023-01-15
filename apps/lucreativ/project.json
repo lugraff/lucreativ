@@ -1,22 +1,29 @@
 {
-  "name": "hotel",
+  "name": "lucreativ",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/hotel/src",
-  "prefix": "hotel",
+  "sourceRoot": "apps/lucreativ/src",
+  "prefix": "lucreativ",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "routputs": ["{options.outputPath}"],
+      "routputs": [
+        "{options.outputPath}"
+      ],
       "options": {
-        "outputPath": "dist/apps/hotel",
-        "index": "apps/hotel/src/index.html",
-        "main": "apps/hotel/src/main.ts",
-        "polyfills": "apps/hotel/src/polyfills.ts",
-        "tsConfig": "apps/hotel/tsconfig.app.json",
+        "outputPath": "dist/apps/lucreativ",
+        "index": "apps/lucreativ/src/index.html",
+        "main": "apps/lucreativ/src/main.ts",
+        "polyfills": "apps/lucreativ/src/polyfills.ts",
+        "tsConfig": "apps/lucreativ/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/hotel/src/favicon.ico", "apps/hotel/src/assets"],
-        "styles": ["apps/hotel/src/styles.scss"],
+        "assets": [
+          "apps/lucreativ/src/favicon.ico",
+          "apps/lucreativ/src/assets"
+        ],
+        "styles": [
+          "apps/lucreativ/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -35,8 +42,8 @@
           ],
           "fileReplacements": [
             {
-              "replace": "apps/hotel/src/environments/environment.ts",
-              "with": "apps/hotel/src/environments/environment.prod.ts"
+              "replace": "apps/lucreativ/src/environments/environment.ts",
+              "with": "apps/lucreativ/src/environments/environment.prod.ts"
             }
           ],
           "outputHashing": "all"
@@ -56,7 +63,7 @@
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
-          "outputPath": "D:/ELITEIB_Beta/foWEb/hotel/dist/"
+          "outputPath": "D:/ELITEIB_Beta/foWEb/lucreativ/dist/"
         }
       },
       "defaultConfiguration": "production"
@@ -65,10 +72,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "hotel:build:production"
+          "browserTarget": "lucreativ:build:production"
         },
         "development": {
-          "browserTarget": "hotel:build:development"
+          "browserTarget": "lucreativ:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -76,23 +83,31 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "hotel:build"
+        "browserTarget": "lucreativ:build"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/hotel/**/*.ts", "apps/hotel/**/*.html"]
+        "lintFilePatterns": [
+          "apps/lucreativ/**/*.ts",
+          "apps/lucreativ/**/*.html"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/hotel"],
+      "outputs": [
+        "coverage/apps/lucreativ"
+      ],
       "options": {
-        "jestConfig": "apps/hotel/jest.config.ts",
+        "jestConfig": "apps/lucreativ/jest.config.ts",
         "passWithNoTests": true
       }
     }
   },
-  "tags": ["type:app", "domain:main"]
+  "tags": [
+    "type:app",
+    "domain:main"
+  ]
 }

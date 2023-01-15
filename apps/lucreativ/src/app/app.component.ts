@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 
 @Component({
   standalone: true,
-  selector: 'hotel-root',
+  selector: 'lucreativ-root',
   templateUrl: './app.component.html',
   imports: [CommonModule, RouterModule],
 })

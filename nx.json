@@ -6,7 +6,7 @@
     },
     ".eslintrc.json": "*"
   },
-  "npmScope": "hotel",
+  "npmScope": "lucreativ",
   "targetDefaults": {
     "test": {
       "inputs": [
@@ -60,5 +60,5 @@
       "style": "scss"
     }
   },
-  "defaultProject": "hotel"
+  "defaultProject": "lucreativ"
 }

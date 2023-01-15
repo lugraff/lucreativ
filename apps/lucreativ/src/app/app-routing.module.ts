@@ -9,7 +9,7 @@ const BASE_ROUTES: Routes = [
     component: BaseComponent,
   },
   {
-    path: 'hotel-page-not-found',
+    path: 'lucreativ-page-not-found',
     component: PageNotFoundComponent,
   },
   {

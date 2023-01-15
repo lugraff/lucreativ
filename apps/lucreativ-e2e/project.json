@@ -1,0 +1,35 @@
+{
+  "name": "lucreativ-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/lucreativ-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/lucreativ-e2e/cypress.json",
+        "devServerTarget": "lucreativ:serve:development"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "lucreativ:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/lucreativ-e2e/**/*.{js,ts}"
+        ]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": [
+    "lucreativ"
+  ]
+}

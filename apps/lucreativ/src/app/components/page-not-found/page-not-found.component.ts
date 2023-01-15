@@ -5,7 +5,7 @@ import { interval, Subscription } from 'rxjs';
 @Component({
   standalone: true,
   imports: [CommonModule],
-  selector: 'hotel-page-not-found',
+  selector: 'lucreativ-page-not-found',
   templateUrl: './page-not-found.component.html',
 })
 export class PageNotFoundComponent implements OnInit, OnDestroy {
