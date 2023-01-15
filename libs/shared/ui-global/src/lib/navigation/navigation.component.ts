@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Route, Router, RouterModule } from '@angular/router';
 import { RemoveString, UppercaseStringSplitterPipe } from '@shared/util-strings';
 import { ButtonLinkComponent } from '../button-link/button-link.component';
 
@@ -14,4 +14,11 @@ export class NavigationComponent {
   public expanded = false;
 
   constructor(public router: Router) {}
+
+  public getRouteData(route: Route): string {
+    if (route.data !== undefined) {
+      return route.data[0];
+    }
+    return '';
+  }
 }

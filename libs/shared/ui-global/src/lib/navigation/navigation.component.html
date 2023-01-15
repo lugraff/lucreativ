@@ -1,15 +1,18 @@
-<div class="fixed flex flex-col h-full transition-all duration-200 from-transparent to-selection bg-gradient-to-l"
+<div class="fixed z-30 flex flex-col h-full transition-all duration-200 from-transparent to-selection bg-gradient-to-l"
   [ngClass]="expanded ? 'w-72':'w-16'">
   <div (click)="expanded = !expanded" class="my-4 mx-2">
-    <img src="../../../assets/Logo.jpg" class="rounded-3xl border-2 border-textB pointer-events-none select-none" />
+    <img src="../../../assets/Logo.jpg"
+      class="rounded-3xl border-2 border-textB pointer-events-none select-none w-60" />
   </div>
   <div class="grow flex flex-col gap-2 items-center">
     <ng-container *ngFor="let route of router.config">
       <ng-container
         *ngIf="route.path !== undefined && route.path !== '**' && route.path !== '' && route.path !== 'page-not-found'">
-        <button link [routerLink]="route.path">
-          <div *ngIf="expanded">
-            {{ route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component' }}
+        <button link [routerLink]="route.path" [icon]="getRouteData(route)">
+          <div class="flex gap-1">
+            <div *ngIf="expanded">
+              {{ route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component' }}
+            </div>
           </div>
         </button>
       </ng-container>

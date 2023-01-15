@@ -20,3 +20,4 @@ export * from './lib/loading-spinner/loading-spinner.component';
 export * from './lib/tooltip/tooltip.component';
 
 export * from './lib/navigation/navigation.component';
+export * from './lib/icon/icon.component';
