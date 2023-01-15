@@ -1,22 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input } from '@angular/core';
-import { StandardIconsComponent } from '../standard-icons/standard-icons.component';
+import { Component, HostBinding } from '@angular/core';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, StandardIconsComponent],
-  selector: 'global-button-link',
-  templateUrl: './button-link.component.html',
+  imports: [CommonModule],
+  // eslint-disable-next-line @angular-eslint/component-selector
+  selector: '[link]',
+  template: `<div class="group-hover:">
+    <ng-content></ng-content>
+  </div>`,
 })
 export class ButtonLinkComponent {
-  @Input() public height = 'medium'; // small / medium / large
-  @Input() public width = ''; // small / medium / large
-  @Input() public icon = '';
-  @Input() public ownColor = false;
-  @Input() public disabled = false;
-  @Input() public activLink = false;
-
-  constructor(elRef: ElementRef) {
-    elRef.nativeElement.innerContent = 'HALLO';
-  }
+  @HostBinding('class') public class =
+    'disabled:grayscale outline-none disabled:pointer-events-none py-1 px-4 group hover:shadow-secondary ring-selection active:bg-textA bg-primary shadow shadow-textB rounded-lg font-semibold text-xl text-textB whitespace-nowrap transition-color';
 }
