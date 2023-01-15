@@ -1,5 +1,3 @@
-export * from './lib/navigation/navigation.component';
-export * from './lib/navigation/navigation-home.component';
 export * from './lib/local-settings/local-settings.component';
 export * from './lib/button-elite/button-elite.component';
 export * from './lib/button-standard/button-standard.component';

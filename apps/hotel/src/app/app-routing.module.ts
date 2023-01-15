@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { BaseComponent } from './components/base/base.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
-
-
-const MAIN_ROUTES: Routes = [
+const BASE_ROUTES: Routes = [
   {
     path: '',
+    component: BaseComponent,
+  },
+  {
+    path: 'hotel-page-not-found',
     component: PageNotFoundComponent,
   },
   {
@@ -16,7 +19,7 @@ const MAIN_ROUTES: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(MAIN_ROUTES)],
+  imports: [RouterModule.forRoot(BASE_ROUTES)],
   exports: [RouterModule],
   providers: [],
 })

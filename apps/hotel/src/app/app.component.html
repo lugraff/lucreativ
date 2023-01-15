@@ -1,1 +1,15 @@
-<div>Hello World</div>
+<div class="w-screen h-screen bg-bgA">
+    <div class="flex font-normal text-textA selection:bg-selection stroke-textA stroke-2 fill-transparent">
+        <div class="grow overflow-auto">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
+
+<!-- Unterer Bereich ist für Preload animation:
+    (wenn nicht vorhanden kann nicht zwischen Animationen geswitcht werden!) -->
+<div class="hidden absolute">
+    <div
+        class="animate-slideIn animate-slideOut animate-zoomIn animate-zoomOut animate-fadeIn animate-fadeOut animate-hover">
+    </div>
+</div>
