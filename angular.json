@@ -3,7 +3,6 @@
   "projects": {
     "lucreativ": "apps/lucreativ",
     "shared-ui-global": "libs/shared/ui-global",
-    "shared-util-connector": "libs/shared/util-connector",
     "shared-util-global": "libs/shared/util-global",
     "shared-util-screen": "libs/shared/util-screen",
     "shared-util-settings": "libs/shared/util-settings",

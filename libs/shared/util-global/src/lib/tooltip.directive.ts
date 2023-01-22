@@ -1,6 +1,6 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 import { GlobalUISettingsService } from '@shared/util-settings';
-import { TooltipService } from './tooltip.service';
+import { TooltipService } from './services/tooltip.service';
 
 @Directive({
   selector: '[globalTooltip]',

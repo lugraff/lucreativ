@@ -20,5 +20,5 @@
   ],
   "include": [
     "**/*.ts"
-  ]
+, "../util-global/src/lib/entities/table-data.ts"  ]
 }

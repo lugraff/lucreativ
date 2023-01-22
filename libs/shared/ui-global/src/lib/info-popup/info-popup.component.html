@@ -1,0 +1,19 @@
+<div
+  *ngIf="infoText"
+  class="{{
+    globalUISettings.AnimationType
+  }} text-secondary from-bgB to-bgA bg-gradient-to-b shadow-bgA shadow-lg border-subtle border select-none pointer-events-none">
+  <div class="flex p-2">
+    <div class="pr-1">
+      <global-icon
+        [icon]="icon"
+        [strokeWidth]="iconStroke"
+        [size]="iconSize"
+        [color]="iconColor">
+      </global-icon>
+    </div>
+    <div class="my-auto break-normal whitespace-pre-line">
+      {{ infoText }}
+    </div>
+  </div>
+</div>

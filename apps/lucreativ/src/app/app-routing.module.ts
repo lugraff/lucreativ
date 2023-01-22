@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/base/home.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
-import { TextEditorComponent } from './components/text-editor/text-editor.component';
 import { DotknotComponent } from './components/dotknot/dotknot.component';
+import { FileManagerComponent } from './components/file-manager/file-manager.component';
 
 const ROUTES: Routes = [
   {
@@ -12,9 +12,9 @@ const ROUTES: Routes = [
     data: ['featherHome'],
   },
   {
-    path: 'text-editor',
-    component: TextEditorComponent,
-    data: ['featherBook'],
+    path: 'file-manager',
+    component: FileManagerComponent,
+    data: ['featherDatabase'],
   },
   {
     path: 'dotknot',

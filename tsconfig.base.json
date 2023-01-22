@@ -18,7 +18,6 @@
     "baseUrl": ".",
     "paths": {
       "@shared/ui-global": ["libs/shared/ui-global/src/index.ts"],
-      "@shared/util-connector": ["libs/shared/util-connector/src/index.ts"],
       "@shared/util-global": ["libs/shared/util-global/src/index.ts"],
       "@shared/util-screen": ["libs/shared/util-screen/src/index.ts"],
       "@shared/util-settings": ["libs/shared/util-settings/src/index.ts"],

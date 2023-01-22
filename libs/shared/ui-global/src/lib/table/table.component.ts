@@ -1,50 +1,73 @@
 import { Component, Input, OnChanges, SimpleChange } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { emptyTable, TableColumn, TableData, TooltipDirective } from '@shared/util-global';
-import { StandardIconsComponent } from '../standard-icons/standard-icons.component';
 import { BehaviorSubject } from 'rxjs';
 import { CdkTableModule } from '@angular/cdk/table';
+import { IconComponent } from '../icon/icon.component';
+import { InfoPopupComponent } from '../info-popup/info-popup.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, StandardIconsComponent, CdkTableModule, TooltipDirective],
+  imports: [CommonModule, IconComponent, CdkTableModule, TooltipDirective, InfoPopupComponent],
   selector: 'global-table',
   templateUrl: './table.component.html',
 })
 export class TableComponent implements OnChanges {
   public elementId = 'TABLE_ID_' + Math.floor(Math.random() * 10000000).toString();
-  @Input() public maxWindowHeight = '100%';
-  @Input() public maxWindowWidth = '100%';
   @Input() public tableData: TableData = emptyTable;
+  @Input() public tooltipPos = 'bottom';
+  @Input() public tooltipLineBreak = false;
+  @Input() public tooltipWidth: string | number = 'fit';
+  public windowHeight = '100%';
+  public windowWidth = '100%';
   public tableDataUnsorted: TableData = emptyTable;
   public data = new BehaviorSubject<any[]>([]);
   public displayedCols: string[] = [];
   public sortedBy = '';
   public asc = true;
-  private copyMessageTimeout = setTimeout(() => {
-    console.log;
-  }, 1000);
   public copyMessage = '';
   public boolTrueValues = [true, 'true', 'True', 'x', 'X', '1', 1];
   public boolFalseValues = [false, 'false', 'False', '.', '0', 0];
-
+  public redraw = false;
   // private allowedWidthValues = ['fr', 'px', 'em', 'rem', '%', 'vw', 'vh', 'ex', 'ch'];
-
-  @Input() public tooltipPos = 'bottom';
-  @Input() public tooltipLineBreak = false;
-  @Input() public tooltipWidth: string | number = 'fit';
 
   public ngOnChanges(changes: { [property: string]: SimpleChange }) {
     const newData: SimpleChange = changes['tableData'];
+    console.log(newData.currentValue);
     if (newData.currentValue.data.length) {
+      this.redraw = true;
       for (let index = 0; index < this.tableData.columns.length; index++) {
         const columnRef = this.tableData.columns[index];
 
         if (columnRef.type === 'dateTime') {
           this.convertDateTime(columnRef, index);
         }
-        this.tableDataUnsorted = JSON.parse(JSON.stringify(this.tableData));
-        this.updateData(this.tableData);
+      }
+      this.tableDataUnsorted = JSON.parse(JSON.stringify(this.tableData));
+      this.updateData(this.tableData);
+
+      this.SetConfig();
+      setTimeout(() => {
+        this.redraw = false;
+      }, 1);
+    }
+  }
+
+  private SetConfig(): void {
+    if (this.tableData.config) {
+      for (const configKey of Object.keys(this.tableData.config ?? [])) {
+        if (configKey === 'tableHeight') {
+          const tableHeight = this.tableData.config[configKey];
+          if (tableHeight !== undefined) {
+            this.windowHeight = tableHeight;
+          }
+        }
+        if (configKey === 'tableWidth') {
+          const tableWidth = this.tableData.config[configKey];
+          if (tableWidth !== undefined) {
+            this.windowWidth = tableWidth;
+          }
+        }
       }
     }
   }
@@ -103,16 +126,13 @@ export class TableComponent implements OnChanges {
   public updateData(data: TableData): void {
     this.data.next(data.data);
     this.displayedCols = data.columns.map((column) => column.keyName);
+    console.log(JSON.stringify(this.displayedCols));
   }
 
   public onCellClick(rowData: any, columnData: TableColumn): void {
     if (columnData.clickAction === 'clipboard') {
       navigator.clipboard.writeText(rowData[columnData.keyName]);
       this.copyMessage = rowData[columnData.keyName] + ' kopiert.';
-      clearTimeout(this.copyMessageTimeout);
-      this.copyMessageTimeout = setTimeout(() => {
-        this.copyMessage = '';
-      }, 2000);
     } else {
       console.log(columnData.clickAction + ' ' + rowData[columnData.keyName]);
     }
