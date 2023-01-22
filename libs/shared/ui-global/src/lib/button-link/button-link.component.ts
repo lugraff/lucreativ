@@ -14,6 +14,6 @@ import { IconComponent } from '../icon/icon.component';
 })
 export class ButtonLinkComponent {
   @HostBinding('class') public class =
-    'disabled:grayscale outline-none disabled:pointer-events-none px-4 group hover:shadow-secondary ring-selection active:bg-textA bg-primary shadow shadow-textB rounded-md font-semibold text-xl text-textB whitespace-nowrap transition-color';
+    'disabled:grayscale outline-none disabled:pointer-events-none px-1 group hover:shadow-selection hover:scale-125 transition-all ring-selection active:bg-textA bg-primary shadow shadow-transparent rounded-full font-semibold text-xl text-textB whitespace-nowrap border-b-2 border-bgB';
   @Input() public icon = '';
 }
