@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChange } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChange } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { emptyTable, TableColumn, TableData, TooltipDirective } from '@shared/util-global';
 import { BehaviorSubject } from 'rxjs';
@@ -18,6 +18,7 @@ export class TableComponent implements OnChanges {
   @Input() public tooltipPos = 'bottom';
   @Input() public tooltipLineBreak = false;
   @Input() public tooltipWidth: string | number = 'fit';
+  @Output() public loadCell = new EventEmitter<any>();
   public windowHeight = '100%';
   public windowWidth = '100%';
   public tableDataUnsorted: TableData = emptyTable;
@@ -33,7 +34,6 @@ export class TableComponent implements OnChanges {
 
   public ngOnChanges(changes: { [property: string]: SimpleChange }) {
     const newData: SimpleChange = changes['tableData'];
-    console.log(newData.currentValue);
     if (newData.currentValue.data.length) {
       this.redraw = true;
       for (let index = 0; index < this.tableData.columns.length; index++) {
@@ -126,13 +126,14 @@ export class TableComponent implements OnChanges {
   public updateData(data: TableData): void {
     this.data.next(data.data);
     this.displayedCols = data.columns.map((column) => column.keyName);
-    console.log(JSON.stringify(this.displayedCols));
   }
 
   public onCellClick(rowData: any, columnData: TableColumn): void {
     if (columnData.clickAction === 'clipboard') {
       navigator.clipboard.writeText(rowData[columnData.keyName]);
       this.copyMessage = rowData[columnData.keyName] + ' kopiert.';
+    } else if (columnData.clickAction === 'loadcell') {
+      this.loadCell.emit(rowData[columnData.keyName]);
     } else {
       console.log(columnData.clickAction + ' ' + rowData[columnData.keyName]);
     }

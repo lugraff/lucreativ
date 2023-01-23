@@ -4,3 +4,5 @@ export * from './lib/standard-icons/standard-icons.component';
 export * from './lib/info-popup/info-popup.component';
 export * from './lib/navigation/navigation.component';
 export * from './lib/icon/icon.component';
+export * from './lib/input-checkbox/input-checkbox.component';
+export * from './lib/input-standard/input-standard.component';

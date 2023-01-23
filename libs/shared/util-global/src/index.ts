@@ -8,6 +8,7 @@ export * from './lib/entities/elite-logo-animation';
 export * from './lib/entities/time-with-days';
 export * from './lib/entities/table-column';
 export * from './lib/entities/table-data';
+export * from './lib/entities/ec-file';
 
 export * from './lib/entities/tooltip-settings';
 export * from './lib/tooltip.directive';
