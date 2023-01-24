@@ -1,0 +1,17 @@
+<div class="text-lg font-semibold text-center border-b border-bgB select-none">
+  <ng-content></ng-content>
+</div>
+<!-- TODO generic buttons, not just delete! -->
+<div class="flex flex-col gap-1 elite_v_scrollbar">
+  <div *ngFor="let item of data; let i = index">
+    <div class="flex gap-1 justify-end">
+      <button list [disabled]="disabledDeleteButtons" (click)="emitselectedOption(item)" class="grow">
+        <div class="">
+          {{ item }}
+        </div>
+      </button>
+      <button standard *ngIf="deleteButton" icon="featherDelete" iconStroke="1.5" iconColor="danger" (click)="onDelete(i)"
+        [ngClass]="{ invisible: item === notAvailableText }"></button>
+    </div>
+  </div>
+</div>

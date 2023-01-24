@@ -22,7 +22,6 @@ export class InputStandardComponent implements ControlValueAccessor, OnInit {
   @Input() public selectAllOnFocus = false;
   @Input() public maxLength = -1;
   @Input() public readonly = false;
-  @Input() public height = 'small'; // small / medium / large
   @Input() public autofocus = false;
   @Input() public disabled = false;
   @Output() public inputTextOutput = new EventEmitter<string>();

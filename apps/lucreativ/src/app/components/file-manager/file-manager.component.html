@@ -1,11 +1,25 @@
-<div class="w-screen h-screen elite_v_scrollbar flex flex-wrap justify-center items-center">
-    <button link icon="featherFile" [disabled]="disableAllButton" (click)="onLoadAllFiles()"></button>
-    <button link icon="featherFilePlus" [disabled]="disableAllButton" (click)="onNewFile()"></button>
-    <button link icon="featherSave" [disabled]="disableAllButton" (click)="onSaveFile()"></button>
+<div class="w-screen h-screen elite_v_scrollbar flex flex-col gap-1 pl-24">
+    <div class="w-full text-center text-5xl font-extralight leading-10 text-primary">EC File Manager</div>
+    <div class="flex gap-1">
+        <!-- TODO Disable Delete buttons don't work -->
+        <global-list [data]="data2" [deleteButton]="true" [disabledDeleteButtons]="disableAllButton" width="25vw"
+            (selectedOption)="onLoadFile($event)" (deleteOption)="onDeleteFile($event)">Files</global-list>
+        <div class="flex flex-col gap-1">
+            <button standard icon="featherDownloadCloud" [disabled]="disableAllButton" (click)="onLoadAllFiles()">Fetch
+                Database</button>
+            <button standard icon="featherFilePlus" [disabled]="disableAllButton" (click)="onNewFile()">Create new
+                File</button>
+            <button standard icon="featherUploadCloud" [disabled]="disableAllButton" (click)="onSaveFile()">Upload
+                File</button>
+            <global-input-standard [(ngModel)]="securityKey" placeholderText="Security Key" icon="featherKey"
+                iconColor="subtle" iconStroke="1.25" [maxLength]="16"></global-input-standard>
+            <global-input-checkbox>Private</global-input-checkbox>
+            <button standard icon="featherRefreshCw" [disabled]="disableAllButton">Update File</button>
+        </div>
+    </div>
 
-    <global-input-standard [(ngModel)]="securityKey"></global-input-standard>
-    <global-table [tableData]="data" (loadCell)="onLoadFile($event)"></global-table>
-    <button link icon="featherDelete" (click)="onDeleteFile()"></button>
+    <!-- <global-table [tableData]="data" (loadCell)="onLoadFile($event)"></global-table> -->
+    <!-- <button standard icon="featherDelete" (click)="onDeleteFile()">Delete</button> -->
     <textarea cols="30" rows="10" [(ngModel)]="filetext" spellcheck="false"
         class="bg-textB outline-none border-subtle border w-[80vw]"></textarea>
 </div>
