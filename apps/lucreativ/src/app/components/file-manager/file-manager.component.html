@@ -1,8 +1,7 @@
 <div class="w-screen h-screen elite_v_scrollbar flex flex-col gap-1 pl-24">
     <div class="w-full text-center text-5xl font-extralight leading-10 text-primary">EC File Manager</div>
     <div class="flex gap-1">
-        <!-- TODO Disable Delete buttons don't work -->
-        <global-list [data]="data2" [deleteButton]="true" [disabledDeleteButtons]="disableAllButton" width="25vw"
+        <global-list [data]="data" [deleteButton]="true" [disabledDeleteButtons]="disableAllButton" width="25vw"
             (selectedOption)="onLoadFile($event)" (deleteOption)="onDeleteFile($event)">Files</global-list>
         <div class="flex flex-col gap-1">
             <button standard icon="featherDownloadCloud" [disabled]="disableAllButton" (click)="onLoadAllFiles()">Fetch
@@ -21,5 +20,8 @@
     <!-- <global-table [tableData]="data" (loadCell)="onLoadFile($event)"></global-table> -->
     <!-- <button standard icon="featherDelete" (click)="onDeleteFile()">Delete</button> -->
     <textarea cols="30" rows="10" [(ngModel)]="filetext" spellcheck="false"
-        class="bg-textB outline-none border-subtle border w-[80vw]"></textarea>
+        class="bg-textB outline-none border-bgB border-2 rounded-md w-[80vw] elite_v_scrollbar"></textarea>
 </div>
+<global-info-popup icon="featherInfo" infoPosition="top" infoAlign="center" [infoOffset]="64"
+    [(infoText)]="errorMessage"></global-info-popup>
+<!-- TODO Loading Component  -->

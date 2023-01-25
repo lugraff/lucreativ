@@ -12,6 +12,7 @@ import {
 import {
   ButtonLinkComponent,
   ButtonStandardComponent,
+  InfoPopupComponent,
   InputCheckboxComponent,
   InputStandardComponent,
   ListComponent,
@@ -30,27 +31,24 @@ import { FormsModule } from '@angular/forms';
     ButtonStandardComponent,
     InputStandardComponent,
     ListComponent,
-    InputCheckboxComponent
+    InputCheckboxComponent,
+    InfoPopupComponent,
   ],
   templateUrl: './file-manager.component.html',
 })
 export class FileManagerComponent {
-  public data: TableData = emptyTable;
-  public data2: string[] = [];
+  public data: string[] = [];
   public securityKey = '';
   public filetext = '';
   public actualFileID = '';
   public disableAllButton = false;
+  public errorMessage = '';
 
   constructor(private connector: ConnectorService) {
-    const savedData: TableData = JSON.parse(localStorage.getItem('filelist') ?? JSON.stringify(emptyTable));
+    const savedData = JSON.parse(localStorage.getItem('filelist') ?? '[]');
+    console.log(savedData);
     if (savedData !== null && savedData !== undefined) {
       this.data = savedData;
-    }
-    const savedData2 = JSON.parse(localStorage.getItem('filelist2') ?? '');
-    console.log(savedData2);
-    if (savedData2 !== null && savedData !== undefined) {
-      this.data2 = savedData2;
     }
   } //TODO ERROR MESSAGES
 
@@ -58,19 +56,11 @@ export class FileManagerComponent {
     this.disableAllButton = true;
     this.connector //TODO key kommt weg!
       .getAll('49f8f2a5-e8c2-11ec-b943-0242ac110002')
-      .subscribe((response) => this.newData(response));
+      .subscribe((response) => this.fetchedData(response));
   }
-  private newData(newData: any): void {
-    this.data2 = newData;
-    const config: TableConfig = { tableWidth: '30vw', tableHeight: '30vh' };
-    const column: TableColumn = { keyName: 'id', displayName: 'File ID', clickAction: 'loadcell' };
-    const newDat: object[] = [];
-    for (const dat of newData) {
-      newDat.push({ id: dat });
-    }
-    this.data = { config: config, columns: [column], data: newDat };
-    localStorage.setItem('filelist', JSON.stringify(this.data));
-    localStorage.setItem('filelist2', JSON.stringify(newData));
+  private fetchedData(newData: any): void {
+    this.data = newData;
+    localStorage.setItem('filelist', JSON.stringify(newData));
     this.disableAllButton = false;
   }
 
@@ -92,10 +82,14 @@ export class FileManagerComponent {
 
   public onDeleteFile(index: number): void {
     this.disableAllButton = true;
-    this.connector.delete(this.data2[index], this.securityKey).subscribe((response) => this.onFileDeleted(response));
+    this.connector
+      .delete(this.data[index], this.securityKey)
+      .subscribe((response) => this.onFileDeleted(response, index));
   }
-  private onFileDeleted(response: any): void {
-    console.log('Delete RESPONSE: ' + JSON.stringify(response));
+  private onFileDeleted(response: any, index: number): void {
+    if (response.status === 0) {
+      this.data.splice(index, 1);
+    }
     this.disableAllButton = false;
   }
 
@@ -107,12 +101,19 @@ export class FileManagerComponent {
 
   public onSaveFile(): void {
     //TODO Private
+    try {
+      JSON.parse(this.filetext);
+    } catch {
+      this.errorMessage = 'Invalid JSON Format!';
+      return;
+    }
     this.connector
       .create('49f8f2a5-e8c2-11ec-b943-0242ac110002', this.filetext, this.securityKey)
       .subscribe((response) => this.onSaveFileFinished(response));
   }
   private onSaveFileFinished(response: any): void {
     console.log('RESPONSE:');
-    console.log(response);
+    console.log(response.id);
+    // push new file in storageData
   }
 }

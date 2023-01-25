@@ -5,12 +5,12 @@
 <div class="flex flex-col gap-1 elite_v_scrollbar">
   <div *ngFor="let item of data; let i = index">
     <div class="flex gap-1 justify-end">
-      <button list [disabled]="disabledDeleteButtons" (click)="emitselectedOption(item)" class="grow">
+      <button list (click)="emitselectedOption(item)" class="grow">
         <div class="">
           {{ item }}
         </div>
       </button>
-      <button standard *ngIf="deleteButton" icon="featherDelete" iconStroke="1.5" iconColor="danger" (click)="onDelete(i)"
+      <button standard *ngIf="deleteButton" [disabled]="disabledDeleteButtons" icon="featherDelete" iconStroke="1.5" iconColor="danger" (click)="onDelete(i)"
         [ngClass]="{ invisible: item === notAvailableText }"></button>
     </div>
   </div>
