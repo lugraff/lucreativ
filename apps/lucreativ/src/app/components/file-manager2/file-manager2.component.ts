@@ -13,7 +13,7 @@ import {
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'lucreativ-file-manager',
+  selector: 'lucreativ-file-manager2',
   standalone: true,
   imports: [
     CommonModule,
@@ -26,10 +26,10 @@ import { FormsModule } from '@angular/forms';
     InputCheckboxComponent,
     InfoPopupComponent,
   ],
-  templateUrl: './file-manager.component.html',
+  templateUrl: './file-manager2.component.html',
 })
-export class FileManagerComponent {
-  public data: string[] = [];
+export class FileManager2Component {
+  public fileIDlist: string[] = [];
   public securityKey = '';
   public actualFileID = '';
   public actualFileData: ECFile = emptyECF;
@@ -41,12 +41,21 @@ export class FileManagerComponent {
   public stringify = JSON.stringify;
 
   constructor(private connector: ConnectorService) {
-    const savedData = JSON.parse(localStorage.getItem('filelist') ?? '[]');
-    console.log(savedData);
-    if (savedData !== null && savedData !== undefined) {
-      this.data = savedData;
+    const fileIDlistStorage = JSON.parse(localStorage.getItem('fileIDlist') ?? '[]');
+    console.log(fileIDlistStorage);
+    if (fileIDlistStorage !== null && fileIDlistStorage !== undefined) {
+      this.fileIDlist = fileIDlistStorage;
+    } //Nur fetchen wenn keine Änderungen vorhanden sind //Constructor: abbild laden
+  } //TODO Fetch -> alle ids laden -> alle files lesen und in localstorage schupfen. -> ECF Files check andere auschließen -> abbild speichern
+  // Push -> alle neuen files speichern, alle veränderten files mergen, abbild speichern
+  // Veränderte Files highlighten
+
+  private getStorageFiles(): void {
+    for (const fileID of this.fileIDlist) {
+      const newFile: ECFile = JSON.parse(localStorage.getItem(fileID) ?? '');
+      console.log('getStorageFile: ' + JSON.stringify(newFile));
     }
-  } //TODO ERROR MESSAGES
+  }
 
   public onLoadAllFiles(): void {
     this.disableAllButton = true;
@@ -55,7 +64,7 @@ export class FileManagerComponent {
       .subscribe((response) => this.fetchedData(response));
   }
   private fetchedData(newData: any): void {
-    this.data = newData;
+    this.fileIDlist = newData;
     localStorage.setItem('filelist', JSON.stringify(newData));
     this.disableAllButton = false;
   }
@@ -79,12 +88,12 @@ export class FileManagerComponent {
   public onDeleteFile(index: number): void {
     this.disableAllButton = true;
     this.connector
-      .delete(this.data[index], this.securityKey)
+      .delete(this.fileIDlist[index], this.securityKey)
       .subscribe((response) => this.onFileDeleted(response, index));
   }
   private onFileDeleted(response: any, index: number): void {
     if (response.status === 0) {
-      this.data.splice(index, 1);
+      this.fileIDlist.splice(index, 1);
       this.actualFileID = '';
       this.actualFileData = emptyECF;
       console.log(this.actualFileData.data);
@@ -95,7 +104,7 @@ export class FileManagerComponent {
   public onNewFile(): void {
     this.actualFileID = '';
     const newFile = emptyECF;
-    newFile.created = Date.now();
+    newFile.timestamp = Date.now();
     this.actualFileData = newFile;
   }
 
@@ -111,7 +120,7 @@ export class FileManagerComponent {
     console.log('RESPONSE:');
     console.log(response.id);
     this.actualFileID = response.id;
-    this.data.push(response.id);
+    this.fileIDlist.push(response.id);
     // push new file in storageData
   }
 }

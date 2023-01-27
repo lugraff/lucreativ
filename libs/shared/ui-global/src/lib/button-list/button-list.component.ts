@@ -7,7 +7,9 @@ import { IconComponent } from '../icon/icon.component';
   imports: [CommonModule, IconComponent],
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: '[list]',
-  template: `<div class="flex gap-1 items-center">
+  template: `<div
+    class="flex gap-1 items-center"
+    [ngClass]="selected ? 'text-primary' : ''">
     <global-icon
       [icon]="icon"
       strokeWidth="1.2"></global-icon>
@@ -21,4 +23,5 @@ export class ButtonListComponent {
     'active:brightness-75 hover:border-primary hover:text-textA hover:from-bgB to-transparent bg-gradient-to-r border-y-2 border-transparent rounded-full text-tertiary text-xl font-normal' +
     this.classBase;
   @Input() public icon = '';
+  @Input() public selected = false;
 }

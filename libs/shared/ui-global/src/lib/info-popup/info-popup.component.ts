@@ -33,6 +33,7 @@ export class InfoPopupComponent implements OnChanges {
   @Input() public infoPosition = 'right'; //'top', 'left', 'right', 'bottom'
   @Input() public infoAlign = 'end'; //'start', 'center', 'end'
   @Input() public infoOffset = 64; //TODO Offset auf Align rechnen? Dann wäre bottom end default
+  //TODO reload from foweb
 
   @Input() public icon = '';
   @Input() public iconStroke: string | number | undefined = undefined;

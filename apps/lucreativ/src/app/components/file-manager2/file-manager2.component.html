@@ -1,7 +1,7 @@
 <div class="w-screen h-screen elite_v_scrollbar flex flex-col gap-1 pl-24">
     <div class="w-full text-center text-5xl font-extralight leading-10 text-primary">EC File Manager</div>
     <div class="flex gap-1">
-        <global-list [data]="data" [deleteButton]="true" [disabledDeleteButtons]="disableAllButton"
+        <global-list [data]="fileIDlist" [deleteButton]="true" [disabledDeleteButtons]="disableAllButton"
             [selected]="actualFileID" width="25vw" (optionSelect)="onLoadFile($event)"
             (deleteOption)="onDeleteFile($event)">Files</global-list>
         <div class="flex flex-col gap-1">

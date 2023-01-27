@@ -4,6 +4,7 @@ import { HomeComponent } from './components/base/home.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { DotknotComponent } from './components/dotknot/dotknot.component';
 import { FileManagerComponent } from './components/file-manager/file-manager.component';
+import { ExtendsClassEditorComponent } from './components/extends-class-editor/extends-class-editor.component';
 
 const ROUTES: Routes = [
   {
@@ -14,6 +15,11 @@ const ROUTES: Routes = [
   {
     path: 'file-manager',
     component: FileManagerComponent,
+    data: ['featherDatabase'],
+  },
+  {
+    path: 'ec-editor',
+    component: ExtendsClassEditorComponent,
     data: ['featherDatabase'],
   },
   {

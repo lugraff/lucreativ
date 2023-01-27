@@ -16,7 +16,8 @@ export class ListComponent implements OnInit {
   @Input() public data: string[] = [];
   @Input() public deleteButton = false;
   @Input() public disabledDeleteButtons = false;
-  @Output() public selectedOption = new EventEmitter<string>();
+  @Input() public selected = '';
+  @Output() public optionSelect = new EventEmitter<string>();
   @Output() public deleteOption = new EventEmitter<number>();
   @HostBinding('class') public class = 'flex flex-col p-2 bg-textB rounded-md border-2 border-bgB';
 
@@ -27,8 +28,9 @@ export class ListComponent implements OnInit {
     this.elRef.nativeElement.style.height = this.height;
   }
 
-  public emitselectedOption(option: string): void {
-    this.selectedOption.emit(option);
+  public emitoptionSelect(option: string): void {
+    this.selected = option;
+    this.optionSelect.emit(option);
   }
 
   public onDelete(index: number): void {

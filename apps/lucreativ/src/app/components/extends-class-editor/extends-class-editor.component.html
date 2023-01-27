@@ -1,10 +1,16 @@
 <div class="w-screen h-screen elite_v_scrollbar flex flex-col gap-1 pl-24">
-    <div class="w-full text-center text-5xl font-extralight leading-10 text-primary">EC File Manager</div>
+    <div class="w-full text-center text-5xl font-extralight leading-10 text-primary">Extends Class Editor</div>
     <div class="flex gap-1">
-        <global-list [data]="data" [deleteButton]="true" [disabledDeleteButtons]="disableAllButton"
+        <global-list [data]="fileIDlist" [deleteButton]="true" [disabledDeleteButtons]="disableAllButton"
             [selected]="actualFileID" width="25vw" (optionSelect)="onLoadFile($event)"
             (deleteOption)="onDeleteFile($event)">Files</global-list>
         <div class="flex flex-col gap-1">
+            <button standard icon="featherFilePlus" [disabled]="disableAllButton" (click)="onCreateNewFile()">Create new
+                File</button>
+        </div>
+
+
+        <!-- <div class="flex flex-col gap-1">
             <button standard icon="featherDownloadCloud" [disabled]="disableAllButton" (click)="onLoadAllFiles()">Fetch
                 Database</button>
             <button standard icon="featherFilePlus" [disabled]="disableAllButton" (click)="onNewFile()">Create new
@@ -15,14 +21,16 @@
                 iconColor="subtle" iconStroke="1.25" [maxLength]="16"></global-input-standard>
             <global-input-checkbox>Private</global-input-checkbox>
             <button standard icon="featherRefreshCw" [disabled]="disableAllButton">Update File</button>
-        </div>
+        </div> -->
     </div>
-
+    <div>Created: {{actualFileData.created | date:'dd.MM.yyyy   HH:mm'}}</div>
+    <div>last edit: {{actualFileData.edited | date:'dd.MM.yyyy   HH:mm'}}</div>
+    <global-input-standard [(ngModel)]="actualFileData.name" [disabled]="this.actualFileID === ''"
+        placeholderText="Name" icon="featherTag" iconColor="subtle" iconStroke="1.25"
+        [maxLength]="16"></global-input-standard>
     <!-- <global-table [tableData]="data" (loadCell)="onLoadFile($event)"></global-table> -->
     <!-- <button standard icon="featherDelete" (click)="onDeleteFile()">Delete</button> -->
-    <textarea cols="30" rows="10" [(ngModel)]="actualFileData.data" spellcheck="false"
-        class="bg-textB outline-none border-bgB border-2 rounded-md w-[80vw] elite_v_scrollbar"></textarea>
+    <textarea cols="30" rows="10" [(ngModel)]="actualFileData.text" [disabled]="this.actualFileID === ''"
+        spellcheck="false"
+        class="bg-textB outline-none border-bgB border-2 rounded-md w-[90vw] elite_v_scrollbar"></textarea>
 </div>
-<global-info-popup icon="featherInfo" infoPosition="top" infoAlign="center" [infoOffset]="64"
-    [(infoText)]="errorMessage"></global-info-popup>
-<!-- TODO Loading Component  -->

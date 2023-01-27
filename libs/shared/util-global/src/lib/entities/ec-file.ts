@@ -2,14 +2,18 @@ export interface ECFile {
   id: string;
   name: string;
   category: string;
-  timestamp: number;
-  data: string;
+  created: number;
+  edited: number;
+  text: string;
+  data?: any[];
 }
 
-export const emptyECF: ECFile = {
-  id: '???',
+const emptyECF_REF: ECFile = {
+  id: '',
   name: '@unnamed',
   category: 'default',
-  timestamp: 0,
-  data: '',
+  created: 0,
+  edited: 0,
+  text: '',
 };
+export const emptyECF: ECFile = JSON.parse(JSON.stringify(emptyECF_REF));
