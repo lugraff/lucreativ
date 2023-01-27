@@ -5,17 +5,17 @@
             [selected]="actualFileID" width="25vw" (optionSelect)="onLoadFile($event)"
             (deleteOption)="onDeleteFile($event)">Files</global-list>
         <div class="flex flex-col gap-1">
+            <button standard icon="featherDownloadCloud" [disabled]="disableAllButton"
+                (click)="onFetchDatabase()">Fetch</button>
+            <button standard icon="featherUploadCloud" [disabled]="disableAllButton"
+                (click)="onUpload()">Upload</button>
             <button standard icon="featherFilePlus" [disabled]="disableAllButton" (click)="onCreateNewFile()">Create new
                 File</button>
         </div>
 
 
         <!-- <div class="flex flex-col gap-1">
-            <button standard icon="featherDownloadCloud" [disabled]="disableAllButton" (click)="onLoadAllFiles()">Fetch
-                Database</button>
             <button standard icon="featherFilePlus" [disabled]="disableAllButton" (click)="onNewFile()">Create new
-                File</button>
-            <button standard icon="featherUploadCloud" [disabled]="disableAllButton" (click)="onSaveFile()">Upload
                 File</button>
             <global-input-standard [(ngModel)]="securityKey" placeholderText="Security Key" icon="featherKey"
                 iconColor="subtle" iconStroke="1.25" [maxLength]="16"></global-input-standard>
@@ -23,14 +23,19 @@
             <button standard icon="featherRefreshCw" [disabled]="disableAllButton">Update File</button>
         </div> -->
     </div>
-    <div>Created: {{actualFileData.created | date:'dd.MM.yyyy   HH:mm'}}</div>
-    <div>last edit: {{actualFileData.edited | date:'dd.MM.yyyy   HH:mm'}}</div>
+
     <global-input-standard [(ngModel)]="actualFileData.name" [disabled]="this.actualFileID === ''"
         placeholderText="Name" icon="featherTag" iconColor="subtle" iconStroke="1.25"
+        [maxLength]="16"></global-input-standard>
+    <global-input-standard [(ngModel)]="actualFileData.category" [disabled]="this.actualFileID === ''"
+        placeholderText="Category" icon="featherArchive" iconColor="subtle" iconStroke="1.25"
         [maxLength]="16"></global-input-standard>
     <!-- <global-table [tableData]="data" (loadCell)="onLoadFile($event)"></global-table> -->
     <!-- <button standard icon="featherDelete" (click)="onDeleteFile()">Delete</button> -->
     <textarea cols="30" rows="10" [(ngModel)]="actualFileData.text" [disabled]="this.actualFileID === ''"
         spellcheck="false"
         class="bg-textB outline-none border-bgB border-2 rounded-md w-[90vw] elite_v_scrollbar"></textarea>
+    <div *ngIf="actualFileData.created > 0">created: {{actualFileData.created | date:'dd.MM.yyyy HH:mm'}}</div>
+    <div *ngIf="actualFileData.edited > 0">last edit: {{actualFileData.edited | date:'dd.MM.yyyy HH:mm'}}</div>
+    <div>{{actualFileData.data|json}}</div>
 </div>

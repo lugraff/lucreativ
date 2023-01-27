@@ -104,7 +104,7 @@ export class FileManager2Component {
   public onNewFile(): void {
     this.actualFileID = '';
     const newFile = emptyECF;
-    newFile.timestamp = Date.now();
+    newFile.created = Date.now();
     this.actualFileData = newFile;
   }
 

@@ -10,8 +10,8 @@ export interface ECFile {
 
 const emptyECF_REF: ECFile = {
   id: '',
-  name: '@unnamed',
-  category: 'default',
+  name: '',
+  category: '',
   created: 0,
   edited: 0,
   text: '',
