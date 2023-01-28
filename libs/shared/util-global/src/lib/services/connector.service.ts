@@ -8,9 +8,12 @@ import { Observable } from 'rxjs';
 export class ConnectorService {
   constructor(private http: HttpClient) {}
 
-  private addHeaders(securityKey: string = '', apiKey: string = ''): HttpHeaders {
+  private addHeaders(securityKey: string = '', apiKey: string = '', patch: boolean = false): HttpHeaders {
     let headers = new HttpHeaders();
     headers = headers.append('Cache-Control', 'no-cache, no-store, must-revalidate, post-check=0, pre-check=0');
+    if (patch) {
+      headers = headers.append('Content-type', 'application/json-patch+json');
+    }
     if (apiKey.length) {
       headers = headers.append('Api-key', apiKey);
     }
@@ -36,5 +39,21 @@ export class ConnectorService {
 
   public delete(id: string, securityKey: string = ''): Observable<any> {
     return this.http.delete<any>('https://json.extendsclass.com/bin/' + id, { headers: this.addHeaders(securityKey) });
+  }
+
+  public overwrite(id: string, data: string, securityKey: string = ''): Observable<any> {
+    return this.http.put<any>('https://json.extendsclass.com/bin/' + id, data, {
+      headers: this.addHeaders(securityKey),
+    });
+  }
+
+  public patch(id: string, operator: string, path: string, data: string, securityKey: string = ''): Observable<any> {
+    return this.http.patch<any>(
+      'https://json.extendsclass.com/bin/' + id,
+      '[{"op":"' + operator + '","path":"' + path + data + '"}]',
+      {
+        headers: this.addHeaders(securityKey, '', true),
+      }
+    );
   }
 }

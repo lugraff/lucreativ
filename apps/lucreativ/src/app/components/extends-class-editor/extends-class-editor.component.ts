@@ -8,8 +8,9 @@ import {
   InputStandardComponent,
   ListComponent,
 } from '@shared/ui-global';
-import { ConnectorService, ECFile, emptyECF } from '@shared/util-global';
+import { ConnectorService, ECFile, ECOnlineFile, emptyECF } from '@shared/util-global';
 //TODO restliche request anzahl anzeige
+// Wenn security key kann nur der ihn kennt online löschen. sonst alle
 @Component({
   selector: 'lucreativ-extends-class-editor',
   standalone: true,
@@ -25,13 +26,15 @@ import { ConnectorService, ECFile, emptyECF } from '@shared/util-global';
   templateUrl: './extends-class-editor.component.html',
 })
 export class ExtendsClassEditorComponent {
+  public onlineECFList: ECOnlineFile[] = [];
   public actualFileData: ECFile = emptyECF;
   public fileIDlist: string[] = [];
   public actualFileID = '';
   public disableAllButton = false;
   public errorMessage = ''; //TODO Show
-  private differentiator = 14; // OnlineFile <-> LocalFile
-  private fileIDBlackList = ['28f3961ccff3'];
+  private differentiator = 13; // OnlineFile <-> LocalFile
+  private onlineECFListID = 'dabfd52e2024';
+  private fileIDBlackList = ['28f3961ccff3', this.onlineECFListID];
 
   constructor(private connector: ConnectorService) {
     this.reloadStorage();
@@ -100,10 +103,24 @@ export class ExtendsClassEditorComponent {
   public onDeleteFile(index: number) {
     this.disableAllButton = true;
     if (this.fileIDlist[index].length < this.differentiator) {
+      for (let i = 0; i < this.onlineECFList.length; i++) {
+        if (this.onlineECFList[i].id === this.fileIDlist[index]) {
+          this.onlineECFList.splice(i, 1);
+          localStorage.setItem('fileCompleteList', JSON.stringify(this.onlineECFList));
+          this.connector
+            .patch(this.onlineECFListID, 'remove', '/', i.toString())
+            .subscribe((response) => this.onRemovedFromOnlineECFListID(response));
+          break;
+        }
+      }
       this.connector.delete(this.fileIDlist[index]).subscribe((response) => this.onDeleteLocalFile(response, index));
     } else {
       this.onDeleteLocalFile('local', index);
     }
+  }
+  private onRemovedFromOnlineECFListID(response: any): void {
+    console.log('REMOVE SUCCESS:');
+    console.log(response);
   }
   private onDeleteLocalFile(response: any, index: number, reset: boolean = true): void {
     if (response === 'local' || response.status === 0) {
@@ -114,7 +131,6 @@ export class ExtendsClassEditorComponent {
         this.actualFileID = '';
         this.actualFileData = emptyECF;
         this.disableAllButton = false;
-        console.log('RESET');
       }
     }
   }
@@ -136,9 +152,28 @@ export class ExtendsClassEditorComponent {
     }
     localStorage.setItem('fileIDList', JSON.stringify(this.fileIDlist));
     this.disableAllButton = false;
+    this.fetchOnlineECFileList();
+  }
+
+  private fetchOnlineECFileList(): void {
+    this.disableAllButton = true;
+    const observer = {
+      next: (response: any) => this.onOnlineFileListFetched(response),
+      error: (error: any) => (this.errorMessage = error.message),
+    };
+    this.connector.getFile(this.onlineECFListID, '').subscribe(observer); //this.securityKey
+  }
+  private onOnlineFileListFetched(response: any): void {
+    console.log('Loaded Online ECF List: ' + response);
+    const decodedList: ECOnlineFile[] = response;
+    console.log(decodedList);
+    this.onlineECFList = decodedList;
+    localStorage.setItem('fileCompleteList', JSON.stringify(decodedList));
+    this.disableAllButton = false;
   }
 
   public onUpload(): void {
+    this.fetchOnlineECFileList();
     this.disableAllButton = true;
     if (this.actualFileID.length > this.differentiator) {
       this.autoSave();
@@ -164,6 +199,25 @@ export class ExtendsClassEditorComponent {
     this.actualFileData.id = response.id;
     this.autoSave();
     localStorage.setItem('fileIDList', JSON.stringify(this.fileIDlist));
+    this.pushToOnlineECFList();
+  }
+  private pushToOnlineECFList(): void {
+    const newECOnlineFile: ECOnlineFile = {
+      id: this.actualFileID,
+      category: this.actualFileData.category,
+      name: this.actualFileData.name,
+      uploaded: Date.now(),
+    };
+    this.onlineECFList.push(newECOnlineFile);
+    console.log(this.onlineECFList);
+    localStorage.setItem('fileCompleteList', JSON.stringify(this.onlineECFList));
+    this.connector
+      .overwrite(this.onlineECFListID, JSON.stringify(this.onlineECFList))
+      .subscribe((response) => this.onModifiedOnlineECFListFinished(response));
+  }
+  private onModifiedOnlineECFListFinished(response: any): void {
+    console.log('ALL Finished RESPONSE:');
+    console.log(response);
     this.disableAllButton = false;
   }
 }
