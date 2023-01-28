@@ -8,7 +8,7 @@ import {
   InputStandardComponent,
   ListComponent,
 } from '@shared/ui-global';
-import { ConnectorService, ECFile, ECOnlineFile, emptyECF } from '@shared/util-global';
+import { ConnectorService, ECFile, ECLocalFile, ECOnlineFile, emptyECF } from '@shared/util-global';
 //TODO restliche request anzahl anzeige
 // Wenn security key kann nur der ihn kennt online löschen. sonst alle
 @Component({
@@ -26,6 +26,7 @@ import { ConnectorService, ECFile, ECOnlineFile, emptyECF } from '@shared/util-g
   templateUrl: './extends-class-editor.component.html',
 })
 export class ExtendsClassEditorComponent {
+  public localECFList: ECLocalFile[] = [];
   public onlineECFList: ECOnlineFile[] = [];
   public actualFileData: ECFile = emptyECF;
   public fileIDlist: string[] = [];
@@ -33,7 +34,7 @@ export class ExtendsClassEditorComponent {
   public disableAllButton = false;
   public errorMessage = ''; //TODO Show
   private differentiator = 13; // OnlineFile <-> LocalFile
-  private onlineECFListID = 'dabfd52e2024';
+  private onlineECFListID = '43a6db6c6f07';
   private fileIDBlackList = ['28f3961ccff3', this.onlineECFListID];
 
   constructor(private connector: ConnectorService) {
@@ -41,13 +42,37 @@ export class ExtendsClassEditorComponent {
   }
 
   private reloadStorage(): void {
+    this.localECFList = [];
     this.fileIDlist = JSON.parse(localStorage.getItem('fileIDList') ?? '[]');
+    this.onlineECFList = JSON.parse(localStorage.getItem('fileCompleteList') ?? '[]');
+    for (const fileID of this.fileIDlist) {
+      if (fileID.length > this.differentiator) {
+        let pushIt = true;
+        for (const localFile of this.localECFList) {
+          if (localFile.id === fileID) {
+            pushIt = false;
+          }
+        }
+        if (pushIt) {
+          const localFile: ECFile = JSON.parse(localStorage.getItem(fileID) ?? '');
+          if (localFile) {
+            this.localECFList.push({
+              id: localFile.id,
+              category: localFile.category,
+              name: localFile.name,
+              created: localFile.created,
+              edited: localFile.edited,
+            });
+          }
+        }
+      }
+    }
   }
 
   public onLoadFile(selectedID: string) {
     this.autoSave();
+    this.reloadStorage();
     this.actualFileID = selectedID;
-
     if (selectedID.length > this.differentiator || localStorage.getItem(selectedID)) {
       this.actualFileData = JSON.parse(localStorage.getItem(selectedID) ?? JSON.stringify(emptyECF));
     } else {
@@ -75,7 +100,9 @@ export class ExtendsClassEditorComponent {
   public onCreateNewFile() {
     this.autoSave();
     this.actualFileData = emptyECF;
-    this.actualFileData.id = Math.floor(Math.random() * 1000000000000000).toString();
+    while (this.actualFileData.id.length <= this.differentiator) {
+      this.actualFileData.id = Math.floor(Math.random() * 1000000000000000).toString();
+    }
     this.actualFileData.created = Date.now();
     this.actualFileData.edited = Date.now();
     this.fileIDlist.push(this.actualFileData.id);
@@ -98,6 +125,7 @@ export class ExtendsClassEditorComponent {
       }
       localStorage.setItem(this.actualFileID, JSON.stringify(this.actualFileData));
     }
+    // this.reloadStorage();
   }
 
   public onDeleteFile(index: number) {
@@ -121,6 +149,7 @@ export class ExtendsClassEditorComponent {
   private onRemovedFromOnlineECFListID(response: any): void {
     console.log('REMOVE SUCCESS:');
     console.log(response);
+    this.reloadStorage();
   }
   private onDeleteLocalFile(response: any, index: number, reset: boolean = true): void {
     if (response === 'local' || response.status === 0) {
@@ -129,10 +158,20 @@ export class ExtendsClassEditorComponent {
       localStorage.setItem('fileIDList', JSON.stringify(this.fileIDlist));
       if (reset) {
         this.actualFileID = '';
-        this.actualFileData = emptyECF;
+        this.actualFileData.id = '';
+        this.actualFileData.text = '';
+        this.actualFileData.name = '';
+        this.actualFileData.data = undefined;
+        this.actualFileData.category = '';
+        this.actualFileData.created = 0;
+        this.actualFileData.edited = 0;
+        this.reloadStorage();
         this.disableAllButton = false;
       }
     }
+    // if (response !== 'local') {
+    //   this.reloadStorage();
+    // }
   }
 
   public onFetchDatabase(): void {
@@ -209,7 +248,6 @@ export class ExtendsClassEditorComponent {
       uploaded: Date.now(),
     };
     this.onlineECFList.push(newECOnlineFile);
-    console.log(this.onlineECFList);
     localStorage.setItem('fileCompleteList', JSON.stringify(this.onlineECFList));
     this.connector
       .overwrite(this.onlineECFListID, JSON.stringify(this.onlineECFList))
@@ -218,6 +256,7 @@ export class ExtendsClassEditorComponent {
   private onModifiedOnlineECFListFinished(response: any): void {
     console.log('ALL Finished RESPONSE:');
     console.log(response);
+    this.reloadStorage();
     this.disableAllButton = false;
   }
 }
