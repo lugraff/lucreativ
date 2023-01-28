@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   ButtonStandardComponent,
+  IconComponent,
   InfoPopupComponent,
   InputCheckboxComponent,
   InputStandardComponent,
   ListComponent,
 } from '@shared/ui-global';
 import { ConnectorService, ECFile, ECLocalFile, ECOnlineFile, emptyECF } from '@shared/util-global';
-//TODO restliche request anzahl anzeige
 // Wenn security key kann nur der ihn kennt online löschen. sonst alle
 @Component({
   selector: 'lucreativ-extends-class-editor',
@@ -22,6 +22,7 @@ import { ConnectorService, ECFile, ECLocalFile, ECOnlineFile, emptyECF } from '@
     ListComponent,
     InputCheckboxComponent,
     InfoPopupComponent,
+    IconComponent,
   ],
   templateUrl: './extends-class-editor.component.html',
 })
@@ -33,11 +34,14 @@ export class ExtendsClassEditorComponent {
   public actualFileID = '';
   public disableAllButton = false;
   public errorMessage = ''; //TODO Show
+  public apiCounter = 10000;
+  public securityKey = '';
   private differentiator = 13; // OnlineFile <-> LocalFile
   private onlineECFListID = '43a6db6c6f07';
   private fileIDBlackList = ['28f3961ccff3', this.onlineECFListID];
 
   constructor(private connector: ConnectorService) {
+    this.apiCounter = JSON.parse(localStorage.getItem('apiCounter') ?? '10000');
     this.reloadStorage();
   }
 
@@ -89,9 +93,8 @@ export class ExtendsClassEditorComponent {
     this.connector.getFile(this.actualFileID, '').subscribe(observer); //this.securityKey
   }
   private onFileFetched(response: any): void {
-    console.log('Loaded RESPONSE: ' + response);
+    this.apiCounter += 1;
     const decodedFile: ECFile = response;
-    console.log(decodedFile);
     this.actualFileData = decodedFile;
     this.autoSave();
     this.disableAllButton = false;
@@ -125,7 +128,6 @@ export class ExtendsClassEditorComponent {
       }
       localStorage.setItem(this.actualFileID, JSON.stringify(this.actualFileData));
     }
-    // this.reloadStorage();
   }
 
   public onDeleteFile(index: number) {
@@ -147,12 +149,14 @@ export class ExtendsClassEditorComponent {
     }
   }
   private onRemovedFromOnlineECFListID(response: any): void {
-    console.log('REMOVE SUCCESS:');
-    console.log(response);
+    this.apiCounter += 1;
     this.reloadStorage();
   }
   private onDeleteLocalFile(response: any, index: number, reset: boolean = true): void {
     if (response === 'local' || response.status === 0) {
+      if (response.status === 0) {
+        this.apiCounter += 1;
+      }
       localStorage.removeItem(this.fileIDlist[index]);
       this.fileIDlist.splice(index, 1);
       localStorage.setItem('fileIDList', JSON.stringify(this.fileIDlist));
@@ -169,9 +173,6 @@ export class ExtendsClassEditorComponent {
         this.disableAllButton = false;
       }
     }
-    // if (response !== 'local') {
-    //   this.reloadStorage();
-    // }
   }
 
   public onFetchDatabase(): void {
@@ -181,7 +182,9 @@ export class ExtendsClassEditorComponent {
       .subscribe((response) => this.fetchedData(response));
   }
   private fetchedData(newData: any): void {
-    const fetchedFileIDs: string[] = newData;
+    this.apiCounter = Number(newData.headers.get('x-counter'));
+    localStorage.setItem('apiCounter', JSON.stringify(this.apiCounter));
+    const fetchedFileIDs: string[] = newData.body;
     for (const fileID of fetchedFileIDs) {
       if (!this.fileIDBlackList.includes(fileID)) {
         if (!this.fileIDlist.includes(fileID)) {
@@ -203,9 +206,8 @@ export class ExtendsClassEditorComponent {
     this.connector.getFile(this.onlineECFListID, '').subscribe(observer); //this.securityKey
   }
   private onOnlineFileListFetched(response: any): void {
-    console.log('Loaded Online ECF List: ' + response);
+    this.apiCounter += 1;
     const decodedList: ECOnlineFile[] = response;
-    console.log(decodedList);
     this.onlineECFList = decodedList;
     localStorage.setItem('fileCompleteList', JSON.stringify(decodedList));
     this.disableAllButton = false;
@@ -225,8 +227,7 @@ export class ExtendsClassEditorComponent {
     }
   }
   private onSaveFileFinished(response: any): void {
-    console.log('RESPONSE:');
-    console.log(response.id);
+    this.apiCounter += 1;
     for (let index = 0; index < this.fileIDlist.length; index++) {
       if (this.fileIDlist[index] === this.actualFileID) {
         this.onDeleteLocalFile('local', index, false);
@@ -254,8 +255,7 @@ export class ExtendsClassEditorComponent {
       .subscribe((response) => this.onModifiedOnlineECFListFinished(response));
   }
   private onModifiedOnlineECFListFinished(response: any): void {
-    console.log('ALL Finished RESPONSE:');
-    console.log(response);
+    this.apiCounter += 1;
     this.reloadStorage();
     this.disableAllButton = false;
   }

@@ -30,7 +30,10 @@ export class ConnectorService {
   }
 
   public getAll(apiKey: string): Observable<any> {
-    return this.http.get<any>('https://json.extendsclass.com/bins', { headers: this.addHeaders('', apiKey) });
+    return this.http.get<any>('https://json.extendsclass.com/bins', {
+      observe: 'response',
+      headers: this.addHeaders('', apiKey),
+    });
   }
 
   public getFile(id: string, securityKey: string = ''): Observable<any> {
