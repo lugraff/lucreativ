@@ -57,10 +57,10 @@
     <div class="flex gap-4">
         <global-input-standard [(ngModel)]="actualFileData.category" [disabled]="this.actualFileID === ''"
             placeholderText="Category" icon="featherArchive" iconColor="subtle" iconStroke="1.25"
-            [maxLength]="16"></global-input-standard>
+            [maxLength]="32"></global-input-standard>
         <global-input-standard [(ngModel)]="actualFileData.name" [disabled]="this.actualFileID === ''"
             placeholderText="Name" icon="featherTag" iconColor="subtle" iconStroke="1.25"
-            [maxLength]="16"></global-input-standard>
+            [maxLength]="32"></global-input-standard>
     </div>
     <!-- <global-table [tableData]="data" (loadCell)="onLoadFile($event)"></global-table> -->
     <!-- <button standard icon="featherDelete" (click)="onDeleteFile()">Delete</button> -->

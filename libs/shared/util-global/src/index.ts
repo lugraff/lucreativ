@@ -2,6 +2,7 @@ export * from './lib/services/cookie-handler.service';
 export * from './lib/services/mouse-event.service';
 export * from './lib/services/connector.service';
 export * from './lib/services/tooltip.service';
+export * from './lib/services/can-deactivate-guard.service';
 
 export * from './lib/entities/searchElement';
 export * from './lib/entities/elite-logo-animation';

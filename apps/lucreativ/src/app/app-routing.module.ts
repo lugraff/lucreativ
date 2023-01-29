@@ -5,6 +5,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { DotknotComponent } from './components/dotknot/dotknot.component';
 import { FileManagerComponent } from './components/file-manager/file-manager.component';
 import { ExtendsClassEditorComponent } from './components/extends-class-editor/extends-class-editor.component';
+import { CanDeactivateGuard } from '@shared/util-global';
 
 const ROUTES: Routes = [
   {
@@ -21,6 +22,7 @@ const ROUTES: Routes = [
     path: 'ec-editor',
     component: ExtendsClassEditorComponent,
     data: ['featherDatabase'],
+    canDeactivate: [CanDeactivateGuard],
   },
   {
     path: 'dotknot',
@@ -40,6 +42,6 @@ const ROUTES: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(ROUTES)],
   exports: [RouterModule],
-  providers: [],
+  providers: [CanDeactivateGuard],
 })
 export class AppRoutingModule {}

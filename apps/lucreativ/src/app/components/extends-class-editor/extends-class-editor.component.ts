@@ -9,8 +9,19 @@ import {
   InputStandardComponent,
   ListComponent,
 } from '@shared/ui-global';
-import { ConnectorService, ECFile, ECLocalFile, ECOnlineFile, emptyECF } from '@shared/util-global';
-// Wenn security key kann nur der ihn kennt online löschen. sonst alle
+import {
+  CanComponentDeactivate,
+  ConnectorService,
+  ECFile,
+  ECLocalFile,
+  ECOnlineFile,
+  emptyECF,
+} from '@shared/util-global';
+import { RouterStateSnapshot } from '@angular/router';
+import { Observable } from 'rxjs';
+// TODO Wenn security key kann nur der ihn kennt online löschen. sonst alle
+// TODO wenn nur noch 500 requests -> nur noch lesen dürfen
+// TODO API KEY -> security key read spezial idFile give api key
 @Component({
   selector: 'lucreativ-extends-class-editor',
   standalone: true,
@@ -26,7 +37,7 @@ import { ConnectorService, ECFile, ECLocalFile, ECOnlineFile, emptyECF } from '@
   ],
   templateUrl: './extends-class-editor.component.html',
 })
-export class ExtendsClassEditorComponent {
+export class ExtendsClassEditorComponent implements CanComponentDeactivate {
   public localECFList: ECLocalFile[] = [];
   public onlineECFList: ECOnlineFile[] = [];
   public actualFileData: ECFile = emptyECF;
@@ -39,11 +50,27 @@ export class ExtendsClassEditorComponent {
   private differentiator = 13; // OnlineFile <-> LocalFile
   private onlineECFListID = '43a6db6c6f07';
   private fileIDBlackList = ['28f3961ccff3', this.onlineECFListID];
+  private desiredRoute = '';
 
   constructor(private connector: ConnectorService) {
     this.apiCounter = JSON.parse(localStorage.getItem('apiCounter') ?? '10000');
     this.reloadStorage();
   }
+
+  public myCanDeactivate(nextState: RouterStateSnapshot | undefined): boolean | Observable<boolean> | Promise<boolean> {
+    console.log('STOP');
+    if (true) {
+      // 'Aktuelle Änderungen der Prüfungszeiten wurden noch nicht übernommen. Wollen Sie die Änderungen verwerfen?';
+      if (nextState !== undefined) {
+        this.desiredRoute = nextState.url;
+      }
+      return false;
+    }
+    return true;
+  }
+  // public ChangeRouteWithoutSave(): void {
+  //   this.router.navigate([this.desiredRoute]);
+  // }
 
   private reloadStorage(): void {
     this.localECFList = [];
