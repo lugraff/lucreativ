@@ -19,7 +19,7 @@ export class ListComponent implements OnInit {
   @Input() public selected = '';
   @Output() public optionSelect = new EventEmitter<string>();
   @Output() public deleteOption = new EventEmitter<number>();
-  @HostBinding('class') public class = 'flex flex-col p-2 bg-textB rounded-md border-2 border-bgB';
+  @HostBinding('class') public class = 'flex flex-col p-2 bg-textB rounded-md border-2 border-bgB min-w-fit';
 
   constructor(private elRef: ElementRef) {}
 

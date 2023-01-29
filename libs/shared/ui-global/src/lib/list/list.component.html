@@ -10,8 +10,10 @@
           {{ item }}
         </div>
       </button>
-      <button standard *ngIf="deleteButton" [disabled]="disabledDeleteButtons" icon="featherDelete" iconStroke="1.5"
-        iconColor="danger" (click)="onDelete(i)" [ngClass]="{ invisible: item === notAvailableText }"></button>
+      <div>
+        <button standard *ngIf="deleteButton" [disabled]="disabledDeleteButtons" icon="featherDelete" iconStroke="1.5"
+          iconColor="danger" (click)="onDelete(i)" [ngClass]="{ invisible: item === notAvailableText }"></button>
+      </div>
     </div>
   </div>
 </div>

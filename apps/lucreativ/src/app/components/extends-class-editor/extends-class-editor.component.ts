@@ -8,6 +8,7 @@ import {
   InputCheckboxComponent,
   InputStandardComponent,
   ListComponent,
+  PopupComponent,
 } from '@shared/ui-global';
 import {
   CanComponentDeactivate,
@@ -17,7 +18,7 @@ import {
   ECOnlineFile,
   emptyECF,
 } from '@shared/util-global';
-import { RouterStateSnapshot } from '@angular/router';
+import { Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 // TODO Wenn security key kann nur der ihn kennt online löschen. sonst alle
 // TODO wenn nur noch 500 requests -> nur noch lesen dürfen
@@ -34,6 +35,7 @@ import { Observable } from 'rxjs';
     InputCheckboxComponent,
     InfoPopupComponent,
     IconComponent,
+    PopupComponent,
   ],
   templateUrl: './extends-class-editor.component.html',
 })
@@ -41,36 +43,51 @@ export class ExtendsClassEditorComponent implements CanComponentDeactivate {
   public localECFList: ECLocalFile[] = [];
   public onlineECFList: ECOnlineFile[] = [];
   public actualFileData: ECFile = emptyECF;
+  public actualFileDataReflection: ECFile = emptyECF;
   public fileIDlist: string[] = [];
   public actualFileID = '';
   public disableAllButton = false;
   public errorMessage = ''; //TODO Show
   public apiCounter = 10000;
   public securityKey = '';
-  private differentiator = 13; // OnlineFile <-> LocalFile
+  public showSavePopup = false;
+  public showSavePopupBeforeNav = false;
+  public differentiator = 13; // OnlineFile <-> LocalFile
   private onlineECFListID = '43a6db6c6f07';
   private fileIDBlackList = ['28f3961ccff3', this.onlineECFListID];
   private desiredRoute = '';
 
-  constructor(private connector: ConnectorService) {
+  constructor(private connector: ConnectorService, private router: Router) {
     this.apiCounter = JSON.parse(localStorage.getItem('apiCounter') ?? '10000');
     this.reloadStorage();
   }
 
   public myCanDeactivate(nextState: RouterStateSnapshot | undefined): boolean | Observable<boolean> | Promise<boolean> {
-    console.log('STOP');
-    if (true) {
+    console.log(this.actualFileDataReflection);
+    console.log(this.actualFileData);
+    if (
+      this.actualFileID.length > this.differentiator &&
+      JSON.stringify(this.actualFileDataReflection) !== JSON.stringify(this.actualFileData)
+    ) {
+      console.log('STOP');
       // 'Aktuelle Änderungen der Prüfungszeiten wurden noch nicht übernommen. Wollen Sie die Änderungen verwerfen?';
       if (nextState !== undefined) {
         this.desiredRoute = nextState.url;
+        this.showSavePopupBeforeNav = true;
       }
       return false;
     }
     return true;
   }
-  // public ChangeRouteWithoutSave(): void {
-  //   this.router.navigate([this.desiredRoute]);
-  // }
+  public ChangeRoute(saveFile: boolean): void {
+    if (saveFile) {
+      this.autoSave();
+    } else {
+      this.actualFileDataReflection = this.actualFileData;
+    }
+    this.showSavePopupBeforeNav = false;
+    this.router.navigate([this.desiredRoute]);
+  }
 
   private reloadStorage(): void {
     this.localECFList = [];
@@ -106,6 +123,7 @@ export class ExtendsClassEditorComponent implements CanComponentDeactivate {
     this.actualFileID = selectedID;
     if (selectedID.length > this.differentiator || localStorage.getItem(selectedID)) {
       this.actualFileData = JSON.parse(localStorage.getItem(selectedID) ?? JSON.stringify(emptyECF));
+      this.actualFileDataReflection = JSON.parse(JSON.stringify(this.actualFileData));
     } else {
       this.onFetchFile();
     }
@@ -127,7 +145,7 @@ export class ExtendsClassEditorComponent implements CanComponentDeactivate {
     this.disableAllButton = false;
   }
 
-  public onCreateNewFile() {
+  public onCreateNewFile(): void {
     this.autoSave();
     this.actualFileData = emptyECF;
     while (this.actualFileData.id.length <= this.differentiator) {
@@ -139,25 +157,29 @@ export class ExtendsClassEditorComponent implements CanComponentDeactivate {
     localStorage.setItem('fileIDList', JSON.stringify(this.fileIDlist));
     localStorage.setItem(this.actualFileData.id, JSON.stringify(this.actualFileData));
     this.actualFileID = this.actualFileData.id;
+    this.actualFileDataReflection = JSON.parse(JSON.stringify(this.actualFileData));
   }
 
-  private autoSave() {
-    //TODO can Deactivate Guard
+  public autoSave(): void {
     if (this.actualFileID === '') {
       return;
     }
     const newData = JSON.stringify(this.actualFileData);
     const spyFile = localStorage.getItem(this.actualFileID);
     if (spyFile !== newData) {
-      //TODO OK Box...
       if (spyFile !== null) {
         this.actualFileData.edited = Date.now();
       }
-      localStorage.setItem(this.actualFileID, JSON.stringify(this.actualFileData));
+      this.showSavePopup = true;
     }
   }
+  public doAutoSave(): void {
+    localStorage.setItem(this.actualFileID, JSON.stringify(this.actualFileData));
+    this.actualFileDataReflection = JSON.parse(JSON.stringify(this.actualFileData));
+    this.showSavePopup = false;
+  }
 
-  public onDeleteFile(index: number) {
+  public onDeleteFile(index: number): void {
     this.disableAllButton = true;
     if (this.fileIDlist[index].length < this.differentiator) {
       for (let i = 0; i < this.onlineECFList.length; i++) {

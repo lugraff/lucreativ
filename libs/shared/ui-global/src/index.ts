@@ -9,3 +9,4 @@ export * from './lib/icon/icon.component';
 export * from './lib/input-checkbox/input-checkbox.component';
 export * from './lib/input-standard/input-standard.component';
 export * from './lib/list/list.component';
+export * from './lib/popup/popup.component';

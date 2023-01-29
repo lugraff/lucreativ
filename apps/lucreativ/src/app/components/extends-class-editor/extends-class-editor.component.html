@@ -64,10 +64,36 @@
     </div>
     <!-- <global-table [tableData]="data" (loadCell)="onLoadFile($event)"></global-table> -->
     <!-- <button standard icon="featherDelete" (click)="onDeleteFile()">Delete</button> -->
-    <textarea cols="30" rows="10" [(ngModel)]="actualFileData.text" [disabled]="this.actualFileID === ''"
-        spellcheck="false"
+    <textarea cols="30" rows="10" [(ngModel)]="actualFileData.text"
+        [disabled]="this.actualFileID.length < differentiator" spellcheck="false"
         class="bg-textB outline-none border-bgB border-2 rounded-md w-[90vw] elite_v_scrollbar"></textarea>
     <div *ngIf="actualFileData.created > 0">created: {{actualFileData.created | date:'dd.MM.yyyy HH:mm'}}</div>
     <div *ngIf="actualFileData.edited > 0">last edit: {{actualFileData.edited | date:'dd.MM.yyyy HH:mm'}}</div>
     <div>{{actualFileData.data|json}}</div>
 </div>
+
+<global-popup *ngIf="showSavePopupBeforeNav" myTitle="Question" [backCovered]="true" [closeable]="false"
+    icon="featherHelpCircle" [minimizeable]="false" [resizeable]="false">
+    <div>Save Changes for local file "{{this.actualFileData.name}}"?</div>
+    <div class="flex gap-4">
+        <button standard (click)="ChangeRoute(false)">
+            Don't save changes
+        </button>
+        <button standard [autofocus]="true" (click)="ChangeRoute(true)">
+            Save file
+        </button>
+    </div>
+</global-popup>
+
+<global-popup *ngIf="showSavePopup" myTitle="Question" [backCovered]="true" [closeable]="false" icon="featherHelpCircle"
+    [minimizeable]="false" [resizeable]="false">
+    <div>Save Changes for local file "{{this.actualFileData.name}}"?</div>
+    <div class="flex gap-4">
+        <button standard (click)="showSavePopup = false">
+            Don't save changes
+        </button>
+        <button standard [autofocus]="true" (click)="doAutoSave()">
+            Save file
+        </button>
+    </div>
+</global-popup>
