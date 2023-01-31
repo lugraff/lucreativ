@@ -3,9 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/base/home.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { DotknotComponent } from './components/dotknot/dotknot.component';
-import { FileManagerComponent } from './components/file-manager/file-manager.component';
 import { ExtendsClassEditorComponent } from './components/extends-class-editor/extends-class-editor.component';
 import { CanDeactivateGuard } from '@shared/util-global';
+import { JSONFileManagerComponent } from './components/json-file-manager/json-file-manager.component';
 
 const ROUTES: Routes = [
   {
@@ -15,7 +15,7 @@ const ROUTES: Routes = [
   },
   {
     path: 'file-manager',
-    component: FileManagerComponent,
+    component: JSONFileManagerComponent,
     data: ['featherDatabase'],
   },
   {
