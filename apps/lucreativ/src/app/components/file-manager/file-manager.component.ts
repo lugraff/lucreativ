@@ -32,6 +32,7 @@ export class FileManagerComponent {
   @ViewChild('inputField') inputField2!: ElementRef;
   public fileList: string[] = [];
   public securityKey = '';
+  public apiKey = '';
   public isPrivate = false;
   public actualFileID = '';
   public fileData: any = undefined;

@@ -18,12 +18,12 @@ const ROUTES: Routes = [
     component: FileManagerComponent,
     data: ['featherDatabase'],
   },
-  // {
-  //   path: 'ec-editor',
-  //   component: ExtendsClassEditorComponent,
-  //   data: ['featherDatabase'],
-  //   canDeactivate: [CanDeactivateGuard],
-  // },
+  {
+    path: 'ec-editor',
+    component: ExtendsClassEditorComponent,
+    data: ['featherDatabase'],
+    canDeactivate: [CanDeactivateGuard],
+  },
   {
     path: 'dotknot',
     component: DotknotComponent,

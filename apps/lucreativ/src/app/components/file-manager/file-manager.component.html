@@ -12,7 +12,8 @@
                 </div>
             </div>
             <div class="flex flex-wrap gap-1">
-                <button standard icon="featherDownloadCloud" [disabled]="disableAllButton || this.apiCounter >= 10000"
+                <button standard icon="featherDownloadCloud"
+                    [disabled]="disableAllButton || this.apiCounter >= 10000 || apiKey === ''"
                     (click)="onLoadAllFiles()">fetch</button>
                 <button standard icon="featherUploadCloud" [disabled]="disableAllButton || this.apiCounter > 9000"
                     (click)="onCreateFile()">
