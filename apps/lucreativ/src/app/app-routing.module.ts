@@ -5,7 +5,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { DotknotComponent } from './components/dotknot/dotknot.component';
 import { ExtendsClassEditorComponent } from './components/extends-class-editor/extends-class-editor.component';
 import { CanDeactivateGuard } from '@shared/util-global';
-import { JSONFileManagerComponent } from './components/json-file-manager/json-file-manager.component';
+import { FileManagerComponent } from './components/file-manager/file-manager.component';
 
 const ROUTES: Routes = [
   {
@@ -15,15 +15,15 @@ const ROUTES: Routes = [
   },
   {
     path: 'file-manager',
-    component: JSONFileManagerComponent,
+    component: FileManagerComponent,
     data: ['featherDatabase'],
   },
-  {
-    path: 'ec-editor',
-    component: ExtendsClassEditorComponent,
-    data: ['featherDatabase'],
-    canDeactivate: [CanDeactivateGuard],
-  },
+  // {
+  //   path: 'ec-editor',
+  //   component: ExtendsClassEditorComponent,
+  //   data: ['featherDatabase'],
+  //   canDeactivate: [CanDeactivateGuard],
+  // },
   {
     path: 'dotknot',
     component: DotknotComponent,

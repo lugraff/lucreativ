@@ -26,12 +26,13 @@ import { FormsModule } from '@angular/forms';
     InputCheckboxComponent,
     InfoPopupComponent,
   ],
-  templateUrl: './json-file-manager.component.html',
+  templateUrl: './file-manager.component.html',
 })
-export class JSONFileManagerComponent {
+export class FileManagerComponent {
   @ViewChild('inputField') inputField2!: ElementRef;
   public fileList: string[] = [];
   public securityKey = '';
+  public isPrivate = false;
   public actualFileID = '';
   public fileData: any = undefined;
   public disableAllButton = false;
@@ -39,6 +40,7 @@ export class JSONFileManagerComponent {
   public apiCounter = 10000;
   public validJSON = false;
   public refreshInputField = false;
+  private deepCopy = '';
   private checkTimeout = setTimeout(() => {
     console.log;
   }, 100);
@@ -48,12 +50,12 @@ export class JSONFileManagerComponent {
   public stringify = JSON.stringify;
 
   constructor(private connector: ConnectorService) {
-    this.apiCounter = JSON.parse(localStorage.getItem('apiCounter') ?? '10000');
-    this.fileList = JSON.parse(localStorage.getItem('file-manager-file-list') ?? '[]');
+    this.setApiCounter(JSON.parse(localStorage.getItem('apiCounter') ?? '9500'));
+    this.fileList = JSON.parse(localStorage.getItem('file-list') ?? '[]');
   }
 
   //TODO bei fetch New* Anzeige
-  //TODO JSON Format Button
+  //TODO Better Requst Bar
   //TODO Login und API Key raus!
 
   public onNewFileText(event: Event): void {
@@ -73,6 +75,14 @@ export class JSONFileManagerComponent {
     }, 400);
   }
 
+  public formatJSON(): void {
+    const saveContent = this.inputField2.nativeElement.textContent;
+    this.fileData = null;
+    setTimeout(() => {
+      this.fileData = JSON.parse(saveContent);
+    });
+  }
+
   public onLoadAllFiles(): void {
     this.disableAllButton = true;
     this.connector.getAll('49f8f2a5-e8c2-11ec-b943-0242ac110002').subscribe((response) => this.fetchedData(response));
@@ -89,12 +99,17 @@ export class JSONFileManagerComponent {
   }
 
   public onLoadFile(id: string): void {
+    if (this.apiCounter >= 10000) {
+      this.errorMessage = 'Sorry, no requests left!';
+      return;
+    }
     this.actualFileID = id;
     this.refreshInputField = true;
     const observer = {
       next: (response: any) => {
         this.refreshInputField = false;
         this.fileData = response;
+        this.deepCopy = JSON.stringify(response);
         this.validJSON = true;
       },
       error: (error: any) => {
@@ -102,6 +117,7 @@ export class JSONFileManagerComponent {
         this.validJSON = false;
         setTimeout(() => {
           this.inputField2.nativeElement.textContent = error.error.text;
+          this.deepCopy = error.error.text;
         }, 0);
       },
     };
@@ -131,14 +147,15 @@ export class JSONFileManagerComponent {
     this.disableAllButton = false;
   }
 
-  public onSaveFile(): void {
+  public onCreateFile(): void {
     this.disableAllButton = true;
-    //TODO Private
+    console.log(this.isPrivate);
     this.connector
       .create(
         '49f8f2a5-e8c2-11ec-b943-0242ac110002',
         JSON.stringify(this.fileData) ?? this.inputField2.nativeElement.textContent,
-        this.securityKey
+        this.securityKey,
+        this.isPrivate
       )
       .subscribe((response) => this.onSaveFileFinished(response));
     this.apiCounter += 1;
@@ -151,7 +168,16 @@ export class JSONFileManagerComponent {
   }
 
   public onUpdateFile(): void {
-    //TODO Checken ob sich file inhaltlich verädert hat -> speichern oder abbrechen
+    if (
+      (this.validJSON && this.deepCopy === JSON.stringify(JSON.parse(this.inputField2.nativeElement.textContent))) ||
+      this.deepCopy === this.inputField2.nativeElement.textContent
+    ) {
+      this.errorMessage = 'No file changes to save!';
+      return;
+    } else if (this.actualFileID === '') {
+      this.errorMessage = 'No file selected!';
+      return;
+    }
     this.disableAllButton = true;
     const observer = {
       next: (response: any) => {

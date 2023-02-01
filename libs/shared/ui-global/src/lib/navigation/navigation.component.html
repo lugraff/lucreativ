@@ -4,7 +4,7 @@
     <img src="../../../assets/Logo.jpg"
       class="rounded-3xl border-2 border-textB pointer-events-none select-none w-60" />
   </div>
-  <div class="grow flex flex-col gap-2 items-center">
+  <div class="grow flex flex-col gap-2 items-center overflow-y-auto">
     <ng-container *ngFor="let route of router.config">
       <ng-container
         *ngIf="route.path !== undefined && route.path !== '**' && route.path !== '' && route.path !== 'page-not-found'">

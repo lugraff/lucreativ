@@ -9,7 +9,7 @@ import { IconComponent } from '../icon/icon.component';
   selector: '[list]',
   template: `<div
     class="flex gap-1 items-center"
-    [ngClass]="selected ? 'text-primary' : ''">
+    [ngClass]="selected ? 'text-primary underline underline-offset-4' : ''">
     <global-icon
       [icon]="icon"
       strokeWidth="1.2"></global-icon>

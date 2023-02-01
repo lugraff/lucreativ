@@ -1,27 +1,16 @@
-<div
-  (click)="InputField.focus()"
+<div (click)="InputField.focus()"
   class="flex w-fit text-xl font-normal from-bgB to-selection bg-gradient-to-tl text-textB rounded-sm border border-textB overflow-clip"
-  [ngClass]="{ 'h-[3rem]': height === 'large', 'h-[2.5rem]': height === 'medium', 'h-[2rem]': height === 'small' }">
+  [ngClass]="disabled?'grayscale pointer-events-none':''">
   <div class="flex px-1">
     <div class="stroke-current fill-transparent self-center pr-1">
-      <global-icon
-        [icon]="icon"
-        [strokeWidth]="iconStroke"
-        [size]="iconSize"
-        [color]="iconColor">
+      <global-icon [icon]="icon" [strokeWidth]="iconStroke" [size]="iconSize" [color]="iconColor">
       </global-icon>
     </div>
     <div class="whitespace-nowrap self-center pr-1">
       <ng-content></ng-content>
     </div>
-    <input
-      #InputField
-      type="checkbox"
-      [(ngModel)]="checked"
-      (ngModelChange)="onChange($event)"
-      (blur)="onTouched()"
-      (focus)="onGetFocus()"
-      [disabled]="disabled"
+    <input #InputField type="checkbox" [(ngModel)]="checked" (ngModelChange)="onChange($event)" (blur)="onTouched()"
+      (focus)="onGetFocus()" [disabled]="disabled"
       class="w-5 h-5 m-1 self-center outline-none rounded-md accent-subtle" />
   </div>
 </div>

@@ -8,7 +8,12 @@ import { Observable } from 'rxjs';
 export class ConnectorService {
   constructor(private http: HttpClient) {}
 
-  private addHeaders(securityKey: string = '', apiKey: string = '', patch: boolean = false): HttpHeaders {
+  private addHeaders(
+    securityKey: string = '',
+    apiKey: string = '',
+    patch: boolean = false,
+    isPrivate: boolean = false
+  ): HttpHeaders {
     let headers = new HttpHeaders();
     headers = headers.append('Cache-Control', 'no-cache, no-store, must-revalidate, post-check=0, pre-check=0');
     if (patch) {
@@ -20,12 +25,15 @@ export class ConnectorService {
     if (securityKey.length) {
       headers = headers.append('security-key', securityKey);
     }
+    if (isPrivate) {
+      headers = headers.append('Private', 'true');
+    }
     return headers;
   }
 
-  public create(apiKey: string, data: string, securityKey: string = ''): Observable<any> {
+  public create(apiKey: string, data: string, securityKey: string = '', isPrivate: boolean = false): Observable<any> {
     return this.http.post<any>('https://json.extendsclass.com/bin', data, {
-      headers: this.addHeaders(securityKey, apiKey),
+      headers: this.addHeaders(securityKey, apiKey, false, isPrivate),
     });
   }
 

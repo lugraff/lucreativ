@@ -16,7 +16,6 @@ export class InputCheckboxComponent implements ControlValueAccessor, OnInit {
   @Input() public iconStroke: string | number | undefined = undefined;
   @Input() public iconSize = '1.5rem';
   @Input() public iconColor = '';
-  @Input() public height = 'small'; // small / medium / large
   @Input() public autofocus = false;
   @Input() public checked = false;
   @Input() public disabled = false;
