@@ -8,6 +8,7 @@ import {
   InputCheckboxComponent,
   InputStandardComponent,
   ListComponent,
+  PopupComponent,
   TableComponent,
 } from '@shared/ui-global';
 import { FormsModule } from '@angular/forms';
@@ -25,11 +26,15 @@ import { FormsModule } from '@angular/forms';
     ListComponent,
     InputCheckboxComponent,
     InfoPopupComponent,
+    PopupComponent,
   ],
   templateUrl: './file-manager.component.html',
 })
 export class FileManagerComponent {
   @ViewChild('inputField') inputField2!: ElementRef;
+  public username = '';
+  public password = '';
+  public showLogin = true;
   public fileList: string[] = [];
   public securityKey = '';
   public apiKey = '';
@@ -50,14 +55,49 @@ export class FileManagerComponent {
   public objectValues = Object.values;
   public stringify = JSON.stringify;
 
+  private users = [{ name: 'Lucas', fileId: '674f0292242a' }];
+
   constructor(private connector: ConnectorService) {
     this.setApiCounter(JSON.parse(localStorage.getItem('apiCounter') ?? '9500'));
     this.fileList = JSON.parse(localStorage.getItem('file-list') ?? '[]');
+    this.username = localStorage.getItem('user-name') ?? '';
   }
 
   //TODO bei fetch New* Anzeige
   //TODO Better Requst Bar
-  //TODO Login und API Key raus!
+  //TODO OpenOnlineFileList
+  //TODO show Login Button
+  //TODO Blacklist
+
+  public onLogin(): void {
+    if (this.username.length < 2 || this.password.length < 2) {
+      return;
+    }
+    if (this.apiCounter >= 10000) {
+      this.showLogin = false;
+      this.errorMessage = 'Sorry, no requests left!';
+      return;
+    }
+    for (let index = 0; index < this.users.length; index++) {
+      if (this.users[index].name === this.username) {
+        const observer = {
+          next: (response: any) => {
+            this.apiKey = response.key;
+            this.securityKey = this.password;
+            localStorage.setItem('user-name', this.username);
+            this.showLogin = false;
+          },
+          error: (error: any) => {
+            this.errorMessage = 'Login failed!';
+          },
+        };
+        this.connector.getFile(this.users[index].fileId, this.password).subscribe(observer);
+        this.apiCounter += 1;
+        return;
+      }
+    }
+    this.errorMessage = 'Sorry, user not found!';
+  }
 
   public onNewFileText(event: Event): void {
     this.checkValidJSON();
@@ -86,12 +126,12 @@ export class FileManagerComponent {
 
   public onLoadAllFiles(): void {
     this.disableAllButton = true;
-    this.connector.getAll('49f8f2a5-e8c2-11ec-b943-0242ac110002').subscribe((response) => this.fetchedData(response));
+    this.connector.getAll(this.apiKey).subscribe((response) => this.fetchedData(response));
   }
   private fetchedData(newData: any): void {
     this.setApiCounter(Number(newData.headers.get('x-counter')));
     this.fileList = newData.body;
-    localStorage.setItem('file-manager-file-list', JSON.stringify(this.fileList));
+    localStorage.setItem('file-list', JSON.stringify(this.fileList));
     this.disableAllButton = false;
   }
   private setApiCounter(count: number): void {
@@ -142,8 +182,8 @@ export class FileManagerComponent {
     if (response.status === 0) {
       this.fileList.splice(index, 1);
       this.actualFileID = '';
-      this.fileData = undefined;
-      localStorage.setItem('file-manager-file-list', JSON.stringify(this.fileList));
+      this.fileData = null;
+      localStorage.setItem('file-list', JSON.stringify(this.fileList));
     }
     this.disableAllButton = false;
   }
@@ -153,7 +193,7 @@ export class FileManagerComponent {
     console.log(this.isPrivate);
     this.connector
       .create(
-        '49f8f2a5-e8c2-11ec-b943-0242ac110002',
+        this.apiKey,
         JSON.stringify(this.fileData) ?? this.inputField2.nativeElement.textContent,
         this.securityKey,
         this.isPrivate
@@ -164,7 +204,7 @@ export class FileManagerComponent {
   private onSaveFileFinished(response: any): void {
     this.actualFileID = response.id;
     this.fileList.push(response.id);
-    localStorage.setItem('file-manager-file-list', JSON.stringify(this.fileList));
+    localStorage.setItem('file-list', JSON.stringify(this.fileList));
     this.disableAllButton = false;
   }
 

@@ -6,7 +6,7 @@
             <div class="w-full text-center text-5xl font-extralight leading-10 text-primary">EC File Manager</div>
             <div class="flex items-center justify-end gap-2"
                 [ngClass]="validJSON ? 'text-primary':'text-subtle line-through'">
-                <div class="text-end text-sm">valid JSON</div>
+                <div class="text-end text-sm">Valid JSON</div>
                 <div>
                     <button standard icon="featherTrello" [disabled]="!validJSON" (click)="formatJSON()"></button>
                 </div>
@@ -14,19 +14,20 @@
             <div class="flex flex-wrap gap-1">
                 <button standard icon="featherDownloadCloud"
                     [disabled]="disableAllButton || this.apiCounter >= 10000 || apiKey === ''"
-                    (click)="onLoadAllFiles()">fetch</button>
-                <button standard icon="featherUploadCloud" [disabled]="disableAllButton || this.apiCounter > 9000"
-                    (click)="onCreateFile()">
-                    create
+                    (click)="onLoadAllFiles()">Fetch</button>
+                <button standard icon="featherUploadCloud"
+                    [disabled]="disableAllButton || this.apiCounter > 9000 || apiKey === ''" (click)="onCreateFile()">
+                    Create
                 </button>
-                <button standard icon="featherRefreshCw" [disabled]="disableAllButton || this.apiCounter > 9000"
-                    (click)="onUpdateFile()">update</button>
+                <button standard icon="featherRefreshCw"
+                    [disabled]="disableAllButton || this.apiCounter > 9000 || actualFileID === ''"
+                    (click)="onUpdateFile()">Update</button>
             </div>
             <div class="flex gap-1 justify-between">
                 <global-input-checkbox icon="featherEyeOff" iconStroke="1.5"
                     [disabled]="disableAllButton || securityKey.length === 0" [(ngModel)]="isPrivate">
-                    private</global-input-checkbox>
-                <global-input-standard [(ngModel)]="securityKey" placeholderText="security key" icon="featherKey"
+                    Private</global-input-checkbox>
+                <global-input-standard [(ngModel)]="securityKey" placeholderText="Security-Key" icon="featherKey"
                     iconColor="subtle" iconStroke="1.25" [maxLength]="16"
                     [disabled]="disableAllButton"></global-input-standard>
             </div>
@@ -55,4 +56,16 @@
 </div>
 <global-info-popup icon="featherInfo" infoPosition="top" infoAlign="center" [infoOffset]="64"
     [(infoText)]="errorMessage"></global-info-popup>
+<global-popup *ngIf="showLogin" (whenClosing)="showLogin = false;" [minimizeable]="false" icon="featherLock"
+    myTitle="Welcome!" popupWidth="22rem">
+    <div class="flex flex-col gap-1">
+        <global-input-standard icon="featherUser" [(inputText)]="username" [maxLength]="32" placeholderText="Username"
+            [spellcheck]="false"></global-input-standard>
+        <global-input-standard icon="featherKey" [(inputText)]="password" inputType="password" [maxLength]="32"
+            placeholderText="Password" [spellcheck]="false"></global-input-standard>
+        <div class="self-end">
+            <button standard (click)="onLogin()" [disabled]="username.length < 2 || password.length < 2">Login</button>
+        </div>
+    </div>
+</global-popup>
 <!-- TODO Loading Component  -->
