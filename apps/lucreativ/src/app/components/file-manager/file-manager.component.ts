@@ -144,6 +144,7 @@ export class FileManagerComponent implements AfterViewInit {
   }
   private fetchedData(newData: any): void {
     this.setApiCounter(Number(newData.headers.get('x-counter')));
+    this.fileList = [];
     for (const fileID of newData.body) {
       if (this.localBlacklist.includes(fileID)) {
         continue;
@@ -204,7 +205,8 @@ export class FileManagerComponent implements AfterViewInit {
     if (response.status === 0) {
       this.fileList.splice(index, 1);
       this.actualFileID = '';
-      this.fileData = null;
+      this.fileData = undefined;
+      this.inputField.nativeElement.textContent = '';
       localStorage.setItem('file-list', JSON.stringify(this.fileList));
     }
     this.disableAllButton = false;
@@ -216,14 +218,21 @@ export class FileManagerComponent implements AfterViewInit {
     if (this.isLocked) {
       security = this.securityKey;
     }
-    this.connector
-      .create(
-        this.apiKey,
-        JSON.stringify(this.fileData) ?? this.inputField.nativeElement.textContent,
-        security,
-        this.isPrivate
-      )
-      .subscribe((response) => this.onSaveFileFinished(response));
+    let filetype = 'JSON';
+    try {
+      this.fileData = JSON.parse(this.inputField.nativeElement.textContent);
+    } catch {
+      filetype = '';
+    }
+    if (filetype === 'JSON') {
+      this.connector
+        .create(this.apiKey, JSON.stringify(this.fileData), security, this.isPrivate)
+        .subscribe((response) => this.onSaveFileFinished(response));
+    } else {
+      this.connector
+        .create(this.apiKey, this.inputField.nativeElement.textContent, security, this.isPrivate)
+        .subscribe((response) => this.onSaveFileFinished(response));
+    }
     this.apiCounter += 1;
   }
   private onSaveFileFinished(response: any): void {
@@ -250,6 +259,9 @@ export class FileManagerComponent implements AfterViewInit {
         try {
           JSON.parse(this.inputField.nativeElement.textContent);
           this.fileData = JSON.parse(this.inputField.nativeElement.textContent);
+          setTimeout(() => {
+            this.formatJSON();
+          });
         } catch {
           this.inputField.nativeElement.textContent = response.data;
         }
@@ -280,6 +292,12 @@ export class FileManagerComponent implements AfterViewInit {
     }
     this.localBlacklist.push(this.blacklistInputField);
     localStorage.setItem('blacklist', JSON.stringify(this.localBlacklist));
+    for (let index = 0; index < this.fileList.length; index++) {
+      if (this.blacklistInputField === this.fileList[index]) {
+        this.fileList.splice(index, 1);
+        localStorage.setItem('file-list', JSON.stringify(this.fileList));
+      }
+    }
     this.blacklistInputField = '';
   }
 }

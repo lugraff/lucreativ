@@ -12,6 +12,7 @@ import { ButtonLinkComponent } from '../button-link/button-link.component';
 })
 export class NavigationComponent {
   public expanded = false;
+  public version = '1.0.0';
 
   constructor(public router: Router) {}
 
