@@ -11,7 +11,7 @@
         "{options.outputPath}"
       ],
       "options": {
-        "outputPath": "dist/apps/lucreativ",
+        "outputPath": "docs/",
         "index": "apps/lucreativ/src/index.html",
         "main": "apps/lucreativ/src/main.ts",
         "polyfills": "apps/lucreativ/src/polyfills.ts",
@@ -63,7 +63,7 @@
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
-          "outputPath": "D:/ELITEIB_Beta/foWEb/lucreativ/dist/"
+          "outputPath": "./dist/"
         }
       },
       "defaultConfiguration": "production"

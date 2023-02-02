@@ -227,7 +227,7 @@ export class ExtendsClassEditorComponent implements CanComponentDeactivate {
   public onFetchDatabase(): void {
     this.disableAllButton = true;
     this.connector //TODO key kommt weg!
-      .getAll('49f8f2a5-e8c2-11ec-b943-0242ac110002')
+      .getAll('api-key')
       .subscribe((response) => this.fetchedData(response));
   }
   private fetchedData(newData: any): void {
@@ -268,7 +268,7 @@ export class ExtendsClassEditorComponent implements CanComponentDeactivate {
     if (this.actualFileID.length > this.differentiator) {
       this.autoSave();
       this.connector
-        .create('49f8f2a5-e8c2-11ec-b943-0242ac110002', JSON.stringify(this.actualFileData))
+        .create('api-key', JSON.stringify(this.actualFileData))
         .subscribe((response) => this.onSaveFileFinished(response));
     } else {
       //File Merge
