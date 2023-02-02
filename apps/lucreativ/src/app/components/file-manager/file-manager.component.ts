@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConnectorService } from '@shared/util-global';
 import {
@@ -30,15 +30,19 @@ import { FormsModule } from '@angular/forms';
   ],
   templateUrl: './file-manager.component.html',
 })
-export class FileManagerComponent implements OnInit {
+export class FileManagerComponent implements AfterViewInit {
   @ViewChild('inputField') inputField!: ElementRef;
   public username = '';
   public password = '';
   public showLogin = false;
+  public showBlacklist = false;
   public fileList: string[] = [];
+  public globalBlacklist: string[] = ['28f3961ccff3'];
+  public localBlacklist: string[] = [];
   public securityKey = '';
   public apiKey = '';
   public isPrivate = false;
+  public isLocked = true;
   public actualFileID = '';
   public fileData: any = undefined;
   public disableAllButton = false;
@@ -46,6 +50,7 @@ export class FileManagerComponent implements OnInit {
   public apiCounter = 10000;
   public validJSON = false;
   public refreshInputField = false;
+  public blacklistInputField = '';
   private deepCopy = '';
   private checkTimeout = setTimeout(() => {
     console.log;
@@ -61,17 +66,18 @@ export class FileManagerComponent implements OnInit {
     this.setApiCounter(JSON.parse(localStorage.getItem('apiCounter') ?? '9500'));
     this.fileList = JSON.parse(localStorage.getItem('file-list') ?? '[]');
     this.username = localStorage.getItem('user-name') ?? '';
+    this.localBlacklist = JSON.parse(localStorage.getItem('blacklist') ?? '');
   }
-
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.inputField.nativeElement.textContent = '';
   }
 
   //TODO bei fetch New* Anzeige
   //TODO Better Requst Bar
   //TODO OpenOnlineFileList
-  //TODO Blacklist
-  //TODO am Anfang leere Zeilen im Editor löschen.
+  //TODO Create new User
+  //TODO Users online stellen
+  //TODO Loading Component
 
   public onLogin(): void {
     if (this.username.length < 2 || this.password.length < 2) {
@@ -138,7 +144,15 @@ export class FileManagerComponent implements OnInit {
   }
   private fetchedData(newData: any): void {
     this.setApiCounter(Number(newData.headers.get('x-counter')));
-    this.fileList = newData.body;
+    for (const fileID of newData.body) {
+      if (this.localBlacklist.includes(fileID)) {
+        continue;
+      }
+      if (this.globalBlacklist.includes(fileID)) {
+        continue;
+      }
+      this.fileList.push(fileID);
+    }
     localStorage.setItem('file-list', JSON.stringify(this.fileList));
     this.disableAllButton = false;
   }
@@ -198,12 +212,15 @@ export class FileManagerComponent implements OnInit {
 
   public onCreateFile(): void {
     this.disableAllButton = true;
-    console.log(this.isPrivate);
+    let security = '';
+    if (this.isLocked) {
+      security = this.securityKey;
+    }
     this.connector
       .create(
         this.apiKey,
         JSON.stringify(this.fileData) ?? this.inputField.nativeElement.textContent,
-        this.securityKey,
+        security,
         this.isPrivate
       )
       .subscribe((response) => this.onSaveFileFinished(response));
@@ -247,5 +264,22 @@ export class FileManagerComponent implements OnInit {
       .overwrite(this.actualFileID, this.inputField.nativeElement.textContent, this.securityKey)
       .subscribe(observer);
     this.apiCounter += 1;
+  }
+
+  onRemoveFromBL(index: number) {
+    this.localBlacklist.splice(index, 1);
+    localStorage.setItem('blacklist', JSON.stringify(this.localBlacklist));
+  }
+
+  onAddBLFile() {
+    for (const blackfile of this.localBlacklist) {
+      if (blackfile === this.blacklistInputField) {
+        this.errorMessage = 'ID already exists!';
+        return;
+      }
+    }
+    this.localBlacklist.push(this.blacklistInputField);
+    localStorage.setItem('blacklist', JSON.stringify(this.localBlacklist));
+    this.blacklistInputField = '';
   }
 }

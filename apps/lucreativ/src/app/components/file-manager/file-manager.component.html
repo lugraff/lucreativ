@@ -1,12 +1,12 @@
-<div class="w-screen h-screen elite_v_scrollbar flex flex-col gap-1 p-2 pl-16 bg-bgA">
+<div class="w-screen h-screen elite_v_scrollbar flex flex-col gap-1 p-2 pl-16 bg-bgA animate-fadeIn">
 
     <div class="flex gap-1 h-full">
 
         <div class="flex flex-col gap-1 w-[25vw] min-w-[17rem]">
             <div class="w-full text-center text-5xl font-extralight leading-10 text-primary">EC File Manager</div>
-            <div class="grid grid-cols-2 items-center justify-between gap-1">
-                <button standard *ngIf="apiKey === '';else loggedIn" (click)="this.showLogin = true" icon="featherLogIn"
-                    [disabled]="disableAllButton || this.apiCounter >= 10000">Login</button>
+            <div class="flex flex-wrap items-center justify-between gap-1">
+                <button standard autofocus *ngIf="apiKey === '';else loggedIn" (click)="this.showLogin = true"
+                    icon="featherLogIn" [disabled]="disableAllButton || this.apiCounter >= 10000">Login</button>
                 <ng-template #loggedIn>
                     <button standard (click)="onLogout()" icon="featherLogOut"
                         [disabled]="disableAllButton">Logout</button>
@@ -14,7 +14,8 @@
                 <button standard icon="featherDownloadCloud"
                     [disabled]="disableAllButton || this.apiCounter >= 10000 || apiKey === ''"
                     (click)="onLoadAllFiles()">Fetch</button>
-
+                <button standard icon="featherAlertOctagon" [disabled]="disableAllButton"
+                    (click)="showBlacklist = true">Blacklist</button>
                 <button standard icon="featherUploadCloud"
                     [disabled]="disableAllButton || this.apiCounter > 9000 || apiKey === ''" (click)="onCreateFile()">
                     Create
@@ -25,7 +26,9 @@
                 <global-input-checkbox icon="featherEyeOff" iconStroke="1.5"
                     [disabled]="disableAllButton || securityKey.length === 0" [(ngModel)]="isPrivate">
                     Private</global-input-checkbox>
-
+                <global-input-checkbox [icon]="isLocked? 'featherLock':'featherUnlock'" iconStroke="1.5"
+                    [disabled]="disableAllButton || securityKey.length === 0" [(ngModel)]="isLocked">
+                    Locked</global-input-checkbox>
                 <div class="flex gap-2 justify-end text-end text-sm items-center"
                     [ngClass]="validJSON ? 'text-primary':'text-subtle line-through'">
                     Valid JSON
@@ -62,12 +65,14 @@
         </div>
 
     </div>
-    <!-- <button standard icon="featherDelete" (click)="onDeleteFile()">Delete</button> -->
 </div>
+
 <global-info-popup icon="featherInfo" infoPosition="top" infoAlign="center" [infoOffset]="64"
     [(infoText)]="errorMessage"></global-info-popup>
-<global-popup *ngIf="showLogin" (whenClosing)="showLogin = false;" [minimizeable]="false" icon="featherLock"
-    myTitle="Welcome!" popupWidth="22rem">
+
+<global-popup *ngIf="showLogin" (whenClosing)="showLogin = false;" [minimizeable]="false" icon="featherEdit"
+    myTitle="Welcome, please login!" popupWidth="22rem">
+    <div class="grow"></div>
     <div class="flex flex-col gap-1">
         <global-input-standard icon="featherUser" [(inputText)]="username" [maxLength]="32" placeholderText="Username"
             [spellcheck]="false"></global-input-standard>
@@ -77,5 +82,20 @@
             <button standard (click)="onLogin()" [disabled]="username.length < 2 || password.length < 2">Login</button>
         </div>
     </div>
+    <div class="grow"></div>
 </global-popup>
-<!-- TODO Loading Component  -->
+
+<global-popup *ngIf="showBlacklist" (whenClosing)="showBlacklist = false;" [resizeable]="true" [backCovered]="false"
+    [minimizeable]="true" icon="featherAlertOctagon" iconColor="danger" myTitle="Blacklist">
+    <global-list [data]="localBlacklist" [deleteButton]="true" (deleteOption)="onRemoveFromBL($event)"
+        height="100%"></global-list>
+    <div class="flex justify-between gap-1">
+        <global-input-standard [autofocus]="true" inputType="search" [maxLength]="16"
+            [(inputText)]="blacklistInputField"></global-input-standard>
+        <div></div>
+        <div>
+            <button standard [disabled]="blacklistInputField.length !== 12" icon="featherPlusCircle"
+                (click)="onAddBLFile()">Add</button>
+        </div>
+    </div>
+</global-popup>
