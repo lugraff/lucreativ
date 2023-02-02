@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConnectorService } from '@shared/util-global';
 import {
@@ -30,11 +30,11 @@ import { FormsModule } from '@angular/forms';
   ],
   templateUrl: './file-manager.component.html',
 })
-export class FileManagerComponent {
-  @ViewChild('inputField') inputField2!: ElementRef;
+export class FileManagerComponent implements OnInit {
+  @ViewChild('inputField') inputField!: ElementRef;
   public username = '';
   public password = '';
-  public showLogin = true;
+  public showLogin = false;
   public fileList: string[] = [];
   public securityKey = '';
   public apiKey = '';
@@ -63,11 +63,15 @@ export class FileManagerComponent {
     this.username = localStorage.getItem('user-name') ?? '';
   }
 
+  ngOnInit(): void {
+    this.inputField.nativeElement.textContent = '';
+  }
+
   //TODO bei fetch New* Anzeige
   //TODO Better Requst Bar
   //TODO OpenOnlineFileList
-  //TODO show Login Button
   //TODO Blacklist
+  //TODO am Anfang leere Zeilen im Editor löschen.
 
   public onLogin(): void {
     if (this.username.length < 2 || this.password.length < 2) {
@@ -98,6 +102,10 @@ export class FileManagerComponent {
     }
     this.errorMessage = 'Sorry, user not found!';
   }
+  public onLogout(): void {
+    this.securityKey = '';
+    this.apiKey = '';
+  }
 
   public onNewFileText(event: Event): void {
     this.checkValidJSON();
@@ -106,7 +114,7 @@ export class FileManagerComponent {
     clearTimeout(this.checkTimeout);
     this.checkTimeout = setTimeout(() => {
       try {
-        JSON.parse(this.inputField2.nativeElement.textContent);
+        JSON.parse(this.inputField.nativeElement.textContent);
         this.validJSON = true;
         return true;
       } catch {
@@ -117,7 +125,7 @@ export class FileManagerComponent {
   }
 
   public formatJSON(): void {
-    const saveContent = this.inputField2.nativeElement.textContent;
+    const saveContent = this.inputField.nativeElement.textContent;
     this.fileData = null;
     setTimeout(() => {
       this.fileData = JSON.parse(saveContent);
@@ -157,7 +165,7 @@ export class FileManagerComponent {
         this.refreshInputField = false;
         this.validJSON = false;
         setTimeout(() => {
-          this.inputField2.nativeElement.textContent = error.error.text;
+          this.inputField.nativeElement.textContent = error.error.text;
           this.deepCopy = error.error.text;
         }, 0);
       },
@@ -194,7 +202,7 @@ export class FileManagerComponent {
     this.connector
       .create(
         this.apiKey,
-        JSON.stringify(this.fileData) ?? this.inputField2.nativeElement.textContent,
+        JSON.stringify(this.fileData) ?? this.inputField.nativeElement.textContent,
         this.securityKey,
         this.isPrivate
       )
@@ -210,8 +218,8 @@ export class FileManagerComponent {
 
   public onUpdateFile(): void {
     if (
-      (this.validJSON && this.deepCopy === JSON.stringify(JSON.parse(this.inputField2.nativeElement.textContent))) ||
-      this.deepCopy === this.inputField2.nativeElement.textContent
+      (this.validJSON && this.deepCopy === JSON.stringify(JSON.parse(this.inputField.nativeElement.textContent))) ||
+      this.deepCopy === this.inputField.nativeElement.textContent
     ) {
       this.errorMessage = 'No file changes to save!';
       return;
@@ -223,10 +231,10 @@ export class FileManagerComponent {
     const observer = {
       next: (response: any) => {
         try {
-          JSON.parse(this.inputField2.nativeElement.textContent);
-          this.fileData = JSON.parse(this.inputField2.nativeElement.textContent);
+          JSON.parse(this.inputField.nativeElement.textContent);
+          this.fileData = JSON.parse(this.inputField.nativeElement.textContent);
         } catch {
-          this.inputField2.nativeElement.textContent = response.data;
+          this.inputField.nativeElement.textContent = response.data;
         }
         this.disableAllButton = false;
       },
@@ -236,7 +244,7 @@ export class FileManagerComponent {
       },
     };
     this.connector
-      .overwrite(this.actualFileID, this.inputField2.nativeElement.textContent, this.securityKey)
+      .overwrite(this.actualFileID, this.inputField.nativeElement.textContent, this.securityKey)
       .subscribe(observer);
     this.apiCounter += 1;
   }

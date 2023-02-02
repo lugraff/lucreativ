@@ -4,17 +4,17 @@
 
         <div class="flex flex-col gap-1 w-[25vw] min-w-[17rem]">
             <div class="w-full text-center text-5xl font-extralight leading-10 text-primary">EC File Manager</div>
-            <div class="flex items-center justify-end gap-2"
-                [ngClass]="validJSON ? 'text-primary':'text-subtle line-through'">
-                <div class="text-end text-sm">Valid JSON</div>
-                <div>
-                    <button standard icon="featherTrello" [disabled]="!validJSON" (click)="formatJSON()"></button>
-                </div>
-            </div>
-            <div class="flex flex-wrap gap-1">
+            <div class="grid grid-cols-2 items-center justify-between gap-1">
+                <button standard *ngIf="apiKey === '';else loggedIn" (click)="this.showLogin = true" icon="featherLogIn"
+                    [disabled]="disableAllButton || this.apiCounter >= 10000">Login</button>
+                <ng-template #loggedIn>
+                    <button standard (click)="onLogout()" icon="featherLogOut"
+                        [disabled]="disableAllButton">Logout</button>
+                </ng-template>
                 <button standard icon="featherDownloadCloud"
                     [disabled]="disableAllButton || this.apiCounter >= 10000 || apiKey === ''"
                     (click)="onLoadAllFiles()">Fetch</button>
+
                 <button standard icon="featherUploadCloud"
                     [disabled]="disableAllButton || this.apiCounter > 9000 || apiKey === ''" (click)="onCreateFile()">
                     Create
@@ -22,14 +22,24 @@
                 <button standard icon="featherRefreshCw"
                     [disabled]="disableAllButton || this.apiCounter > 9000 || actualFileID === ''"
                     (click)="onUpdateFile()">Update</button>
-            </div>
-            <div class="flex gap-1 justify-between">
                 <global-input-checkbox icon="featherEyeOff" iconStroke="1.5"
                     [disabled]="disableAllButton || securityKey.length === 0" [(ngModel)]="isPrivate">
                     Private</global-input-checkbox>
-                <global-input-standard [(ngModel)]="securityKey" placeholderText="Security-Key" icon="featherKey"
+
+                <div class="flex gap-2 justify-end text-end text-sm items-center"
+                    [ngClass]="validJSON ? 'text-primary':'text-subtle line-through'">
+                    Valid JSON
+                    <div>
+                        <button standard icon="featherTrello" [disabled]="!validJSON" (click)="formatJSON()"></button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="flex gap-1 justify-between">
+
+                <!-- <global-input-standard [(ngModel)]="securityKey" placeholderText="Security-Key" icon="featherKey"
                     iconColor="subtle" iconStroke="1.25" [maxLength]="16"
-                    [disabled]="disableAllButton"></global-input-standard>
+                    [disabled]="disableAllButton"></global-input-standard> -->
             </div>
             <global-list [data]="fileList" [deleteButton]="true"
                 [disabledDeleteButtons]="disableAllButton || this.apiCounter > 9500" [selected]="actualFileID"
