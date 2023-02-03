@@ -30,14 +30,16 @@ import { FormsModule } from '@angular/forms';
   ],
   templateUrl: './file-manager.component.html',
 })
-export class FileManagerComponent implements AfterViewInit {
+export class FileManagerComponent implements AfterViewInit {//Für neuen USER: Name und id zu "users" hinzufügen und id zu "globalBlacklist hinzufügen."
+  private readonly users = [{ name: 'Lucas', fileId: '674f0292242a' }];
+  public readonly nativeFileList: string[] = [];
+  public readonly globalBlacklist: string[] = ['28f3961ccff3', '674f0292242a'];
   @ViewChild('inputField') inputField!: ElementRef;
   public username = '';
   public password = '';
   public showLogin = false;
   public showBlacklist = false;
-  public fileList: string[] = [];
-  public globalBlacklist: string[] = ['28f3961ccff3'];
+  public fileList: string[] = this.nativeFileList;
   public localBlacklist: string[] = [];
   public securityKey = '';
   public apiKey = '';
@@ -60,12 +62,10 @@ export class FileManagerComponent implements AfterViewInit {
   public objectValues = Object.values;
   public stringify = JSON.stringify;
 
-  private users = [{ name: 'Lucas', fileId: '674f0292242a' }];
-
   constructor(private connector: ConnectorService) {
     try {
       this.setApiCounter(JSON.parse(localStorage.getItem('apiCounter') ?? '9500'));
-      this.fileList = JSON.parse(localStorage.getItem('file-list') ?? '[]');
+      this.fileList = JSON.parse(localStorage.getItem('file-list') ?? JSON.stringify(this.nativeFileList));
       this.username = localStorage.getItem('user-name') ?? '';
       this.localBlacklist = JSON.parse(localStorage.getItem('blacklist') ?? '[]');
     } catch {
@@ -81,9 +81,6 @@ export class FileManagerComponent implements AfterViewInit {
 
   //TODO bei fetch New* Anzeige
   //TODO Better Requst Bar
-  //TODO OpenOnlineFileList
-  //TODO Create new User
-  //TODO Users online stellen
   //TODO Loading Component
 
   public onLogin(): void {
@@ -139,24 +136,25 @@ export class FileManagerComponent implements AfterViewInit {
 
   public formatJSON(): void {
     const saveContent = this.inputField.nativeElement.textContent;
-    this.fileData = null;
+    this.refreshInputField = true;
+    this.fileData = undefined;
     setTimeout(() => {
       this.fileData = JSON.parse(saveContent);
+      this.refreshInputField = false;
     });
   }
 
-  public onLoadAllFiles(): void {
-    this.disableAllButton = true;
+  public fetch(): void {
     this.connector.getAll(this.apiKey).subscribe((response) => this.fetchedData(response));
   }
   private fetchedData(newData: any): void {
     this.setApiCounter(Number(newData.headers.get('x-counter')));
-    this.fileList = [];
+    this.fileList = this.nativeFileList;
     for (const fileID of newData.body) {
-      if (this.localBlacklist.includes(fileID)) {
+      if (this.globalBlacklist.includes(fileID)) {
         continue;
       }
-      if (this.globalBlacklist.includes(fileID)) {
+      if (this.localBlacklist.includes(fileID)) {
         continue;
       }
       this.fileList.push(fileID);
@@ -186,10 +184,15 @@ export class FileManagerComponent implements AfterViewInit {
       error: (error: any) => {
         this.refreshInputField = false;
         this.validJSON = false;
+        if (error.status !== 200) {
+          this.errorMessage = error.error.message;
+          this.actualFileID = '';
+        }
+        console.log(error);
         setTimeout(() => {
           this.inputField.nativeElement.textContent = error.error.text;
           this.deepCopy = error.error.text;
-        }, 0);
+        });
       },
     };
     this.connector.getFile(id, this.securityKey).subscribe(observer);

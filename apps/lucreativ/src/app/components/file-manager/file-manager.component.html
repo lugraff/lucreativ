@@ -13,7 +13,7 @@
                 </ng-template>
                 <button standard icon="featherDownloadCloud"
                     [disabled]="disableAllButton || this.apiCounter >= 10000 || apiKey === ''"
-                    (click)="onLoadAllFiles()">Fetch</button>
+                    (click)="fetch()">Fetch</button>
                 <button standard icon="featherAlertOctagon" [disabled]="disableAllButton"
                     (click)="showBlacklist = true">Blacklist</button>
                 <button standard icon="featherUploadCloud"
