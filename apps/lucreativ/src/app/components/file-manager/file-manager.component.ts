@@ -63,10 +63,17 @@ export class FileManagerComponent implements AfterViewInit {
   private users = [{ name: 'Lucas', fileId: '674f0292242a' }];
 
   constructor(private connector: ConnectorService) {
-    this.setApiCounter(JSON.parse(localStorage.getItem('apiCounter') ?? '9500'));
-    this.fileList = JSON.parse(localStorage.getItem('file-list') ?? '[]');
-    this.username = localStorage.getItem('user-name') ?? '';
-    this.localBlacklist = JSON.parse(localStorage.getItem('blacklist') ?? '');
+    try {
+      this.setApiCounter(JSON.parse(localStorage.getItem('apiCounter') ?? '9500'));
+      this.fileList = JSON.parse(localStorage.getItem('file-list') ?? '[]');
+      this.username = localStorage.getItem('user-name') ?? '';
+      this.localBlacklist = JSON.parse(localStorage.getItem('blacklist') ?? '[]');
+    } catch {
+      localStorage.setItem('apiCounter', '9500');
+      localStorage.setItem('file-list', '[]');
+      localStorage.setItem('user-name', '');
+      localStorage.setItem('blacklist', '[]');
+    }
   }
   ngAfterViewInit(): void {
     this.inputField.nativeElement.textContent = '';
