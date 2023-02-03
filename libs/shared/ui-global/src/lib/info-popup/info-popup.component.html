@@ -2,9 +2,10 @@
   *ngIf="infoText"
   class="{{
     globalUISettings.AnimationType
-  }} text-secondary from-bgB to-bgA bg-gradient-to-b shadow-bgA shadow-lg border-subtle border select-none pointer-events-none">
-  <div class="flex p-2">
-    <div class="pr-1">
+  }} flex items-center text-secondary from-bgB to-bgA bg-gradient-to-b shadow-bgA shadow-lg border-subtle border pr-2"
+  [ngClass]="{ 'animate-fadeIn': globalUISettings.AnimationType === '' }">
+  <div class="flex items-center p-2">
+    <div class="pr-2">
       <global-icon
         [icon]="icon"
         [strokeWidth]="iconStroke"
@@ -12,8 +13,14 @@
         [color]="iconColor">
       </global-icon>
     </div>
-    <div class="my-auto break-normal whitespace-pre-line text-lg">
+    <div class="my-auto break-normal whitespace-pre-line text-lg max-w-[50vw]">
       {{ infoText }}
     </div>
   </div>
+  <button
+    *ngIf="showOK"
+    standard
+    (click)="OnClose()">
+    OK
+  </button>
 </div>

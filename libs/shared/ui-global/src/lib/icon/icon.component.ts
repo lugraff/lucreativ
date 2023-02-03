@@ -290,6 +290,9 @@ import {
   featherZoomIn,
   featherZoomOut,
 } from '@ng-icons/feather-icons';
+import { getTailwindColorHexCode } from '@shared/util-global';
+//TODO size & stroke kontrollieren
+// INFO: Hier Icons laden! ICONS: https://ng-icons.github.io/ng-icons/#/browse-icons
 @Component({
   standalone: true,
   imports: [CommonModule, NgIconComponent],
@@ -607,11 +610,11 @@ import {
 export class IconComponent implements OnChanges {
   @Input() public icon: string | undefined = undefined;
   public _icon = '';
-  @Input() public strokeWidth: string | number | undefined = undefined;
+  @Input() public strokeWidth: string | number | undefined = 1.5;
   @Input() public size = '1.5rem';
   @Input() public color = '';
   public _color = '';
-  private readonly icons = [
+  public readonly icons = [
     featherActivity,
     'featherAirplay',
     'featherAlertCircle',
@@ -900,22 +903,6 @@ export class IconComponent implements OnChanges {
     'featherZoomIn',
     'featherZoomOut',
   ];
-  private readonly tailwindColors: { [key: string]: string } = {
-    textA: '#ffffff',
-    textB: '#000000',
-    warning: '#ffcc00',
-    danger: '#f54b4c',
-    primaryH: '#9de04b',
-    primaryK: '#ec7100',
-    primaryW: '#8adafe',
-    primary: '#9de04b',
-    secondary: '#d9d9d9',
-    tertiary: '#b4b4b4',
-    selection: '#37473a',
-    bgB: '#2b3738',
-    bgA: '#222c2d',
-    subtle: '#646464',
-  };
 
   public ngOnChanges(changes: SimpleChanges): void {
     const changeIcon: SimpleChange = changes['icon'];
@@ -923,25 +910,16 @@ export class IconComponent implements OnChanges {
     if (changeIcon || changeColor) {
       if (this.icon !== undefined) {
         this._icon = this.iconExists(this.icon);
-        this._color = this.iconColor(this.color);
+        this._color = getTailwindColorHexCode(this.color);
       }
     }
   }
 
-  public iconExists(icon: string): string {
+  private iconExists(icon: string): string {
     if (this.icons.includes(icon)) {
       return icon;
     }
     this.color = '#646464';
     return 'featherHelpCircle';
-  }
-
-  public iconColor(color: string): string {
-    for (const keyName of Object.keys(this.tailwindColors)) {
-      if (color === keyName) {
-        return this.tailwindColors[color];
-      }
-    }
-    return color;
   }
 }

@@ -14,5 +14,6 @@ export * from './lib/entities/ec-online-file';
 export * from './lib/entities/ec-local-file';
 export * from './lib/entities/vector2';
 export * from './lib/entities/tooltip-settings';
+export * from './lib/entities/tailwind-colors';
 
 export * from './lib/tooltip.directive';

@@ -1,32 +1,66 @@
-<div *ngIf="!redraw" class="flex flex-col max-h-full min-w-fit elite_v_scrollbar border border-subtle"
-  [ngStyle]="{ 'height': windowHeight.toString(), 'width': windowWidth.toString() }">
-  <table mat-sort cdk-table [dataSource]="data">
-    <ng-container *ngFor="let column of tableData.columns" [cdkColumnDef]="column.keyName">
-      <th class="relative bg-subtle p-1 cursor-pointer font-semibold !z-[5]" (click)="onTitleClick(column.keyName)"
-        [ngStyle]="{ width: column.width ?? ' ' }" cdk-header-cell *cdkHeaderCellDef>
-        <div class="overflow-clip max-h-6 break-all" [globalTooltip]="column.displayName">
+<div
+  *ngIf="tableDataCopy$ | async as pipedData"
+  class="flex flex-col max-h-full min-w-fit elite_v_scrollbar border border-subtle text-textA"
+  [ngStyle]="{ height: windowHeight.toString(), width: windowWidth.toString() }">
+  <table
+    cdk-table
+    [dataSource]="pipedData.data">
+    <ng-container
+      *ngFor="let column of pipedData.columns; let i = index"
+      [cdkColumnDef]="column.keyName">
+      <th
+        class="relative bg-subtle p-1 cursor-pointer font-semibold !z-[5]"
+        (click)="onTitleClick(column.keyName, i)"
+        [ngStyle]="{ width: column.width ?? '' }"
+        cdk-header-cell
+        *cdkHeaderCellDef>
+        <div
+          class="overflow-clip max-h-6 break-all"
+          [globalTooltip]="column.displayName"
+          [ttPosition]="ttPosition"
+          [ttAlign]="ttAlign"
+          [ttAnchor]="ttAnchor"
+          [ttOffset]="ttOffset">
           <div class="flex justify-center">
             <div>{{ column.displayName }}</div>
-            <div [ngClass]="sortedBy === column.keyName ? '' : 'invisible'">
+            <div
+              [ngClass]="sortedBy === column.keyName ? '' : 'invisible'"
+              class="pl-1">
               {{ asc ? '▼' : '▲' }}
             </div>
           </div>
         </div>
       </th>
-      <td cdk-cell *cdkCellDef="let row" class="border-r border-subtle p-1">
-        <div *ngIf="row[column.keyName] !== undefined && row[column.keyName] !== null">
-          <container-element [ngSwitch]="column.type" (click)="onCellClick(row, column)">
+
+      <td
+        cdk-cell
+        *cdkCellDef="let row"
+        class="border-r border-subtle p-1">
+        <!-- check for different displaying versions -->
+        <div
+          *ngIf="row[column.keyName] !== undefined && row[column.keyName] !== null"
+          [ngClass]="{ 'cursor-pointer': column.clickAction !== undefined && column.clickAction !== '' }"
+          (click)="onCellClick(row, column)">
+          <container-element [ngSwitch]="column.type">
             <div *ngSwitchCase="'icon'">
-              <global-icon [icon]="row[column.keyName]"
-                [ngStyle]="column.colored && row['ColorCode'] ? { color: row['ColorCode'] } : {}">
+              <global-icon
+                [icon]="row[column.keyName]"
+                [color]="column.colored && row['ColorCode'] ? row['ColorCode'] : ''">
               </global-icon>
             </div>
+
             <div *ngSwitchCase="'boolIcon'">
-              <div [ngSwitch]="true" class="flex justify-center">
-                <global-icon *ngSwitchCase="boolTrueValues.includes(row[column.keyName])" icon="featherCheckCircle"
+              <div
+                [ngSwitch]="true"
+                class="flex justify-center">
+                <global-icon
+                  *ngSwitchCase="boolTrueValues.includes(row[column.keyName])"
+                  icon="featherCheckCircle"
                   color="primary">
                 </global-icon>
-                <global-icon *ngSwitchCase="boolFalseValues.includes(row[column.keyName])" icon="featherXCircle"
+                <global-icon
+                  *ngSwitchCase="boolFalseValues.includes(row[column.keyName])"
+                  icon="featherXCircle"
                   color="danger">
                 </global-icon>
                 <div *ngSwitchDefault>
@@ -35,11 +69,17 @@
               </div>
             </div>
 
-            <div *ngSwitchDefault class="font-light whitespace-pre-wrap" [ngClass]="
+            <div
+              *ngSwitchDefault
+              class="font-light whitespace-pre-wrap"
+              [ngClass]="
                 row[column.keyName].length <= 10 || row[column.keyName]?.toString().includes(' ')
                   ? 'break-words'
                   : 'break-all'
-              " [ngStyle]="column.colored && row['ColorCode'] ? { color: row['ColorCode'] } : {}">
+              "
+              [ngStyle]="
+                column.colored && row['ColorCode'] ? { color: thisGetTailwindColorHexCode(row['ColorCode']) } : {}
+              ">
               {{ row[column.keyName] }}
             </div>
           </container-element>
@@ -48,11 +88,27 @@
       <!-- <td class="bg-warning" cdk-footer-cell *cdkFooterCellDef="">{{ def.title }}</td> -->
     </ng-container>
 
-    <tr cdk-header-row *cdkHeaderRowDef="displayedCols; sticky: true"></tr>
-    <tr cdk-row *cdkRowDef="let row; columns: displayedCols" class="even:bg-bgB odd:bg-bgA"></tr>
+    <tr
+      cdk-header-row
+      *cdkHeaderRowDef="displayedCols; sticky: true"></tr>
+    <tr
+      cdk-row
+      *cdkRowDef="let row; columns: displayedCols"
+      class="even:bg-bgB odd:bg-bgA"></tr>
     <!-- <tr cdk-footer-row *cdkFooterRowDef="displayedCols; sticky: true"></tr> -->
   </table>
+  <global-loading-spinner
+    *ngIf="loading"
+    [showInstantly]="true"
+    class="fixed left-1/2 top-1/2">
+  </global-loading-spinner>
 </div>
+<!-- <pre>
+  {{ tableDataCopy$ | async | json }}
+</pre> -->
 
-<global-info-popup [(infoText)]="copyMessage" [infoTimeout]="5000" icon="featherInfo" iconColor="warning">
+<global-info-popup
+  [(infoText)]="copyMessage"
+  icon="featherInfo"
+  iconColor="warning">
 </global-info-popup>

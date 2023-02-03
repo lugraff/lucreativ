@@ -10,33 +10,28 @@ import {
   SimpleChange,
   SimpleChanges,
 } from '@angular/core';
+import { Vector2 } from '@shared/util-global';
 import { GlobalUISettingsService } from '@shared/util-settings';
+import { ButtonStandardComponent } from '../button-standard/button-standard.component';
 import { IconComponent } from '../icon/icon.component';
-
-export interface Position2 {
-  x: number;
-  y: number;
-}
 
 @Component({
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule, IconComponent, ButtonStandardComponent],
   selector: 'global-info-popup',
   templateUrl: './info-popup.component.html',
 })
-
-//TODO Positioning & flicker bug
 export class InfoPopupComponent implements OnChanges {
   @Input() public infoText = '';
   @Output() public infoTextChange = new EventEmitter();
-  @Input() public infoTimeout = 2000;
+  @Input() public infoTimeout = 0;
   @Input() public infoPosition = 'right'; //'top', 'left', 'right', 'bottom'
   @Input() public infoAlign = 'end'; //'start', 'center', 'end'
   @Input() public infoOffset = 64; //TODO Offset auf Align rechnen? Dann wäre bottom end default
-  //TODO reload from foweb
+  @Input() public showOK = false;
 
   @Input() public icon = '';
-  @Input() public iconStroke: string | number | undefined = undefined;
+  @Input() public iconStroke: string | number | undefined = 1.5;
   @Input() public iconSize = '1.5rem';
   @Input() public iconColor = '';
 
@@ -56,11 +51,22 @@ export class InfoPopupComponent implements OnChanges {
       clearTimeout(this.hideTimeout);
       this.hideTimeout = setTimeout(() => {
         this.ResetInfoPopup();
-      }, this.infoTimeout);
+      }, this.calcDisplayTime());
     }
   }
 
-  private OnClose(): void {
+  private calcDisplayTime(): number {
+    let displayTimeout = this.infoTimeout;
+    if (displayTimeout <= 0) {
+      displayTimeout = this.infoText.length * 33;
+      if (displayTimeout < 2000) {
+        displayTimeout = 2000;
+      }
+    }
+    return displayTimeout;
+  }
+
+  public OnClose(): void {
     clearTimeout(this.hideTimeout);
     this.ResetInfoPopup();
   }
@@ -74,7 +80,7 @@ export class InfoPopupComponent implements OnChanges {
     this.elRef.nativeElement.style.left = '0px';
     this.elRef.nativeElement.style.top = '0px';
     setTimeout(() => {
-      let position: Position2 = { x: 0, y: 0 };
+      let position: Vector2 = { x: 0, y: 0 };
       position = this.calcScreenPos(
         this.infoPosition,
         this.infoAlign,
@@ -86,8 +92,8 @@ export class InfoPopupComponent implements OnChanges {
     }, 0);
   }
 
-  private calcScreenPos(position: string, align: string, offset: number, rectInfoPopup: DOMRect): Position2 {
-    let newPosition: Position2 = { x: 0, y: 0 };
+  private calcScreenPos(position: string, align: string, offset: number, rectInfoPopup: DOMRect): Vector2 {
+    let newPosition: Vector2 = { x: 0, y: 0 };
     let alignValue = 0.5;
     if (align === 'start') {
       alignValue = 0;
