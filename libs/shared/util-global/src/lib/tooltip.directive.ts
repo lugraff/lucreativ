@@ -8,11 +8,14 @@ import { TooltipService } from './services/tooltip.service';
 })
 export class TooltipDirective {
   @Input() public globalTooltip = '';
-  @Input() public ttIcon = '';
   @Input() public ttPosition = 'top'; //'top', 'left', 'right', 'bottom'
   @Input() public ttAlign = 'center'; //'start', 'center', 'end'
   @Input() public ttAnchor = 'parent'; //'mouse', 'parent', 'screen'
   @Input() public ttOffset = 8;
+  @Input() public ttIcon = '';
+  @Input() public ttIconStroke: string | number | undefined = undefined;
+  @Input() public ttIconSize = '1.5rem';
+  @Input() public ttIconColor = '';
   private delayTimeout = setTimeout(() => {
     console.log;
   }, 100);
@@ -56,6 +59,9 @@ export class TooltipDirective {
         offset: this.ttOffset,
         text: this.globalTooltip,
         icon: this.ttIcon,
+        iconStroke: this.ttIconStroke,
+        ttIconSize: this.ttIconSize,
+        ttIconColor: this.ttIconColor,
         mouseEvent: this.lastMouseEvent,
       });
     }, this.GetTooltipDelay());
