@@ -12,6 +12,7 @@ export * from './lib/entities/table-data';
 export * from './lib/entities/ec-file';
 export * from './lib/entities/ec-online-file';
 export * from './lib/entities/ec-local-file';
-
+export * from './lib/entities/vector2';
 export * from './lib/entities/tooltip-settings';
+
 export * from './lib/tooltip.directive';

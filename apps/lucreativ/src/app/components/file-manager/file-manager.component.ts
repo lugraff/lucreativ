@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConnectorService } from '@shared/util-global';
 import {
@@ -30,7 +30,8 @@ import { FormsModule } from '@angular/forms';
   ],
   templateUrl: './file-manager.component.html',
 })
-export class FileManagerComponent implements AfterViewInit {//Für neuen USER: Name und id zu "users" hinzufügen und id zu "globalBlacklist hinzufügen."
+export class FileManagerComponent implements AfterViewInit {
+  //Für neuen USER: Name und id zu "users" hinzufügen und id zu "globalBlacklist hinzufügen."
   private readonly users = [{ name: 'Lucas', fileId: '674f0292242a' }];
   public readonly nativeFileList: string[] = [];
   public readonly globalBlacklist: string[] = ['28f3961ccff3', '674f0292242a'];
@@ -79,9 +80,13 @@ export class FileManagerComponent implements AfterViewInit {//Für neuen USER: N
     this.inputField.nativeElement.textContent = '';
   }
 
-  //TODO bei fetch New* Anzeige
-  //TODO Better Requst Bar
   //TODO Loading Component
+  //TODO Info Component neu
+  //TODO TOOLTIPS
+  //TODO Liste mit Filenamen?
+  //TODO Andere DateiFormate?
+  //TODO Buttonanordnug
+  //TODO Mobile Responsive Orientation?
 
   public onLogin(): void {
     if (this.username.length < 2 || this.password.length < 2) {
@@ -101,7 +106,7 @@ export class FileManagerComponent implements AfterViewInit {//Für neuen USER: N
             localStorage.setItem('user-name', this.username);
             this.showLogin = false;
           },
-          error: (error: any) => {
+          error: () => {
             this.errorMessage = 'Login failed!';
           },
         };
@@ -150,6 +155,8 @@ export class FileManagerComponent implements AfterViewInit {//Für neuen USER: N
   private fetchedData(newData: any): void {
     this.setApiCounter(Number(newData.headers.get('x-counter')));
     this.fileList = this.nativeFileList;
+    const lastKnownFiles = JSON.parse(localStorage.getItem('file-list') ?? '[]');
+    let counter = 0;
     for (const fileID of newData.body) {
       if (this.globalBlacklist.includes(fileID)) {
         continue;
@@ -158,6 +165,14 @@ export class FileManagerComponent implements AfterViewInit {//Für neuen USER: N
         continue;
       }
       this.fileList.push(fileID);
+      if (!lastKnownFiles.includes(fileID)) {
+        counter++;
+      }
+    }
+    if (counter === 1) {
+      this.errorMessage = counter + ' new file!';
+    } else if (counter > 1) {
+      this.errorMessage = counter + ' new files!';
     }
     localStorage.setItem('file-list', JSON.stringify(this.fileList));
     this.disableAllButton = false;

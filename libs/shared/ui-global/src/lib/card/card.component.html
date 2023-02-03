@@ -1,0 +1,17 @@
+<div
+  *ngIf="myTitle.length"
+  class="elite_text_headerC pb-2">
+  {{ myTitle }}
+</div>
+<div class="flex gap-4 items-center">
+  <global-icon
+    *ngIf="icon.length"
+    [icon]="icon"
+    [strokeWidth]="iconStroke"
+    [size]="iconSize"
+    [color]="iconColor">
+  </global-icon>
+  <div class="w-full h-full my-auto break-normal whitespace-pre-line">
+    <ng-content></ng-content>
+  </div>
+</div>
