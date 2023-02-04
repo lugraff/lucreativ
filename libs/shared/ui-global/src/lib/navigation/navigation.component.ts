@@ -25,7 +25,7 @@ import { TooltipDirective } from '@shared/util-global';
 export class NavigationComponent {
   public showLocalSettings = false;
   public expanded = false;
-  public version = '1.1.1';
+  public version = '1.1.2';
 
   constructor(public router: Router) {}
 
