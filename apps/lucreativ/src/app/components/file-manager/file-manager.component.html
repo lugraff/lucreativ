@@ -2,55 +2,70 @@
 
     <div class="flex gap-1 h-full">
 
-        <div class="flex flex-col gap-1 w-[25vw] min-w-[17rem]">
+        <div class="flex flex-col gap-1 w-72">
 
             <div class="w-full text-center text-5xl font-extralight leading-10 text-primary">EC File Manager</div>
 
-            <div class="flex flex-wrap items-center justify-between gap-1">
+            <div class="grid grid-cols-2 items-center justify-between gap-1">
                 <button standard autofocus *ngIf="apiKey === '';else loggedIn" (click)="this.showLogin = true"
-                    icon="featherLogIn" iconColor="textB" [disabled]="disableAllButton || this.apiCounter >= 10000">Login</button>
+                    icon="featherLogIn" iconColor="textB"
+                    globalTooltip="If you are logged in, you can create your own files." ttPosition="right"
+                    ttIcon="featherInfo" ttIconColor="warning"
+                    [disabled]="disableAllButton || this.apiCounter >= 10000">Login</button>
                 <ng-template #loggedIn>
                     <button standard iconColor="textB" (click)="onLogout()" icon="featherLogOut"
                         [disabled]="disableAllButton">Logout</button>
                 </ng-template>
                 <button standard iconColor="textB" icon="featherDownloadCloud"
-                    [disabled]="disableAllButton || this.apiCounter >= 10000 || apiKey === ''"
-                    (click)="fetch()">Fetch</button>
+                    [disabled]="disableAllButton || this.apiCounter >= 10000 || apiKey === ''" (click)="fetch()"
+                    globalTooltip="Updates the list of all public files." ttPosition="right" ttIcon="featherInfo"
+                    ttIconColor="warning">Fetch</button>
                 <button standard iconColor="textB" icon="featherAlertOctagon" [disabled]="disableAllButton"
-                    (click)="showBlacklist = true">Blacklist</button>
+                    (click)="showBlacklist = true"
+                    globalTooltip="Determine which files you do not want to be displayed." ttPosition="right"
+                    ttIcon="featherInfo" ttIconColor="warning">Blacklist</button>
                 <button standard iconColor="textB" icon="featherUploadCloud"
+                    globalTooltip="A new file with the current text will be created." ttPosition="right"
+                    ttIcon="featherInfo" ttIconColor="warning"
                     [disabled]="disableAllButton || this.apiCounter > 9000 || apiKey === ''" (click)="onCreateFile()">
                     Create
                 </button>
                 <button standard iconColor="textB" icon="featherRefreshCw"
                     [disabled]="disableAllButton || this.apiCounter > 9000 || actualFileID === ''"
-                    (click)="onUpdateFile()">Update</button>
-                <global-input-checkbox iconColor="textB" [icon]="isPrivate? 'featherEyeOff':'featherEye'" iconStroke="1.5"
-                    [disabled]="disableAllButton || securityKey.length === 0" [(ngModel)]="isPrivate">
+                    (click)="onUpdateFile()" globalTooltip="The actual file will be updated." ttPosition="right"
+                    ttIcon="featherInfo" ttIconColor="warning">Update</button>
+                <button standard icon="featherTrello" iconColor="textB" [disabled]="!validJSON" (click)="formatJSON()"
+                    globalTooltip="Is active if the text has a valid JSON format and formats it when clicked."
+                    ttPosition="right" ttIcon="featherInfo" ttIconColor="warning">Format</button>
+                <global-input-checkbox iconColor="textB" [icon]="isPrivate? 'featherEyeOff':'featherEye'"
+                    iconStroke="1.5" [disabled]="disableAllButton || securityKey.length === 0" [(ngModel)]="isPrivate"
+                    globalTooltip="If Private is active, the file can be opened only with security key."
+                    ttPosition="right" ttIcon="featherInfo" ttIconColor="warning">
                     Private</global-input-checkbox>
-                <global-input-checkbox iconColor="textB" [icon]="isLocked? 'featherLock':'featherUnlock'" iconStroke="1.5"
-                    [disabled]="disableAllButton || securityKey.length === 0" [(ngModel)]="isLocked">
+                <global-input-checkbox iconColor="textB" [icon]="isLocked? 'featherLock':'featherUnlock'"
+                    iconStroke="1.5" [disabled]="disableAllButton || securityKey.length === 0" [(ngModel)]="isLocked"
+                    globalTooltip="When 'Locked' is active, only you can modify or delete the file. But others can read it."
+                    ttPosition="right" ttIcon="featherInfo" ttIconColor="warning">
                     Locked</global-input-checkbox>
-                <div class="flex gap-2 justify-end text-end text-sm items-center"
-                    [ngClass]="validJSON ? 'text-primary':'text-subtle line-through'">
-                    Valid JSON
-                    <div>
-                        <button iconColor="textB" standard icon="featherTrello" [disabled]="!validJSON" (click)="formatJSON()"></button>
-                    </div>
-                </div>
             </div>
 
             <global-list [data]="fileList" [deleteButton]="true"
                 [disabledDeleteButtons]="disableAllButton || this.apiCounter > 9500" [selected]="actualFileID"
-                width="100%" height="100%" (optionSelect)="onLoadFile($event)"
-                (deleteOption)="onDeleteFile($event)">file list</global-list>
-            <div class="text-xs font-semibold text-subtle leading-4">{{apiCounter}} of 10000 requests/month
+                width="100%" height="100%" (optionSelect)="onLoadFile($event)" (deleteOption)="onDeleteFile($event)"
+                globalTooltip="Shows all files that are not in the blacklist. Click on them to load them. With the x symbol you can delete the file."
+                ttPosition="right" ttIcon="featherInfo" ttIconColor="warning">file
+                list</global-list>
+            <div class="text-xs font-semibold text-subtle leading-4"
+                globalTooltip="The monthly remaining request is displayed here. From 9000 requests you can only read files! "
+                ttPosition="top" ttIcon="featherInfo" ttIconColor="warning">{{apiCounter}} of 10000 requests/month
             </div>
             <div class="rounded-full h-2" [ngStyle]="{ width: (apiCounter/125)+'%' }"
                 [ngClass]="apiCounter > 9000 ? 'bg-warning':'bg-primary'" [class.bg-danger]="apiCounter >= 10000"></div>
         </div>
 
-        <div class="grow text-tertiary bg-textB border-bgB border-2 rounded-md elite_v_scrollbar">
+        <div class="grow text-tertiary bg-textB border-bgB border-2 rounded-md elite_v_scrollbar"
+            globalTooltip="This is the text window for the files." ttPosition="left" ttIcon="featherInfo"
+            ttIconColor="warning">
             <pre #inputField *ngIf="!refreshInputField" [contentEditable]="true" [spellcheck]="false"
                 (input)="onNewFileText($event)" class="h-full w-full outline-none">
             {{fileData|json}}
@@ -70,7 +85,8 @@
         <global-input-standard icon="featherUser" [(inputText)]="username" [maxLength]="32" placeholderText="Username"
             [spellcheck]="false"></global-input-standard>
         <global-input-standard icon="featherKey" [(inputText)]="password" inputType="password" [maxLength]="32"
-            placeholderText="Password" [spellcheck]="false"></global-input-standard>
+            placeholderText="Password" [spellcheck]="false" [autofocus]="true"
+            (inputTextOutput)="onLogin()"></global-input-standard>
         <div class="self-end">
             <button standard (click)="onLogin()" [disabled]="username.length < 2 || password.length < 2">Login</button>
         </div>

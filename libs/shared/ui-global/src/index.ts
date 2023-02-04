@@ -10,3 +10,5 @@ export * from './lib/input-checkbox/input-checkbox.component';
 export * from './lib/input-standard/input-standard.component';
 export * from './lib/list/list.component';
 export * from './lib/popup/popup.component';
+export * from './lib/tooltip/tooltip.component';
+export * from './lib/local-settings/local-settings.component';

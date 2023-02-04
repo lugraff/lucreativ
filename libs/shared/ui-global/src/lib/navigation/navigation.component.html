@@ -8,7 +8,9 @@
   <div class="grow flex flex-col gap-2 items-center overflow-y-auto overflow-x-clip py-2">
     <ng-container *ngFor="let route of router.config">
       <ng-container *ngIf="route.path !== undefined && route.path !== '**' && route.path !== 'page-not-found'">
-        <button link [routerLink]="route.path" [icon]="getRouteData(route)" iconColor="textB">
+        <button link [routerLink]="route.path" [icon]="getRouteData(route)" iconColor="textB"
+          [globalTooltip]="route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component'"
+          ttPosition="right" ttIcon="featherNavigation" ttIconColor="textA">
 
           <div *ngIf="expanded">
             {{ route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component' }}
@@ -17,6 +19,15 @@
         </button>
       </ng-container>
     </ng-container>
+    <button link icon="featherTool" iconColor="textB" (click)="showLocalSettings = true"
+      globalTooltip="Displays the local settings." ttPosition="right" ttIcon="featherNavigation" ttIconColor="textA">
+      <div *ngIf="expanded">Local Settings</div>
+    </button>
   </div>
   <div *ngIf="expanded" class="text-subtle text-sm animate-fadeIn">{{version}}</div>
 </div>
+
+<global-popup *ngIf="showLocalSettings" myTitle="Local Settings" [closeable]="true" [minimizeable]="true"
+  [backCovered]="false" [resizeable]="false" (whenClosing)="showLocalSettings = false">
+  <global-local-settings></global-local-settings>
+</global-popup>

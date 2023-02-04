@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ConnectorService } from '@shared/util-global';
+import { ConnectorService, TooltipDirective } from '@shared/util-global';
 import {
   ButtonLinkComponent,
   ButtonStandardComponent,
@@ -27,6 +27,7 @@ import { FormsModule } from '@angular/forms';
     InputCheckboxComponent,
     InfoPopupComponent,
     PopupComponent,
+    TooltipDirective,
   ],
   templateUrl: './file-manager.component.html',
 })
@@ -81,11 +82,9 @@ export class FileManagerComponent implements AfterViewInit {
   }
 
   //TODO Loading Component
-  //TODO Info Component neu
   //TODO TOOLTIPS
   //TODO Liste mit Filenamen?
   //TODO Andere DateiFormate?
-  //TODO Buttonanordnug
   //TODO Mobile Responsive Orientation?
 
   public onLogin(): void {
