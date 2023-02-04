@@ -6,13 +6,17 @@ import { IconComponent } from '../icon/icon.component';
   standalone: true,
   imports: [CommonModule, IconComponent],
   // eslint-disable-next-line @angular-eslint/component-selector
-  selector: '[list]',
+  selector: 'button[list]',
   template: `<div
     class="flex gap-1 items-center"
     [ngClass]="selected ? 'text-primary underline underline-offset-4' : ''">
     <global-icon
+      *ngIf="icon.length"
       [icon]="icon"
-      strokeWidth="1.2"></global-icon>
+      [strokeWidth]="iconStroke"
+      [size]="iconSize"
+      [color]="iconColor">
+    </global-icon>
     <ng-content></ng-content>
   </div>`,
 })
@@ -22,6 +26,10 @@ export class ButtonListComponent {
   @HostBinding('class') public class =
     'active:brightness-75 hover:border-primary hover:text-textA hover:from-bgB to-transparent bg-gradient-to-r border-y-2 border-transparent rounded-full text-tertiary text-xl font-normal' +
     this.classBase;
+  @Input() public activeButton = false;
   @Input() public icon = '';
+  @Input() public iconStroke: string | number | undefined = 1.5;
+  @Input() public iconSize = '1.5rem';
+  @Input() public iconColor = '';
   @Input() public selected = false;
 }
