@@ -8,34 +8,34 @@
 
             <div class="flex flex-wrap items-center justify-between gap-1">
                 <button standard autofocus *ngIf="apiKey === '';else loggedIn" (click)="this.showLogin = true"
-                    icon="featherLogIn" [disabled]="disableAllButton || this.apiCounter >= 10000">Login</button>
+                    icon="featherLogIn" iconColor="textB" [disabled]="disableAllButton || this.apiCounter >= 10000">Login</button>
                 <ng-template #loggedIn>
-                    <button standard (click)="onLogout()" icon="featherLogOut"
+                    <button standard iconColor="textB" (click)="onLogout()" icon="featherLogOut"
                         [disabled]="disableAllButton">Logout</button>
                 </ng-template>
-                <button standard icon="featherDownloadCloud"
+                <button standard iconColor="textB" icon="featherDownloadCloud"
                     [disabled]="disableAllButton || this.apiCounter >= 10000 || apiKey === ''"
                     (click)="fetch()">Fetch</button>
-                <button standard icon="featherAlertOctagon" [disabled]="disableAllButton"
+                <button standard iconColor="textB" icon="featherAlertOctagon" [disabled]="disableAllButton"
                     (click)="showBlacklist = true">Blacklist</button>
-                <button standard icon="featherUploadCloud"
+                <button standard iconColor="textB" icon="featherUploadCloud"
                     [disabled]="disableAllButton || this.apiCounter > 9000 || apiKey === ''" (click)="onCreateFile()">
                     Create
                 </button>
-                <button standard icon="featherRefreshCw"
+                <button standard iconColor="textB" icon="featherRefreshCw"
                     [disabled]="disableAllButton || this.apiCounter > 9000 || actualFileID === ''"
                     (click)="onUpdateFile()">Update</button>
-                <global-input-checkbox [icon]="isPrivate? 'featherEyeOff':'featherEye'" iconStroke="1.5"
+                <global-input-checkbox iconColor="textB" [icon]="isPrivate? 'featherEyeOff':'featherEye'" iconStroke="1.5"
                     [disabled]="disableAllButton || securityKey.length === 0" [(ngModel)]="isPrivate">
                     Private</global-input-checkbox>
-                <global-input-checkbox [icon]="isLocked? 'featherLock':'featherUnlock'" iconStroke="1.5"
+                <global-input-checkbox iconColor="textB" [icon]="isLocked? 'featherLock':'featherUnlock'" iconStroke="1.5"
                     [disabled]="disableAllButton || securityKey.length === 0" [(ngModel)]="isLocked">
                     Locked</global-input-checkbox>
                 <div class="flex gap-2 justify-end text-end text-sm items-center"
                     [ngClass]="validJSON ? 'text-primary':'text-subtle line-through'">
                     Valid JSON
                     <div>
-                        <button standard icon="featherTrello" [disabled]="!validJSON" (click)="formatJSON()"></button>
+                        <button iconColor="textB" standard icon="featherTrello" [disabled]="!validJSON" (click)="formatJSON()"></button>
                     </div>
                 </div>
             </div>

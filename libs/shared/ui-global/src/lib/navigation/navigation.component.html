@@ -8,7 +8,7 @@
   <div class="grow flex flex-col gap-2 items-center overflow-y-auto overflow-x-clip py-2">
     <ng-container *ngFor="let route of router.config">
       <ng-container *ngIf="route.path !== undefined && route.path !== '**' && route.path !== 'page-not-found'">
-        <button link [routerLink]="route.path" [icon]="getRouteData(route)">
+        <button link [routerLink]="route.path" [icon]="getRouteData(route)" iconColor="textB">
 
           <div *ngIf="expanded">
             {{ route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component' }}
