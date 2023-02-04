@@ -82,8 +82,6 @@ export class FileManagerComponent implements AfterViewInit {
   }
 
   //TODO Loading Component
-  //TODO TOOLTIPS
-  //TODO Liste mit Filenamen?
   //TODO Andere DateiFormate?
   //TODO Mobile Responsive Orientation?
 
