@@ -20,7 +20,7 @@ export class ListComponent implements OnInit {
   @Output() public optionSelect = new EventEmitter<string>();
   @Output() public deleteOption = new EventEmitter<number>();
   @HostBinding('class') public class =
-    'flex flex-col p-2 bg-textB rounded-md border-2 border-bgB min-w-fit min-h-[15vh]';
+    'flex flex-col p-2 from-bgC to-bgD bg-gradient-to-t rounded-md border-2 border-bgB min-w-fit min-h-[15vh]';
 
   constructor(private elRef: ElementRef) {}
 

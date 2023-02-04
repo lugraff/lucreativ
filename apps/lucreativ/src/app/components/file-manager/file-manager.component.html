@@ -63,7 +63,7 @@
                 [ngClass]="apiCounter > 9000 ? 'bg-warning':'bg-primary'" [class.bg-danger]="apiCounter >= 10000"></div>
         </div>
 
-        <div class="grow text-tertiary bg-textB border-bgB border-2 rounded-md elite_v_scrollbar"
+        <div class="grow text-tertiary from-bgC to-bgD bg-gradient-to-t border-bgB border-2 rounded-md elite_v_scrollbar"
             globalTooltip="This is the text window for the files." ttPosition="left" ttIcon="featherInfo"
             ttIconColor="warning">
             <pre #inputField *ngIf="!refreshInputField" [contentEditable]="true" [spellcheck]="false"
