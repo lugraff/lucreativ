@@ -12,7 +12,7 @@
           ttPosition="right" ttIcon="featherNavigation" ttIconColor="textA">
           {{route|json}}
           <div *ngIf="expanded">
-            {{ route.component!.name}}T
+            {{ route.component!.name | removeString : 'Component' }}
             <!-- {{ route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component' }} -->
           </div>
 
