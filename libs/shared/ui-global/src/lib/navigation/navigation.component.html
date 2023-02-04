@@ -13,7 +13,8 @@
           ttPosition="right" ttIcon="featherNavigation" ttIconColor="textA">
 
           <div *ngIf="expanded">
-            {{ route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component' }}
+            {{ route.component!.name}}
+            <!-- {{ route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component' }} -->
           </div>
 
         </button>
