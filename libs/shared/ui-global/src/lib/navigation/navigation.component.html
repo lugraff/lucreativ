@@ -10,10 +10,9 @@
         <button link [routerLink]="route.path" [icon]="getRouteData(route)" iconColor="textB"
           [globalTooltip]="route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component'"
           ttPosition="right" ttIcon="featherNavigation" ttIconColor="textA">
-          {{route|json}}
+          <!-- {{route|json}} -->
           <div *ngIf="expanded">
-            {{ route.component!.name | removeString : 'Component' }}
-            <!-- {{ route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component' }} -->
+            {{ route.component!.name}}
           </div>
 
         </button>
