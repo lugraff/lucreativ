@@ -8,6 +8,7 @@ import {
   InputCheckboxComponent,
   InputStandardComponent,
   ListComponent,
+  LoadingSpinnerComponent,
   PopupComponent,
   TableComponent,
 } from '@shared/ui-global';
@@ -28,6 +29,7 @@ import { FormsModule } from '@angular/forms';
     InfoPopupComponent,
     PopupComponent,
     TooltipDirective,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './file-manager.component.html',
 })

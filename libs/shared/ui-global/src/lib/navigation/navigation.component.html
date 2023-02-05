@@ -7,10 +7,10 @@
   <div class="grow flex flex-col gap-2 items-center overflow-y-auto overflow-x-clip py-2">
     <ng-container *ngFor="let route of router.config">
       <ng-container *ngIf="route.path !== undefined && route.path !== '**' && route.path !== 'page-not-found'">
-        <button link [routerLink]="route.path" [icon]="getRouteData(route)" iconColor="textB"
-          [globalTooltip]="route.component?.name??route.path | uppercaseStringSplitter : ' ' | removeString : 'Component'"
-          ttPosition="right" ttIcon="featherNavigation" ttIconColor="textA">
-          <div *ngIf="expanded && route.data !== undefined">
+        <button *ngIf="route.data !== undefined" link [routerLink]="route.path" [icon]="getRouteData(route)"
+          iconColor="textB" [globalTooltip]="route.data[1]" ttPosition="right" ttIcon="featherNavigation"
+          ttIconColor="textA">
+          <div *ngIf="expanded">
             {{ route.data[1] }}
           </div>
 

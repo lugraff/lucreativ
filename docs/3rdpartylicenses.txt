@@ -27,8 +27,6 @@ MIT
 
 @shared/util-settings
 
-@shared/util-strings
-
 rxjs
 Apache-2.0
                                Apache License

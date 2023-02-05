@@ -12,3 +12,4 @@ export * from './lib/list/list.component';
 export * from './lib/popup/popup.component';
 export * from './lib/tooltip/tooltip.component';
 export * from './lib/local-settings/local-settings.component';
+export * from './lib/loading-spinner/loading-spinner.component';

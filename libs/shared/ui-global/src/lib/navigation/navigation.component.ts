@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Route, Router, RouterModule } from '@angular/router';
-import { RemoveString, UppercaseStringSplitterPipe } from '@shared/util-strings';
 import { ButtonLinkComponent } from '../button-link/button-link.component';
 import { LocalSettingsComponent } from '../local-settings/local-settings.component';
 import { PopupComponent } from '../popup/popup.component';
@@ -10,16 +9,7 @@ import { TooltipDirective } from '@shared/util-global';
 @Component({
   selector: 'global-navigation',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    UppercaseStringSplitterPipe,
-    RemoveString,
-    ButtonLinkComponent,
-    LocalSettingsComponent,
-    PopupComponent,
-    TooltipDirective,
-  ],
+  imports: [CommonModule, RouterModule, ButtonLinkComponent, LocalSettingsComponent, PopupComponent, TooltipDirective],
   templateUrl: './navigation.component.html',
 })
 export class NavigationComponent {
