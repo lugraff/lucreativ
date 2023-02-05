@@ -24,7 +24,7 @@ export class ButtonListComponent {
   private readonly classBase =
     ' group outline-none whitespace-nowrap disabled:grayscale disabled:pointer-events-none transition-all px-1';
   @HostBinding('class') public class =
-    'active:brightness-75 hover:border-primary hover:text-textA hover:from-bgB to-transparent bg-gradient-to-r border-y-2 border-transparent rounded-full text-tertiary text-xl font-normal' +
+    'active:brightness-75 hover:border-primary hover:text-textA border-y-2 border-transparent rounded-full text-tertiary text-xl font-normal' +
     this.classBase;
   @Input() public activeButton = false;
   @Input() public icon = '';

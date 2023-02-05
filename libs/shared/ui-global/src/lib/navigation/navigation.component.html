@@ -8,10 +8,10 @@
     <ng-container *ngFor="let route of router.config">
       <ng-container *ngIf="route.path !== undefined && route.path !== '**' && route.path !== 'page-not-found'">
         <button link [routerLink]="route.path" [icon]="getRouteData(route)" iconColor="textB"
-          [globalTooltip]="route.component!.name | uppercaseStringSplitter : ' ' | removeString : 'Component'"
+          [globalTooltip]="route.component?.name??route.path | uppercaseStringSplitter : ' ' | removeString : 'Component'"
           ttPosition="right" ttIcon="featherNavigation" ttIconColor="textA">
           <div *ngIf="expanded">
-            {{ route.path }}
+            {{ route.component?.name??route.path | uppercaseStringSplitter : ' ' | removeString : 'Component' }}
           </div>
 
         </button>

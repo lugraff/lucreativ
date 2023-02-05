@@ -84,6 +84,7 @@ export class FileManagerComponent implements AfterViewInit {
   //TODO Loading Component
   //TODO Andere DateiFormate?
   //TODO Mobile Responsive Orientation?
+  //TODO Bei Seitenwechsel wieder einloggen wenn key da ist.
 
   public onLogin(): void {
     if (this.username.length < 2 || this.password.length < 2) {
