@@ -10,12 +10,12 @@ const ROUTES: Routes = [
   {
     path: '',
     component: HomeComponent,
-    data: ['featherHome'],
+    data: ['featherHome', 'Home'],
   },
   {
     path: 'file-manager',
     component: FileManagerComponent,
-    data: ['featherDatabase'],
+    data: ['featherDatabase', 'File Manager'],
   },
   // {
   //   path: 'ec-editor',
@@ -26,7 +26,7 @@ const ROUTES: Routes = [
   {
     path: 'dotknot',
     component: DotknotComponent,
-    data: ['featherCodesandbox'],
+    data: ['featherCodesandbox', 'Dotknot'],
   },
   {
     path: 'page-not-found',
