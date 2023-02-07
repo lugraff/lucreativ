@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@300;400;500;600;700&display=swap');
+
+@tailwind components;
+@tailwind base;
+@tailwind utilities;
+
+@layer base {
+  html {
+    //------------------------------------------------------Globals:
+    //font-size: 1rem; //-----------------------------GlobalSizeSetting
+    -webkit-tap-highlight-color: transparent; //------fixes the touch-bg-color!
+    -webkit-transform: translate3d(0, 0, 0); //---------fixes a blurry-bug!
+  }
+}
+
+.elite_v_scrollbar {
+  @apply pr-3 overflow-y-scroll overflow-x-hidden;
+}
+
+.elite_h_scrollbar {
+  @apply pb-3 overflow-x-scroll overflow-y-hidden;
+}
+
+.elite_scrollbar {
+  @apply pb-3 pr-3 overflow-scroll;
+}
+
+@media screen and (min-device-width: 640px) {
+  .elite_v_scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-tertiary scrollbar-track-bgB;
+  }
+
+  .elite_h_scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-tertiary scrollbar-track-bgB;
+  }
+
+  .elite_scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-tertiary scrollbar-track-bgB;
+  }
+}
