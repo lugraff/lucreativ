@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConnectorService, StorageService } from '@shared/util-global';
 import {
@@ -34,7 +34,7 @@ import { FormsModule } from '@angular/forms';
   ],
   templateUrl: './file-manager.component.html',
 })
-export class FileManagerComponent implements AfterViewInit {
+export class FileManagerComponent implements AfterViewInit, OnDestroy {
   //Für neuen USER: Name und id zu "users" hinzufügen und id zu "globalBlacklist hinzufügen."
   private readonly users = [{ name: 'Lucas', fileId: '674f0292242a' }];
   public readonly nativeFileList: string[] = [];
@@ -67,12 +67,16 @@ export class FileManagerComponent implements AfterViewInit {
   public objectValues = Object.values;
   public stringify = JSON.stringify;
 
-  constructor(private connector: ConnectorService, private storageService:StorageService) {
+  constructor(private connector: ConnectorService, private storageService: StorageService) {
     try {
       this.setApiCounter(JSON.parse(this.storageService.getItem('apiCounter') ?? '9500'));
       this.fileList = JSON.parse(this.storageService.getItem('file-list') ?? JSON.stringify(this.nativeFileList));
       this.username = this.storageService.getItem('user-name') ?? '';
       this.localBlacklist = JSON.parse(this.storageService.getItem('blacklist') ?? '[]');
+      const sessionApiKey = this.storageService.getItem('apiKey', true);
+      if (sessionApiKey !== null) {
+        this.apiKey = sessionApiKey;
+      }
     } catch {
       this.storageService.setItem('apiCounter', '9500');
       this.storageService.setItem('file-list', '[]');
@@ -80,14 +84,13 @@ export class FileManagerComponent implements AfterViewInit {
       this.storageService.setItem('blacklist', '[]');
     }
   }
+
   ngAfterViewInit(): void {
     this.inputField.nativeElement.textContent = '';
   }
 
-  //TODO Loading Component
   //TODO Andere DateiFormate?
   //TODO Mobile Responsive Orientation?
-  //TODO Bei Seitenwechsel wieder einloggen wenn key da ist.
 
   public onLogin(): void {
     if (this.username.length < 2 || this.password.length < 2) {
@@ -325,5 +328,11 @@ export class FileManagerComponent implements AfterViewInit {
       }
     }
     this.blacklistInputField = '';
+  }
+
+  ngOnDestroy(): void {
+    if (this.apiKey !== null && this.apiKey.length > 0) {
+      this.storageService.setItem('apiKey', this.apiKey, true);
+    }
   }
 }

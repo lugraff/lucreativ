@@ -4,28 +4,44 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class StorageService {
-  public getItem(key: string): any {
+  public getItem(key: string, session: boolean = false): any {
     if (navigator.cookieEnabled) {
-      return localStorage.getItem(key);
+      if (session) {
+        return sessionStorage.getItem(key);
+      } else {
+        return localStorage.getItem(key);
+      }
     }
     return null;
   }
 
-  public setItem(key: string, data: string): void {
+  public setItem(key: string, data: string, session: boolean = false): void {
     if (navigator.cookieEnabled) {
-      localStorage.setItem(key, data);
+      if (session) {
+        sessionStorage.setItem(key, data);
+      } else {
+        localStorage.setItem(key, data);
+      }
     }
   }
 
-  public removeItem(key: string): void {
+  public removeItem(key: string, session: boolean = false): void {
     if (navigator.cookieEnabled) {
-      localStorage.removeItem(key);
+      if (session) {
+        sessionStorage.removeItem(key);
+      } else {
+        localStorage.removeItem(key);
+      }
     }
   }
 
-  public clear(): void {
+  public clear(session: boolean = false): void {
     if (navigator.cookieEnabled) {
-      localStorage.clear();
+      if (session) {
+        sessionStorage.clear();
+      } else {
+        localStorage.clear();
+      }
     }
   }
 }
