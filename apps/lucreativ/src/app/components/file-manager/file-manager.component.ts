@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ConnectorService, TooltipDirective } from '@shared/util-global';
+import { ConnectorService, StorageService } from '@shared/util-global';
 import {
   ButtonLinkComponent,
   ButtonStandardComponent,
@@ -11,6 +11,7 @@ import {
   LoadingSpinnerComponent,
   PopupComponent,
   TableComponent,
+  TooltipDirective,
 } from '@shared/ui-global';
 import { FormsModule } from '@angular/forms';
 
@@ -66,17 +67,17 @@ export class FileManagerComponent implements AfterViewInit {
   public objectValues = Object.values;
   public stringify = JSON.stringify;
 
-  constructor(private connector: ConnectorService) {
+  constructor(private connector: ConnectorService, private storageService:StorageService) {
     try {
-      this.setApiCounter(JSON.parse(localStorage.getItem('apiCounter') ?? '9500'));
-      this.fileList = JSON.parse(localStorage.getItem('file-list') ?? JSON.stringify(this.nativeFileList));
-      this.username = localStorage.getItem('user-name') ?? '';
-      this.localBlacklist = JSON.parse(localStorage.getItem('blacklist') ?? '[]');
+      this.setApiCounter(JSON.parse(this.storageService.getItem('apiCounter') ?? '9500'));
+      this.fileList = JSON.parse(this.storageService.getItem('file-list') ?? JSON.stringify(this.nativeFileList));
+      this.username = this.storageService.getItem('user-name') ?? '';
+      this.localBlacklist = JSON.parse(this.storageService.getItem('blacklist') ?? '[]');
     } catch {
-      localStorage.setItem('apiCounter', '9500');
-      localStorage.setItem('file-list', '[]');
-      localStorage.setItem('user-name', '');
-      localStorage.setItem('blacklist', '[]');
+      this.storageService.setItem('apiCounter', '9500');
+      this.storageService.setItem('file-list', '[]');
+      this.storageService.setItem('user-name', '');
+      this.storageService.setItem('blacklist', '[]');
     }
   }
   ngAfterViewInit(): void {
@@ -103,7 +104,7 @@ export class FileManagerComponent implements AfterViewInit {
           next: (response: any) => {
             this.apiKey = response.key;
             this.securityKey = this.password;
-            localStorage.setItem('user-name', this.username);
+            this.storageService.setItem('user-name', this.username);
             this.showLogin = false;
           },
           error: () => {
@@ -155,7 +156,7 @@ export class FileManagerComponent implements AfterViewInit {
   private fetchedData(newData: any): void {
     this.setApiCounter(Number(newData.headers.get('x-counter')));
     this.fileList = this.nativeFileList;
-    const lastKnownFiles = JSON.parse(localStorage.getItem('file-list') ?? '[]');
+    const lastKnownFiles = JSON.parse(this.storageService.getItem('file-list') ?? '[]');
     let counter = 0;
     for (const fileID of newData.body) {
       if (this.globalBlacklist.includes(fileID)) {
@@ -174,12 +175,12 @@ export class FileManagerComponent implements AfterViewInit {
     } else if (counter > 1) {
       this.errorMessage = counter + ' new files!';
     }
-    localStorage.setItem('file-list', JSON.stringify(this.fileList));
+    this.storageService.setItem('file-list', JSON.stringify(this.fileList));
     this.disableAllButton = false;
   }
   private setApiCounter(count: number): void {
     this.apiCounter = count;
-    localStorage.setItem('apiCounter', JSON.stringify(this.apiCounter));
+    this.storageService.setItem('apiCounter', JSON.stringify(this.apiCounter));
   }
 
   public onLoadFile(id: string): void {
@@ -232,7 +233,7 @@ export class FileManagerComponent implements AfterViewInit {
       this.actualFileID = '';
       this.fileData = undefined;
       this.inputField.nativeElement.textContent = '';
-      localStorage.setItem('file-list', JSON.stringify(this.fileList));
+      this.storageService.setItem('file-list', JSON.stringify(this.fileList));
     }
     this.disableAllButton = false;
   }
@@ -263,7 +264,7 @@ export class FileManagerComponent implements AfterViewInit {
   private onSaveFileFinished(response: any): void {
     this.actualFileID = response.id;
     this.fileList.push(response.id);
-    localStorage.setItem('file-list', JSON.stringify(this.fileList));
+    this.storageService.setItem('file-list', JSON.stringify(this.fileList));
     this.disableAllButton = false;
   }
 
@@ -305,7 +306,7 @@ export class FileManagerComponent implements AfterViewInit {
 
   onRemoveFromBL(index: number) {
     this.localBlacklist.splice(index, 1);
-    localStorage.setItem('blacklist', JSON.stringify(this.localBlacklist));
+    this.storageService.setItem('blacklist', JSON.stringify(this.localBlacklist));
   }
 
   onAddBLFile() {
@@ -316,11 +317,11 @@ export class FileManagerComponent implements AfterViewInit {
       }
     }
     this.localBlacklist.push(this.blacklistInputField);
-    localStorage.setItem('blacklist', JSON.stringify(this.localBlacklist));
+    this.storageService.setItem('blacklist', JSON.stringify(this.localBlacklist));
     for (let index = 0; index < this.fileList.length; index++) {
       if (this.blacklistInputField === this.fileList[index]) {
         this.fileList.splice(index, 1);
-        localStorage.setItem('file-list', JSON.stringify(this.fileList));
+        this.storageService.setItem('file-list', JSON.stringify(this.fileList));
       }
     }
     this.blacklistInputField = '';

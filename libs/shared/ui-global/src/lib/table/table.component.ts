@@ -7,7 +7,6 @@ import {
   getTailwindColorHexCode,
   TableColumn,
   TableData,
-  TooltipDirective,
 } from '@shared/util-global';
 import { CdkTableModule } from '@angular/cdk/table';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -15,6 +14,7 @@ import { IconComponent } from '../icon/icon.component';
 import { InfoPopupComponent } from '../info-popup/info-popup.component';
 import { ReplaySubject, Subscription } from 'rxjs';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   standalone: true,

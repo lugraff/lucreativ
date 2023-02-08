@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { StorageService } from '@shared/util-global';
 
 export interface UISettings {
   lowCPU: boolean;
@@ -62,8 +63,8 @@ export class GlobalUISettingsService {
     this.SaveSettings();
   }
 
-  constructor() {
-    const localStoreSettingsString = localStorage.getItem('localUISettings');
+  constructor(private storageService: StorageService) {
+    const localStoreSettingsString = this.storageService.getItem('localUISettings');
     if (localStoreSettingsString === null) {
       return;
     }
@@ -83,11 +84,11 @@ export class GlobalUISettingsService {
       tooltipKeyControl: this.tooltipKeyControl,
       tooltipDelay: this.tooltipDelay,
     };
-    localStorage.setItem('localUISettings', JSON.stringify(newSettings));
+    this.storageService.setItem('localUISettings', JSON.stringify(newSettings));
   }
 
   public resetSettings(): void {
-    localStorage.removeItem('localUISettings');
+    this.storageService.removeItem('localUISettings');
     this.lowCPU = true;
     this.showTooltips = true;
     this.tooltipKeyControl = false;

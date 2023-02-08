@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
-import { TooltipDirective } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { GlobalUISettingsService } from '@shared/util-settings';
 import { ButtonStandardComponent } from '../button-standard/button-standard.component';
 import { InputCheckboxComponent } from '../input-checkbox/input-checkbox.component';
 import { InputStandardComponent } from '../input-standard/input-standard.component';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 @Component({
   standalone: true,

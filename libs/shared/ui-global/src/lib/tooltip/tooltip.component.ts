@@ -211,7 +211,7 @@ export class TooltipComponent implements OnDestroy {
       newPosition.y = 0;
     }
     if (newPosition.x < 0) {
-      this.arrowOffsetX = 0 - newPosition.x;
+      this.arrowOffsetX = newPosition.x;
       newPosition.x = 0;
     }
     if (newPosition.y + rectTooltip.height > window.innerHeight) {
