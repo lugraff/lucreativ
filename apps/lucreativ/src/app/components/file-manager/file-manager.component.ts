@@ -14,6 +14,7 @@ import {
   TooltipDirective,
 } from '@shared/ui-global';
 import { FormsModule } from '@angular/forms';
+import { IsMobileScreenService } from '@shared/util-screen';
 
 @Component({
   selector: 'lucreativ-file-manager',
@@ -67,7 +68,7 @@ export class FileManagerComponent implements AfterViewInit, OnDestroy {
   public objectValues = Object.values;
   public stringify = JSON.stringify;
 
-  constructor(private connector: ConnectorService, private storageService: StorageService) {
+  constructor(private connector: ConnectorService, private storageService: StorageService, public screenService:IsMobileScreenService) {
     try {
       this.setApiCounter(JSON.parse(this.storageService.getItem('apiCounter') ?? '9500'));
       this.fileList = JSON.parse(this.storageService.getItem('file-list') ?? JSON.stringify(this.nativeFileList));

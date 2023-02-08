@@ -25,6 +25,12 @@ export class IsMobileScreenService {
   public windowWidth$ = this.windowWidth.asObservable();
   private windowHeight = new BehaviorSubject<number>(0);
   public windowHeight$ = this.windowHeight.asObservable();
+  private landscape = new BehaviorSubject<boolean>(true);
+  public landscape$ = this.landscape.asObservable();
+
+  private calcTimeout = setTimeout(() => {
+    console.log;
+  }, 100);
 
   constructor(@Optional() @Inject(INJECTION_TOKEN_SMALL_SCREEN_BREAKPOINT) breakpoint: string) {
     this._breakPoint = this.ConvertBreakpoint(breakpoint ?? 'sm');
@@ -35,15 +41,23 @@ export class IsMobileScreenService {
   }
 
   public CheckWindow() {
-    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-    this.windowHeight.next(vh);
-    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    this.windowWidth.next(vw);
-    // everything is hooked to the Tailwind md: param which is 768.
-    const isMobile = vw < this._breakPoint;
-    if (isMobile !== this.isMobileScreen.value) {
-      this.isMobileScreen.next(isMobile);
-    }
+    clearTimeout(this.calcTimeout);
+    this.calcTimeout = setTimeout(() => {
+      const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+      this.windowHeight.next(vh);
+      const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+      this.windowWidth.next(vw);
+      // everything is hooked to the Tailwind md: param which is 768.
+      const isMobile = vw < this._breakPoint;
+      if (isMobile !== this.isMobileScreen.value) {
+        this.isMobileScreen.next(isMobile);
+      }
+      if (vh > vw) {
+        this.landscape.next(true);
+      } else {
+        this.landscape.next(false);
+      }
+    }, 100);
   }
 
   ConvertBreakpoint(breakpoint: string): number {

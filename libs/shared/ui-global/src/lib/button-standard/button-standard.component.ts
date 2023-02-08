@@ -7,7 +7,7 @@ import { IconComponent } from '../icon/icon.component';
   imports: [CommonModule, IconComponent],
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'button[standard]',
-  template: `<div class="flex items-center gap-2 pl-1">
+  template: `<div class="flex items-center gap-2 pl-1 overflow-clip">
     <global-icon
       *ngIf="icon.length"
       [icon]="icon"
