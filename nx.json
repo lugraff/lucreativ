@@ -9,11 +9,7 @@
   "npmScope": "lucreativ",
   "targetDefaults": {
     "test": {
-      "inputs": [
-        "default",
-        "^default",
-        "{workspaceRoot}/jest.preset.js"
-      ]
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"]
     }
   },
   "targetDependencies": {
@@ -28,13 +24,7 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e",
-          "component-test"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e", "component-test"]
       }
     }
   },

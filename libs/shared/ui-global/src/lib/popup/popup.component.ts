@@ -20,6 +20,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   @Input() public minimizeable = true;
   @Input() public backCovered = true;
   @Input() public popupWidth = '25%';
+  @Input() public popupHeight = '25%';
   @Input() public appearX = '50%';
   @Input() public appearY = '50%';
   @Input() public appearMouse = '';
@@ -68,6 +69,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
     this.self = document.getElementById(this.elementId);
     if (this.self !== null) {
       this.self.style.width = this.popupWidth;
+      this.self.style.height = this.popupHeight;
 
       if (this.mouseAppearLocations.includes(this.appearMouse)) {
         this.appearAtMouse();
