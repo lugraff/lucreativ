@@ -15,11 +15,12 @@ export class PaintComponent implements AfterViewInit {
   @ViewChild('layerContainer') layerContainer!: ElementRef;
   private actualCanvas: HTMLCanvasElement | undefined = undefined;
   private ctx: CanvasRenderingContext2D | undefined = undefined;
-  public layerlist: string[] = [];
+  public layerlist: string[] = ['Image'];
   public actualID = '';
   public lineWidth = 2;
   public lineColor = '#ffffff';
   public newNumber = 0;
+  public notAvailableText = 'Image';
 
   constructor(private renderer: Renderer2, private elRef: ElementRef) {}
   ngAfterViewInit(): void {
@@ -34,8 +35,8 @@ export class PaintComponent implements AfterViewInit {
     if (this.actualCanvas) {
       this.actualCanvas.id = 'Layer_' + ++this.newNumber;
       this.actualID = this.actualCanvas.id;
-      this.actualCanvas.width = 1900;
-      this.actualCanvas.height = 1900;
+      this.actualCanvas.width = 500;
+      this.actualCanvas.height = 500;
       this.actualCanvas.style.position = 'fixed';
       this.actualCanvas.style.backgroundColor = 'transparent';
       this.actualCanvas.style.border = '10px';
@@ -49,20 +50,34 @@ export class PaintComponent implements AfterViewInit {
   }
 
   onLayerSelect(layerID: string) {
-    const canvas = document.getElementById(layerID);
-    if (canvas && this.actualCanvas) {
-      this.actualCanvas.style.zIndex = '0';
-      canvas.style.zIndex = '10';
-      this.actualCanvas = canvas as HTMLCanvasElement;
-      this.ctx = this.actualCanvas.getContext('2d') as CanvasRenderingContext2D;
-      this.actualID = layerID;
+    if (layerID !== this.notAvailableText) {
+      const canvas = document.getElementById(layerID);
+      if (canvas) {
+        if (this.actualCanvas) {
+          this.actualCanvas.style.zIndex = '0';
+        }
+        canvas.style.zIndex = '10';
+        this.actualCanvas = canvas as HTMLCanvasElement;
+        this.ctx = this.actualCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.actualID = layerID;
+      }
+    } else {
+      if (this.actualCanvas) {
+        this.actualCanvas = undefined;
+        this.actualID = 'Image';
+      }
     }
   }
 
   onDeleteLayer(index: number) {
     document.getElementById(this.layerlist[index])?.remove();
     this.layerlist.splice(index, 1);
-    this.actualID = '';
+    this.actualCanvas = undefined;
+    this.actualID = 'Image';
+  }
+
+  onSaveImage() {
+    //
   }
 
   private pen(): void {
@@ -71,14 +86,14 @@ export class PaintComponent implements AfterViewInit {
     const rect = this.actualCanvas?.getBoundingClientRect();
     console.log(rect);
     if (this.actualCanvas !== undefined && rect !== undefined) {
-      fromEvent(this.actualCanvas, 'mousedown')
+      fromEvent(this.actualCanvas, 'pointerdown')
         .pipe(
           switchMap((e: MouseEvent | any) => {
             startX = e.clientX - rect.left;
             startY = e.clientY - rect.top;
             if (this.actualCanvas !== undefined) {
-              return fromEvent(this.actualCanvas, 'mousemove').pipe(
-                takeUntil(fromEvent(this.actualCanvas, 'mouseup'))
+              return fromEvent(this.actualCanvas, 'pointermove').pipe(
+                takeUntil(fromEvent(this.actualCanvas, 'pointerup'))
                 // takeUntil(fromEvent(this.actualCanvas, 'mouseleave'))
               );
             }
