@@ -1,1 +1,2 @@
-<canvas id="canvas" class="bg-textB ml-16 mt-2" width="1200" height="600"></canvas>
+<canvas id="canvas" class="bg-textB" [width]="screenService.windowWidth$|async"
+    [height]="screenService.windowHeight$|async"></canvas>

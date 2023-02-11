@@ -1,6 +1,13 @@
 import { AfterViewInit, Component, NgZone, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Vector2 } from '@shared/util-global';
+import { IsMobileScreenService } from '@shared/util-screen';
+
+export interface Ball {
+  pos: Vector2;
+  dir: Vector2;
+  speed: number;
+}
 
 @Component({
   selector: 'lucreativ-canvas',
@@ -11,11 +18,22 @@ import { Vector2 } from '@shared/util-global';
 export class CanvasComponent implements AfterViewInit, OnDestroy {
   private canvas: HTMLCanvasElement | undefined = undefined;
   private processing = false;
-  private posBall: Vector2 = { x: 50, y: 50 };
-  private dir: Vector2 = { x: 1, y: 1 };
-  private speed = 6;
 
-  constructor(private ngZone: NgZone) {}
+  private balls: Ball[] = [
+    // { pos: { x: 50, y: 50 }, dir: { x: 1, y: 1 }, speed: 5 },
+    // { pos: { x: 10, y: 150 }, dir: { x: -1, y: 1 }, speed: 4 },
+  ];
+
+  constructor(private ngZone: NgZone, public screenService: IsMobileScreenService) {
+    for (let index = 0; index < 100; index++) {
+      const newBall: Ball = {
+        pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
+        dir: { x: Math.random()-0.5, y: Math.random()-0.5 },
+        speed: Math.random() * 1 + 3,
+      };
+      this.balls.push(newBall);
+    }
+  }
 
   public ngAfterViewInit(): void {
     this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -29,30 +47,43 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       return;
     }
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.clearRect(0, 0, 1200, 600);
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    this.posBall.x += this.dir.x * this.speed;
-    this.posBall.y += this.dir.y * this.speed;
-    this.speed = 5;
-    if (this.posBall.y < 0) {
-      this.dir.y = 1;
-    } else if (this.posBall.y > 600) {
-      this.dir.y = -1;
+    for (const ball of this.balls) {
+      this.calcBallPos(ball);
     }
-    if (this.posBall.x < 0) {
-      this.dir.x = 1;
-    } else if (this.posBall.x > 1200) {
-      this.dir.x = -1;
+    for (const ball of this.balls) {
+      this.paintBall(ctx, ball.pos);
     }
-    this.paintBall(ctx, this.posBall);
 
     requestAnimationFrame(() => this.process());
   }
 
+  private calcBallPos(ball: Ball): void {
+    ball.pos.x += ball.dir.x * ball.speed;
+    ball.pos.y += ball.dir.y * ball.speed;
+    ball.speed += Math.random() * 0.1;
+    if (ball.speed < 0) {
+      ball.speed = 1;
+    } else if (ball.speed > 2) {
+      ball.speed = 1;
+    }
+    if (ball.pos.y < 0) {
+      ball.dir.y = 1;
+    } else if (ball.pos.y > window.innerHeight) {
+      ball.dir.y = -1;
+    }
+    if (ball.pos.x < 0) {
+      ball.dir.x = 1;
+    } else if (ball.pos.x > window.innerWidth) {
+      ball.dir.x = -1;
+    }
+  }
+
   private paintBall(ctx: CanvasRenderingContext2D, posBall: Vector2): void {
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = '#aabb22';
     const circle = new Path2D();
-    circle.arc(posBall.x, posBall.y, 16, 0, 2 * Math.PI);
+    circle.arc(posBall.x, posBall.y, 6, 0, 2 * Math.PI);
     ctx.fill(circle);
   }
 
