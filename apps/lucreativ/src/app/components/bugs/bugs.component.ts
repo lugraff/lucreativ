@@ -14,9 +14,9 @@ export interface Ball {
   selector: 'lucreativ-bugs',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './canvas.component.html',
+  templateUrl: './bugs.component.html',
 })
-export class CanvasComponent implements AfterViewInit, OnDestroy {
+export class BugsComponent implements AfterViewInit, OnDestroy {
   private canvas: HTMLCanvasElement | undefined = undefined;
   private processing = false;
 
@@ -30,8 +30,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       const newBall: Ball = {
         pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
         dir: { x: Math.random() - 0.5, y: Math.random() - 0.5 },
-        speed: Math.random() + 0.1,
-        radius: Math.random() * 50 + 1,
+        speed: Math.random() * 1 + 3,
+        radius: Math.random() * 10 + 1,
       };
       this.balls.push(newBall);
     }
@@ -58,10 +58,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.paintBall(ctx, ball);
     }
 
-    ctx.shadowBlur = 4;
-    ctx.shadowOffsetX = 6;
-    ctx.shadowColor = 'black';
-
     requestAnimationFrame(() => this.process());
   }
 
@@ -71,10 +67,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     ball.speed += Math.random() * 0.1;
     if (ball.speed < 0) {
       ball.speed = 1;
-    } else if (ball.speed > 1) {
+    } else if (ball.speed > 2) {
       ball.speed = 1;
     }
-
     if (ball.pos.y < ball.radius) {
       ball.dir.y = 1;
     } else if (ball.pos.y + ball.radius > window.innerHeight) {
@@ -88,7 +83,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   private paintBall(ctx: CanvasRenderingContext2D, ball: Ball): void {
-    ctx.fillStyle = '#A3C832aa';
+    ctx.fillStyle = '#aabb22';
     const circle = new Path2D();
     circle.arc(ball.pos.x, ball.pos.y, ball.radius, 0, 2 * Math.PI);
     ctx.fill(circle);
