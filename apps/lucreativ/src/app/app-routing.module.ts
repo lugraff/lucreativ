@@ -6,6 +6,7 @@ import { DotknotComponent } from './components/dotknot/dotknot.component';
 import { CanDeactivateGuard } from '@shared/util-global';
 import { FileManagerComponent } from './components/file-manager/file-manager.component';
 import { PaintComponent } from './components/paint/paint.component';
+import { CanvasComponent } from './components/canvas/canvas.component';
 
 const ROUTES: Routes = [
   {
@@ -33,6 +34,11 @@ const ROUTES: Routes = [
     path: 'paint',
     component: PaintComponent,
     data: ['featherPenTool', 'Paint'],
+  },
+  {
+    path: 'canvas',
+    component: CanvasComponent,
+    data: ['featherFilm', 'Canvas'],
   },
   {
     path: 'page-not-found',
