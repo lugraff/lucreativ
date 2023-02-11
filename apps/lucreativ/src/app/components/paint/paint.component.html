@@ -1,4 +1,4 @@
-<div #layerContainer class="w-screen h-screen elite_v_scrollbar p-2 pl-16 bg-bgD animate-fadeIn">
+<div #layerContainer class="w-screen h-screen overflow-clip p-2 pl-16 bg-bgD animate-fadeIn">
     <div class="flex items-center gap-1 pb-2">
         <div>
             <button list icon="featherSave" (click)="onSaveImage()"></button>
@@ -18,8 +18,8 @@
     </div>
 </div>
 
-<global-popup myTitle="Layers" [closeable]="false" [resizeable]="true" [backCovered]="false" appearX="100%"
-    popupWidth="1%" popupHeight="100%" icon="featherLayers">
+<global-popup *ngIf="false" myTitle="Layers" [closeable]="false" [resizeable]="true" [backCovered]="false"
+    appearX="100%" popupWidth="1%" popupHeight="100%" icon="featherLayers">
     <global-list [data]="layerlist" [notAvailableText]="notAvailableText" [deleteButton]="true"
         (optionSelect)="onLayerSelect($event)" (deleteOption)="onDeleteLayer($event)" [selected]="actualID"
         class="grow">
