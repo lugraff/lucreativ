@@ -21,6 +21,7 @@ export class PaintComponent implements AfterViewInit {
   public lineColor = '#ffffff';
   public newNumber = 0;
   public notAvailableText = 'Image';
+  public showLayerPopup = false;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef) {}
   ngAfterViewInit(): void {

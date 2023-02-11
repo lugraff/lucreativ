@@ -18,7 +18,7 @@
     </div>
 </div>
 
-<global-popup *ngIf="false" myTitle="Layers" [closeable]="false" [resizeable]="true" [backCovered]="false"
+<global-popup *ngIf="showLayerPopup" myTitle="Layers" [closeable]="false" [resizeable]="true" [backCovered]="false"
     appearX="100%" popupWidth="1%" popupHeight="100%" icon="featherLayers">
     <global-list [data]="layerlist" [notAvailableText]="notAvailableText" [deleteButton]="true"
         (optionSelect)="onLayerSelect($event)" (deleteOption)="onDeleteLayer($event)" [selected]="actualID"
