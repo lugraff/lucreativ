@@ -7,6 +7,7 @@ import { CanDeactivateGuard } from '@shared/util-global';
 import { FileManagerComponent } from './components/file-manager/file-manager.component';
 import { PaintComponent } from './components/paint/paint.component';
 import { CanvasComponent } from './components/canvas/canvas.component';
+import { NetAnimationComponent } from './components/net-animation/net-animation.component';
 
 const ROUTES: Routes = [
   {
@@ -36,9 +37,14 @@ const ROUTES: Routes = [
     data: ['featherPenTool', 'Paint'],
   },
   {
+    path: 'net-animation',
+    component: NetAnimationComponent,
+    data: ['featherFilm', 'Net Animation'],
+  },
+  {
     path: 'canvas',
     component: CanvasComponent,
-    data: ['featherFilm', 'Canvas'],
+    data: ['featherBox', 'Canvas'],
   },
   {
     path: 'page-not-found',

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, NgZone, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MouseEventService, TouchEventService, Vector2 } from '@shared/util-global';
+import { MouseEventService, Vector2 } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { FormsModule } from '@angular/forms';
 import { ButtonListComponent, ButtonStandardComponent } from '@shared/ui-global';
@@ -13,12 +13,12 @@ export interface Ball {
 }
 
 @Component({
-  selector: 'lucreativ-canvas',
+  selector: 'lucreativ-net-animation',
   standalone: true,
   imports: [CommonModule, FormsModule, ButtonStandardComponent, ButtonListComponent],
-  templateUrl: './canvas.component.html',
+  templateUrl: './net-animation.component.html',
 })
-export class CanvasComponent implements AfterViewInit, OnDestroy {
+export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   private canvas: HTMLCanvasElement | undefined = undefined;
   private processing = false;
   private mousePos: Vector2 = { x: 0, y: 0 };
@@ -30,8 +30,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private balls: Ball[] = [];
 
-  constructor(private ngZone: NgZone, public screenService: IsMobileScreenService, touchService: TouchEventService) {
-    touchService.touchMove.subscribe((event) => (this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY }));
+  constructor(private ngZone: NgZone, public screenService: IsMobileScreenService, mouseService: MouseEventService) {
+    mouseService.mouseMove.subscribe((event) => (this.mousePos = { x: event.clientX, y: event.clientY }));
     for (let index = 0; index < this.dots; index++) {
       const newBall: Ball = {
         pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
