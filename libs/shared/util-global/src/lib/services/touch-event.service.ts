@@ -15,13 +15,14 @@ export class TouchEventService {
       this.touchStart.next(event);
     });
     window.addEventListener('touchmove', (event) => {
-      this.touchStart.next(event);
+      console.log(event);
+      this.touchMove.next(event);
     });
     window.addEventListener('touchend', (event) => {
-      this.touchStart.next(event);
+      this.touchEnd.next(event);
     });
     window.addEventListener('touchcancel', (event) => {
-      this.touchStart.next(event);
+      this.touchCancel.next(event);
     });
   }
 }

@@ -31,7 +31,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private balls: Ball[] = [];
 
   constructor(private ngZone: NgZone, public screenService: IsMobileScreenService, touchService: TouchEventService) {
-    touchService.touchMove.subscribe((event) => (this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY }));
+    touchService.touchMove.subscribe((event) => {
+      console.log(event);
+      event.preventDefault();
+      this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+    });
     for (let index = 0; index < this.dots; index++) {
       const newBall: Ball = {
         pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
