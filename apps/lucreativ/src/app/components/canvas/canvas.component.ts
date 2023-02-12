@@ -4,6 +4,7 @@ import { MouseEventService, TouchEventService, Vector2 } from '@shared/util-glob
 import { IsMobileScreenService } from '@shared/util-screen';
 import { FormsModule } from '@angular/forms';
 import { ButtonListComponent, ButtonStandardComponent } from '@shared/ui-global';
+import { Subscription } from 'rxjs';
 
 export interface Ball {
   pos: Vector2;
@@ -22,20 +23,35 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private canvas: HTMLCanvasElement | undefined = undefined;
   private processing = false;
   private mousePos: Vector2 = { x: 0, y: 0 };
+  private subs: Subscription[] = [];
   public connectDist = 140;
   public dots = 100;
   public minSpeed = 0;
   public maxSpeed = 2;
   public showSettings = true;
+  public isTouching = false;
 
   private balls: Ball[] = [];
 
   constructor(private ngZone: NgZone, public screenService: IsMobileScreenService, touchService: TouchEventService) {
-    touchService.touchMove.subscribe((event) => {
-      console.log(event);
-      event.preventDefault();
-      this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
-    });
+    this.subs.push(
+      touchService.touchStart.subscribe((event) => {
+        this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+        this.isTouching = true;
+      })
+    );
+    this.subs.push(
+      touchService.touchMove.subscribe((event) => {
+        this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+      })
+    );
+    this.subs.push(
+      touchService.touchEnd.subscribe((event) => {
+        this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+        this.isTouching = false;
+      })
+    );
+
     for (let index = 0; index < this.dots; index++) {
       const newBall: Ball = {
         pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
@@ -69,8 +85,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    for (const ball of this.balls) {
-      this.calcMouseGravity(ball);
+    if (this.isTouching) {
+      for (const ball of this.balls) {
+        this.calcMouseGravity(ball);
+      }
     }
     for (const ball of this.balls) {
       this.calcBallPos(ball);
@@ -81,6 +99,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     for (let index = 0; index < this.balls.length; index++) {
       this.paintLine(ctx, index);
     }
+
     requestAnimationFrame(() => this.process());
   }
 
@@ -167,5 +186,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.processing = false;
+    this.subs.forEach((sub) => {
+      sub.unsubscribe();
+    });
   }
 }
