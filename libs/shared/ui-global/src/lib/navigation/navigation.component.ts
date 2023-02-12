@@ -15,6 +15,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
 export class NavigationComponent {
   public showLocalSettings = false;
   public expanded = false;
+  public showMenu = true;
   public version = '1.1.2';
 
   constructor(public router: Router) {}

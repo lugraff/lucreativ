@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MouseEventService, Vector2 } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { FormsModule } from '@angular/forms';
-import { ButtonStandardComponent } from '@shared/ui-global';
+import { ButtonListComponent, ButtonStandardComponent } from '@shared/ui-global';
 
 export interface Ball {
   pos: Vector2;
@@ -15,17 +15,18 @@ export interface Ball {
 @Component({
   selector: 'lucreativ-bugs',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonStandardComponent],
+  imports: [CommonModule, FormsModule, ButtonStandardComponent, ButtonListComponent],
   templateUrl: './canvas.component.html',
 })
 export class CanvasComponent implements AfterViewInit, OnDestroy {
   private canvas: HTMLCanvasElement | undefined = undefined;
   private processing = false;
+  private mousePos: Vector2 = { x: 0, y: 0 };
   public connectDist = 140;
   public dots = 100;
   public minSpeed = 0;
   public maxSpeed = 2;
-  private mousePos: Vector2 = { x: 0, y: 0 };
+  public showSettings = true;
 
   private balls: Ball[] = [];
 
@@ -47,6 +48,14 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
     this.processing = true;
     this.ngZone.runOutsideAngular(() => this.process());
+  }
+
+  public setToFullscreen(): void {
+    const elem = document.body as HTMLElement;
+    const methodToBeInvoked = elem.requestFullscreen;
+    if (methodToBeInvoked) {
+      methodToBeInvoked.call(elem);
+    }
   }
 
   private process(): void {

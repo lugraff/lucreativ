@@ -1,10 +1,10 @@
 <div
-  class="fixed z-30 flex flex-col h-full transition-all duration-300 ease-out from-transparent to-bgB bg-gradient-to-l"
+  class="fixed z-30 flex flex-col h-full transition-all duration-300 ease-out"
   (mouseleave)="expanded= false" [ngClass]="expanded ? 'w-72':'w-16'">
-  <div (click)="expanded = !expanded" (mouseenter)="expanded = true" class="mt-4 mb-6 mx-2">
+  <div (click)="showMenu = !showMenu" (mouseenter)="showMenu = true; expanded=true;" class="mt-4 mb-6 mx-2">
     <img src="assets/Logo.jpg" class="rounded-3xl border-2 border-textB pointer-events-none select-none w-60" />
   </div>
-  <div class="grow flex flex-col gap-2 items-center overflow-y-auto overflow-x-clip py-2">
+  <div *ngIf="showMenu" class="grow flex flex-col gap-2 items-center overflow-y-auto overflow-x-clip py-2">
     <ng-container *ngFor="let route of router.config">
       <ng-container *ngIf="route.path !== undefined && route.path !== '**' && route.path !== 'page-not-found'">
         <button *ngIf="route.data !== undefined" link [routerLink]="route.path" [icon]="getRouteData(route)"
