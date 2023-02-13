@@ -5,21 +5,23 @@ import { BehaviorSubject, Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class MouseEventService {
-  mouseMoveBehave = new BehaviorSubject<MouseEvent | undefined>(undefined);
+  mouseLastEvent = new BehaviorSubject<MouseEvent | undefined>(undefined);
   mouseMove = new Subject<MouseEvent>();
   mouseUp = new Subject<MouseEvent>();
-  // mouseDown = new Subject<any>();
+  mouseDown = new Subject<MouseEvent>();
 
   constructor() {
+    window.addEventListener('mousedown', (event) => {
+      this.mouseDown.next(event);
+      this.mouseLastEvent.next(event);
+    });
     window.addEventListener('mousemove', (event) => {
       this.mouseMove.next(event);
-      this.mouseMoveBehave.next(event);
+      this.mouseLastEvent.next(event);
     });
     window.addEventListener('mouseup', (event) => {
       this.mouseUp.next(event);
+      this.mouseLastEvent.next(event);
     });
-    // window.addEventListener('mousedown', (event) => {
-    //   this.mouseDown.next(event);
-    // });
   }
 }

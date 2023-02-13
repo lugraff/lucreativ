@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, HostListener, Input, OnDestroy, Output } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { MouseEventService } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { GlobalUISettingsService } from '@shared/util-settings';
@@ -13,44 +23,34 @@ import { IconComponent } from '../icon/icon.component';
   templateUrl: './popup.component.html',
 })
 export class PopupComponent implements AfterViewInit, OnDestroy {
-  public elementId = 'ID' + Math.floor(Math.random() * 10000000).toString();
+  @ViewChild('popup') private popupElementRef: ElementRef = new ElementRef(HTMLDivElement);
   @Input() public myTitle = '';
   @Input() public closeable = true;
   @Input() public resizeable = false;
   @Input() public minimizeable = true;
   @Input() public backCovered = true;
-  @Input() public popupWidth = '25%';
-  @Input() public popupHeight = '25%';
-  @Input() public appearX = '50%';
-  @Input() public appearY = '50%';
-  @Input() public appearMouse = '';
+  @Input() public popupWidth = 'auto';
+  @Input() public popupHeight = 'auto';
+  @Input() public anchor = 'screen'; // 'mouse'
+  @Input() public position = 'center'; // 'center' 'top' 'bottom' 'left' 'right' 'top-left' 'top-right' 'bottom-left' 'bottom-right'
+  @Input() public offset = 16;
   @Input() public icon = '';
-  @Input() public iconStroke: string | number | undefined = undefined;
+  @Input() public iconStroke: string | number | undefined = 1.5;
   @Input() public iconSize = '1.5rem';
   @Input() public iconColor = '';
-  @Output() public whenClosing = new EventEmitter();
+  @Output() public whenClosing = new EventEmitter(); //TODO IN and OUTPUT for show and close
   public dragWindow = false;
   public resizeWindow = false;
   public activeWindow = false;
   public status = '';
-  private self: HTMLElement | null = null;
+  public iconColors = ['tertiary', 'tertiary', 'tertiary', 'tertiary'];
+  private popup = document.createElement('div') as HTMLDivElement;
   private subscriptionsForMouseEvents: Subscription[] = [];
   private subscriptionsForWindowSize: Subscription[] = [];
   private dragOffsetX = 0;
   private dragOffsetY = 0;
   private savedWidth = '';
   private savedHeight = '';
-  private mouseAppearLocations = [
-    'center',
-    'top',
-    'bottom',
-    'left',
-    'right',
-    'top-left',
-    'top-right',
-    'bottom-left',
-    'bottom-right',
-  ];
 
   @HostListener('window:keydown.Escape', ['$event'])
   keyEvent(): void {
@@ -66,59 +66,100 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   ) {}
 
   public ngAfterViewInit(): void {
-    this.self = document.getElementById(this.elementId);
-    if (this.self !== null) {
-      this.self.style.width = this.popupWidth;
-      this.self.style.height = this.popupHeight;
+    this.popup = this.popupElementRef.nativeElement;
+    this.popup.style.width = this.popupWidth;
+    this.popup.style.height = this.popupHeight;
 
-      if (this.mouseAppearLocations.includes(this.appearMouse)) {
-        this.appearAtMouse();
-      }
-
-      new ResizeObserver(() => {
-        this.moveIntoViewX();
-        this.moveIntoViewY();
-      }).observe(this.self);
-
-      this.subscriptionsForWindowSize.push(this.screenService.windowWidth$.subscribe(() => this.moveIntoViewX()));
-      this.subscriptionsForWindowSize.push(this.screenService.windowHeight$.subscribe(() => this.moveIntoViewY()));
-
-      this.savedWidth = this.self.style.width;
-      this.savedHeight = this.self.style.height;
+    if (this.anchor === 'screen') {
+      this.appearAtScreen();
+    } else {
+      this.appearAtMouse();
     }
+
+    new ResizeObserver(() => {
+      this.moveIntoViewX();
+      this.moveIntoViewY();
+    }).observe(this.popup);
+
+    this.subscriptionsForWindowSize.push(this.screenService.windowWidth$.subscribe(() => this.moveIntoViewX()));
+    this.subscriptionsForWindowSize.push(this.screenService.windowHeight$.subscribe(() => this.moveIntoViewY()));
+
+    this.savedWidth = this.popup.style.width;
+    this.savedHeight = this.popup.style.height;
+  }
+
+  private appearAtScreen(): void {
+    let appearYOffset = 0;
+    let appearXOffset = 0;
+    const multibler = 0.5;
+    if (this.position === 'top') {
+      appearYOffset = this.offset;
+      appearXOffset = window.innerWidth * multibler - this.popup.clientWidth * multibler;
+    } else if (this.position === 'bottom') {
+      appearYOffset = window.innerHeight - this.popup.clientHeight - this.offset;
+      appearXOffset = window.innerWidth * multibler - this.popup.clientWidth * multibler;
+    } else if (this.position === 'left') {
+      appearYOffset = window.innerHeight * multibler - this.popup.clientHeight * multibler;
+      appearXOffset = this.offset;
+    } else if (this.position === 'right') {
+      appearYOffset = window.innerHeight * multibler - this.popup.clientHeight * multibler;
+      appearXOffset = window.innerWidth - this.popup.clientWidth - this.offset;
+    } else if (this.position === 'top-left') {
+      appearYOffset = this.offset;
+      appearXOffset = this.offset;
+    } else if (this.position === 'top-right') {
+      appearYOffset = this.offset;
+      appearXOffset = window.innerWidth - this.popup.clientWidth - this.offset;
+    } else if (this.position === 'bottom-left') {
+      appearYOffset = window.innerHeight - this.popup.clientHeight - this.offset;
+      appearXOffset = this.offset;
+    } else if (this.position === 'bottom-right') {
+      appearYOffset = window.innerHeight - this.popup.clientHeight - this.offset;
+      appearXOffset = window.innerWidth - this.popup.clientWidth - this.offset;
+    } else {
+      appearYOffset = window.innerHeight * multibler - this.popup.clientHeight * multibler;
+      appearXOffset = window.innerWidth * multibler - this.popup.clientWidth * multibler;
+    }
+    this.popup.style.top = appearYOffset.toString() + 'px';
+    this.popup.style.left = appearXOffset.toString() + 'px';
   }
 
   private appearAtMouse(): void {
-    this.mouseEvents.mouseMoveBehave.pipe(take(1)).subscribe((event) => {
+    this.mouseEvents.mouseLastEvent.pipe(take(1)).subscribe((event) => {
       if (event !== undefined) {
-        let appearXOffset = 0;
         let appearYOffset = 0;
-        const multibler = 1.9;
-        if (this.self !== null) {
-          if (this.appearMouse === 'top') {
-            appearYOffset = -this.self.clientHeight / multibler;
-          } else if (this.appearMouse === 'bottom') {
-            appearYOffset = this.self.clientHeight / multibler;
-          } else if (this.appearMouse === 'left') {
-            appearXOffset = -this.self.clientWidth / multibler;
-          } else if (this.appearMouse === 'right') {
-            appearXOffset = this.self.clientWidth / multibler;
-          } else if (this.appearMouse === 'top-left') {
-            appearYOffset = -this.self.clientHeight / multibler;
-            appearXOffset = -this.self.clientWidth / multibler;
-          } else if (this.appearMouse === 'top-right') {
-            appearYOffset = -this.self.clientHeight / multibler;
-            appearXOffset = this.self.clientWidth / multibler;
-          } else if (this.appearMouse === 'bottom-left') {
-            appearYOffset = this.self.clientHeight / multibler;
-            appearXOffset = -this.self.clientWidth / multibler;
-          } else if (this.appearMouse === 'bottom-right') {
-            appearYOffset = this.self.clientHeight / multibler;
-            appearXOffset = this.self.clientWidth / multibler;
-          }
-          this.self.style.left = (event.clientX + appearXOffset).toString() + 'px';
-          this.self.style.top = (event.clientY + appearYOffset).toString() + 'px';
+        let appearXOffset = 0;
+        const multibler = 0.5;
+        if (this.position === 'top') {
+          appearYOffset = -this.popup.clientHeight - this.offset;
+          appearXOffset = -this.popup.clientWidth * multibler;
+        } else if (this.position === 'bottom') {
+          appearYOffset = this.offset;
+          appearXOffset = -this.popup.clientWidth * multibler;
+        } else if (this.position === 'left') {
+          appearYOffset = -this.popup.clientHeight * multibler;
+          appearXOffset = -this.popup.clientWidth - this.offset;
+        } else if (this.position === 'right') {
+          appearYOffset = -this.popup.clientHeight * multibler;
+          appearXOffset = this.offset;
+        } else if (this.position === 'top-left') {
+          appearYOffset = -this.popup.clientHeight - this.offset;
+          appearXOffset = -this.popup.clientWidth - this.offset;
+        } else if (this.position === 'top-right') {
+          appearYOffset = -this.popup.clientHeight - this.offset;
+          appearXOffset = this.offset;
+        } else if (this.position === 'bottom-left') {
+          appearYOffset = this.offset;
+          appearXOffset = -this.popup.clientWidth - this.offset;
+        } else if (this.position === 'bottom-right') {
+          appearYOffset = this.offset;
+          appearXOffset = this.offset;
+        } else {
+          appearYOffset = -this.popup.clientHeight * multibler;
+          appearXOffset = -this.popup.clientWidth * multibler;
         }
+        this.popup.style.top = (event.clientY + appearYOffset).toString() + 'px';
+        this.popup.style.left = (event.clientX + appearXOffset).toString() + 'px';
       }
     });
   }
@@ -128,21 +169,17 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
       this.dragWindow = true;
       this.subscriptionsForMouseEvents.push(this.mouseEvents.mouseMove.subscribe((event) => this.onMove(event)));
       this.subscriptionsForMouseEvents.push(this.mouseEvents.mouseUp.subscribe(() => this.onEnd()));
-      if (this.self !== null) {
-        this.dragOffsetX = event.offsetX - this.self.clientWidth / 2;
-        this.dragOffsetY = event.offsetY - this.self.clientHeight / 2;
-      }
+      this.dragOffsetX = event.offsetX;
+      this.dragOffsetY = event.offsetY;
     }
   }
 
   public onMove(event: MouseEvent | undefined): void {
-    if (!this.dragWindow || this.elementId === null || event === undefined) {
+    if (!this.dragWindow || event === undefined) {
       return;
     }
-    if (this.self !== null) {
-      this.self.style.left = this.WithinX(event.clientX - this.dragOffsetX, this.self.clientWidth).toString() + 'px';
-      this.self.style.top = this.WithinY(event.clientY - this.dragOffsetY, this.self.clientHeight).toString() + 'px';
-    }
+    this.popup.style.left = this.WithinX(event.clientX - this.dragOffsetX, this.popup.clientWidth).toString() + 'px';
+    this.popup.style.top = this.WithinY(event.clientY - this.dragOffsetY, this.popup.clientHeight).toString() + 'px';
   }
 
   public onStartResize(event: MouseEvent | undefined): void {
@@ -154,13 +191,11 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   }
 
   public onResize(event: MouseEvent | undefined): void {
-    if (!this.resizeWindow || this.elementId === null || event === undefined) {
+    if (!this.resizeWindow || event === undefined) {
       return;
     }
-    if (this.self !== null) {
-      this.self.style.width = event.clientX + 16 - this.self.getBoundingClientRect().x + 'px';
-      this.self.style.height = event.clientY + 16 - this.self.getBoundingClientRect().y + 'px';
-    }
+    this.popup.style.width = event.clientX - this.popup.getBoundingClientRect().x + 'px';
+    this.popup.style.height = event.clientY - this.popup.getBoundingClientRect().y + 'px';
   }
 
   public onEnd(): void {
@@ -190,44 +225,33 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   }
 
   public onMaximize(): void {
-    if (this.self !== null) {
-      this.self.style.width = '100%';
-      this.self.style.height = '100%';
-      this.self.style.left = '50%';
-      this.self.style.top = '50%';
-    }
+    this.popup.style.width = '100%';
+    this.popup.style.height = '100%';
     this.checkStatus();
   }
 
   public onWindowed(): void {
-    if (this.self !== null) {
-      this.self.style.width = this.savedWidth;
-      this.self.style.height = this.savedHeight;
-      this.self.style.left = '50%';
-      this.self.style.top = '50%';
-    }
+    this.popup.style.width = this.savedWidth;
+    this.popup.style.height = this.savedHeight;
     this.checkStatus();
   }
 
   public onMinimize(): void {
-    if (this.self !== null) {
-      this.self.style.width = '0px';
-      this.self.style.height = '0px';
-      this.self.style.left = '100%';
-      this.self.style.top = '100%';
-    }
+    this.popup.style.width = '0px';
+    this.popup.style.height = '0px';
+    this.popup.style.left = '100%';
+    this.popup.style.top = '100%';
     this.checkStatus();
   }
 
   private checkStatus(): void {
-    if (this.self !== null) {
-      if (this.self.clientHeight <= 36) {
-        this.status = 'minimized';
-      } else if (this.self.clientHeight > 36 && this.self.clientHeight < window.innerHeight - 20) {
-        this.status = '';
-      } else if (this.self.clientHeight >= window.innerHeight - 20) {
-        this.status = 'maximized';
-      }
+    this.iconColors = ['tertiary', 'tertiary', 'tertiary', 'tertiary'];
+    if (this.popup.clientHeight <= 36) {
+      this.status = 'minimized';
+    } else if (this.popup.clientHeight > 36 && this.popup.clientHeight < window.innerHeight - 20) {
+      this.status = '';
+    } else if (this.popup.clientHeight >= window.innerHeight - 20) {
+      this.status = 'maximized';
     }
   }
 
@@ -236,30 +260,26 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   }
 
   private moveIntoViewX(): void {
-    if (this.self !== null) {
-      this.self.style.left = this.WithinX(this.self.offsetLeft, this.self.clientWidth).toString() + 'px';
-    }
+    this.popup.style.left = this.WithinX(this.popup.offsetLeft, this.popup.clientWidth).toString() + 'px';
   }
 
   private moveIntoViewY(): void {
-    if (this.self !== null) {
-      this.self.style.top = this.WithinY(this.self.offsetTop, this.self.clientHeight).toString() + 'px';
-    }
+    this.popup.style.top = this.WithinY(this.popup.offsetTop, this.popup.clientHeight).toString() + 'px';
   }
 
   private WithinX(popupPositionX: number, popupWidth: number): number {
-    if (popupPositionX < popupWidth / 2 + 0) {
-      popupPositionX = popupWidth / 2 + 0;
-    } else if (popupPositionX > window.innerWidth - popupWidth / 2 - 0) {
-      popupPositionX = window.innerWidth - popupWidth / 2 - 0;
+    if (popupPositionX < 0) {
+      popupPositionX = 0;
+    } else if (popupPositionX > window.innerWidth - popupWidth) {
+      popupPositionX = window.innerWidth - popupWidth;
     }
     return popupPositionX;
   }
   private WithinY(popupPositionY: number, popupHeight: number): number {
-    if (popupPositionY < popupHeight / 2) {
-      popupPositionY = popupHeight / 2;
-    } else if (popupPositionY > window.innerHeight - popupHeight / 2) {
-      popupPositionY = window.innerHeight - popupHeight / 2;
+    if (popupPositionY < 0) {
+      popupPositionY = 0;
+    } else if (popupPositionY > window.innerHeight - popupHeight) {
+      popupPositionY = window.innerHeight - popupHeight;
     }
     return popupPositionY;
   }

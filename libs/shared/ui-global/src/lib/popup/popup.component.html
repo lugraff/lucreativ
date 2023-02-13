@@ -1,13 +1,12 @@
 <div *ngIf="backCovered" (click)="onOutsideClick()" [ngClass]="
     globalUISettings.LowCPU ? 'bg-textB opacity-30' : 'backdrop-blur-[1px] backdrop-brightness-75 animate-fadeIn'
   " class="fixed left-0 top-0 w-screen h-screen z-30"></div>
-<div [id]="elementId" (mouseleave)="activeWindow = false" (mouseenter)="activeWindow = true"
-  class="fixed flex flex-col -translate-x-1/2 -translate-y-1/2 max-w-full max-h-full min-w-fit min-h-[2rem]"
-  [ngStyle]="{ top: appearY, left: appearX }" [ngClass]="backCovered || dragWindow || activeWindow ? 'z-40' : 'z-20'">
-  <div class="{{ globalUISettings.AnimationType }} h-full bg-bgA border border-tertiary
-         hover:border-secondary shadow-lg shadow-bgA overflow-clip">
+<div #popup (mouseleave)="activeWindow = false" (mouseenter)="activeWindow = true"
+  class="fixed flex flex-col max-w-full max-h-full min-w-fit min-h-[2.1rem]"
+  [ngClass]="backCovered || dragWindow || activeWindow ? 'z-40' : 'z-20'">
+  <div class="{{ globalUISettings.AnimationType }} h-full bg-bgA shadow-lg shadow-shadow overflow-clip">
     <div class="relative flex bg-bgB z-20 select-none">
-      <div class="flex grow text-xl my-auto ml-2 whitespace-nowrap truncate"
+      <div class="flex gap-1 grow text-xl my-auto ml-2 pr-3 whitespace-nowrap truncate"
         [ngClass]="activeWindow ? 'text-primary' : 'text-tertiary'" (mousedown)="onStartMove($event)">
         <div *ngIf="icon.length" class="pr-2 my-auto">
           <global-icon [icon]="icon" [strokeWidth]="iconStroke" [size]="iconSize" [color]="iconColor">
@@ -16,26 +15,29 @@
         {{ myTitle }}
       </div>
       <global-icon *ngIf="(minimizeable || resizeable) && status !== 'minimized'" icon="featherMinus"
+        [color]="iconColors[0]" (mouseenter)="iconColors[0] = 'primary'" (mouseleave)="iconColors[0] = 'tertiary'"
         (click)="onMinimize()" class="pr-1 py-1 text-tertiary hover:text-primary"></global-icon>
-      <global-icon *ngIf="resizeable && status !== 'maximized'" icon="featherMaximize" (click)="onMaximize()"
+      <global-icon *ngIf="resizeable && status !== 'maximized'" icon="featherMaximize" [color]="iconColors[1]"
+        (mouseenter)="iconColors[1] = 'primary'" (mouseleave)="iconColors[1] = 'tertiary'" (click)="onMaximize()"
         class="pr-1 py-1 text-tertiary hover:text-primary"></global-icon>
-      <global-icon *ngIf="(minimizeable || resizeable) && status !== ''" icon="featherCopy" (click)="onWindowed()"
+      <global-icon *ngIf="(minimizeable || resizeable) && status !== ''" icon="featherCopy" [color]="iconColors[2]"
+        (mouseenter)="iconColors[2] = 'primary'" (mouseleave)="iconColors[2] = 'tertiary'" (click)="onWindowed()"
         class="pr-1 py-1 text-tertiary hover:text-primary"></global-icon>
-      <global-icon *ngIf="closeable" icon="featherX" (click)="onClose()"
-        class="pr-1 py-1 text-tertiary hover:text-danger"></global-icon>
+      <global-icon *ngIf="closeable" icon="featherX" [color]="iconColors[3]" (mouseenter)="iconColors[3] = 'danger'"
+        (mouseleave)="iconColors[3] = 'tertiary'" (click)="onClose()" class="pr-1 py-1"></global-icon>
     </div>
-    <div *ngIf="resizeable && status !== 'minimized'"
-      class="fixed left-[calc(100%-1.3rem)] top-[calc(100%-1.4rem)] z-20">
+
+    <div class="flex flex-col h-full max-h-[calc(100%-2.2rem)] gap-1 elite_v_scrollbar pl-3 py-1"
+      [ngClass]="resizeWindow ? 'pointer-events-none select-none' : ''">
+      <ng-content></ng-content>
+    </div>
+
+    <div *ngIf="resizeable && status !== 'minimized'" class="absolute left-[calc(100%-1.3rem)] top-[calc(100%-1.4rem)]">
       <svg (mousedown)="onStartResize($event)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-        class="w-[1.5rem] h-[1.5rem] stroke-[1.5] stroke-tertiary active:stroke-primary -rotate-45">
+        class="w-[1.5rem] h-[1.5rem] stroke-[1.5] stroke-tertiary active:stroke-primary hover:stroke-primary hover:stroke-2 -rotate-45">
         <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
         <path stroke-linecap="round" stroke-linejoin="round" d="M14 16H9" />
       </svg>
-    </div>
-
-    <div class="flex flex-col gap-1 h-full max-h-[calc(100%-2.2rem)] min-h-[16vh] elite_v_scrollbar pl-3 py-3"
-      [ngClass]="resizeWindow ? 'pointer-events-none select-none' : ''">
-      <ng-content></ng-content>
     </div>
   </div>
 </div>

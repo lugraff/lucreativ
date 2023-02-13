@@ -40,6 +40,7 @@ module.exports = {
       bgB: '#205060',
       bgA: '#303442',
       subtle: '#646464',
+      shadow: '#000000aa',
     },
     extend: {
       keyframes: {

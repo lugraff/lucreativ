@@ -26,6 +26,6 @@
 </div>
 
 <global-popup *ngIf="showLocalSettings" myTitle="Local Settings" [closeable]="true" [minimizeable]="true"
-  [backCovered]="false" [resizeable]="false" (whenClosing)="showLocalSettings = false">
+  [backCovered]="false" [resizeable]="true" (whenClosing)="showLocalSettings = false">
   <global-local-settings></global-local-settings>
 </global-popup>
