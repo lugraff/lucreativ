@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, NgZone, OnDestroy } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, NgZone, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MouseEventService, Vector2 } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { FormsModule } from '@angular/forms';
-import { ButtonListComponent, ButtonStandardComponent } from '@shared/ui-global';
+import { ButtonListComponent, ButtonStandardComponent, PopupComponent } from '@shared/ui-global';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 export interface Ball {
   pos: Vector2;
@@ -12,20 +13,26 @@ export interface Ball {
   radius: number;
 }
 
+//TODO Keyboard Space Pause/Play
+
 @Component({
   selector: 'lucreativ-net-animation',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonStandardComponent, ButtonListComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, FormsModule, ButtonStandardComponent, ButtonListComponent, PopupComponent],
   templateUrl: './net-animation.component.html',
 })
 export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   private canvas: HTMLCanvasElement | undefined = undefined;
-  private processing = false;
   private mousePos: Vector2 = { x: 0, y: 0 };
+  private subs: Subscription[] = [];
+  public processing = new BehaviorSubject<boolean>(false);
   public connectDist = 140;
   public dots = 100;
   public minSpeed = 0;
   public maxSpeed = 2;
+  public range = 100;
+  public damping = 0.05;
   public showSettings = true;
 
   private balls: Ball[] = [];
@@ -45,9 +52,11 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
 
   public ngAfterViewInit(): void {
     this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    this.processing.subscribe(() => this.ngZone.runOutsideAngular(() => this.process()));
+  }
 
-    this.processing = true;
-    this.ngZone.runOutsideAngular(() => this.process());
+  onTogglePlaying() {
+    this.processing.next(!this.processing.value);
   }
 
   public setToFullscreen(): void {
@@ -59,7 +68,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   }
 
   private process(): void {
-    if (!this.processing || !this.canvas) {
+    if (!this.processing.value || !this.canvas) {
       return;
     }
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -85,14 +94,14 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
       (ball.pos.x - this.mousePos.x) * (ball.pos.x - this.mousePos.x) +
         (ball.pos.y - this.mousePos.y) * (ball.pos.y - this.mousePos.y)
     );
-    if (distance < this.connectDist * 2) {
-      ball.speed += distance * 0.001;
+    if (distance < this.range) {
+      ball.speed += this.range * 0.001;
       if (ball.speed > this.maxSpeed) {
         ball.speed = this.maxSpeed;
       }
     } else {
       if (ball.speed > this.minSpeed) {
-        ball.speed -= distance * 0.00005;
+        ball.speed -= this.damping;
       } else {
         ball.speed = this.minSpeed;
       }
@@ -162,6 +171,9 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.processing = false;
+    this.processing.next(false);
+    this.subs.forEach((sub) => {
+      sub.unsubscribe();
+    });
   }
 }

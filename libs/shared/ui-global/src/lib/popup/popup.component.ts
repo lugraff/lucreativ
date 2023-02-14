@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -16,8 +18,13 @@ import { GlobalUISettingsService } from '@shared/util-settings';
 import { Subscription, take } from 'rxjs';
 import { IconComponent } from '../icon/icon.component';
 
+//TODO Aktiv Window rework ( active wenn mouseEnter | deactive wenn outside click?)
+//TODO Window Dock
+//TODO Minimize side by side
+
 @Component({
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, IconComponent],
   selector: 'global-popup',
   templateUrl: './popup.component.html',
@@ -38,7 +45,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   @Input() public iconStroke: string | number | undefined = 1.5;
   @Input() public iconSize = '1.5rem';
   @Input() public iconColor = '';
-  @Output() public whenClosing = new EventEmitter(); //TODO IN and OUTPUT for show and close
+  @Output() public whenClosing = new EventEmitter();
   public dragWindow = false;
   public resizeWindow = false;
   public activeWindow = false;
@@ -51,21 +58,40 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   private dragOffsetY = 0;
   private savedWidth = '';
   private savedHeight = '';
+  private keyboardEventRef: (ev: KeyboardEvent) => unknown = (event: KeyboardEvent) => this.OnKeyDownEvent(event);
 
-  @HostListener('window:keydown.Escape', ['$event'])
-  keyEvent(): void {
-    if (this.closeable) {
-      this.onClose();
-    }
-  }
+  // @HostListener('window:mouseup', ['$event']) clickedOut(event: PointerEvent) {
+  //   //TODO nur wenn Popup da ist!
+  //   const popupRect = this.popup.getBoundingClientRect();
+  //   if (
+  //     event.clientX < popupRect.right &&
+  //     event.clientX > popupRect.left &&
+  //     event.clientY > popupRect.top &&
+  //     event.clientY < popupRect.bottom
+  //   ) {
+  //     this.activeWindow = true;
+  //   } else {
+  //     this.activeWindow = false;
+  //   }
+  // }
 
   constructor(
     private mouseEvents: MouseEventService,
     public globalUISettings: GlobalUISettingsService,
-    private screenService: IsMobileScreenService
+    private screenService: IsMobileScreenService,
+    private detector: ChangeDetectorRef
   ) {}
 
+  private OnKeyDownEvent(event: KeyboardEvent): void {
+    if (this.activeWindow) {
+      if (this.closeable && event.key === 'Escape') {
+        this.onClose();
+      }
+    }
+  }
+
   public ngAfterViewInit(): void {
+    addEventListener('keydown', this.keyboardEventRef); //oder erst wenn activeWindow true ist?
     this.popup = this.popupElementRef.nativeElement;
     this.popup.style.width = this.popupWidth;
     this.popup.style.height = this.popupHeight;
@@ -88,32 +114,32 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
     this.savedHeight = this.popup.style.height;
   }
 
-  private appearAtScreen(): void {
+  private appearAtScreen(position: string = this.position): void {
     let appearYOffset = 0;
     let appearXOffset = 0;
     const multibler = 0.5;
-    if (this.position === 'top') {
+    if (position === 'top') {
       appearYOffset = this.offset;
       appearXOffset = window.innerWidth * multibler - this.popup.clientWidth * multibler;
-    } else if (this.position === 'bottom') {
+    } else if (position === 'bottom') {
       appearYOffset = window.innerHeight - this.popup.clientHeight - this.offset;
       appearXOffset = window.innerWidth * multibler - this.popup.clientWidth * multibler;
-    } else if (this.position === 'left') {
+    } else if (position === 'left') {
       appearYOffset = window.innerHeight * multibler - this.popup.clientHeight * multibler;
       appearXOffset = this.offset;
-    } else if (this.position === 'right') {
+    } else if (position === 'right') {
       appearYOffset = window.innerHeight * multibler - this.popup.clientHeight * multibler;
       appearXOffset = window.innerWidth - this.popup.clientWidth - this.offset;
-    } else if (this.position === 'top-left') {
+    } else if (position === 'top-left') {
       appearYOffset = this.offset;
       appearXOffset = this.offset;
-    } else if (this.position === 'top-right') {
+    } else if (position === 'top-right') {
       appearYOffset = this.offset;
       appearXOffset = window.innerWidth - this.popup.clientWidth - this.offset;
-    } else if (this.position === 'bottom-left') {
+    } else if (position === 'bottom-left') {
       appearYOffset = window.innerHeight - this.popup.clientHeight - this.offset;
       appearXOffset = this.offset;
-    } else if (this.position === 'bottom-right') {
+    } else if (position === 'bottom-right') {
       appearYOffset = window.innerHeight - this.popup.clientHeight - this.offset;
       appearXOffset = window.innerWidth - this.popup.clientWidth - this.offset;
     } else {
@@ -124,34 +150,34 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
     this.popup.style.left = appearXOffset.toString() + 'px';
   }
 
-  private appearAtMouse(): void {
+  private appearAtMouse(position: string = this.position): void {
     this.mouseEvents.mouseLastEvent.pipe(take(1)).subscribe((event) => {
       if (event !== undefined) {
         let appearYOffset = 0;
         let appearXOffset = 0;
         const multibler = 0.5;
-        if (this.position === 'top') {
+        if (position === 'top') {
           appearYOffset = -this.popup.clientHeight - this.offset;
           appearXOffset = -this.popup.clientWidth * multibler;
-        } else if (this.position === 'bottom') {
+        } else if (position === 'bottom') {
           appearYOffset = this.offset;
           appearXOffset = -this.popup.clientWidth * multibler;
-        } else if (this.position === 'left') {
+        } else if (position === 'left') {
           appearYOffset = -this.popup.clientHeight * multibler;
           appearXOffset = -this.popup.clientWidth - this.offset;
-        } else if (this.position === 'right') {
+        } else if (position === 'right') {
           appearYOffset = -this.popup.clientHeight * multibler;
           appearXOffset = this.offset;
-        } else if (this.position === 'top-left') {
+        } else if (position === 'top-left') {
           appearYOffset = -this.popup.clientHeight - this.offset;
           appearXOffset = -this.popup.clientWidth - this.offset;
-        } else if (this.position === 'top-right') {
+        } else if (position === 'top-right') {
           appearYOffset = -this.popup.clientHeight - this.offset;
           appearXOffset = this.offset;
-        } else if (this.position === 'bottom-left') {
+        } else if (position === 'bottom-left') {
           appearYOffset = this.offset;
           appearXOffset = -this.popup.clientWidth - this.offset;
-        } else if (this.position === 'bottom-right') {
+        } else if (position === 'bottom-right') {
           appearYOffset = this.offset;
           appearXOffset = this.offset;
         } else {
@@ -167,6 +193,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   public onStartMove(event: MouseEvent | undefined): void {
     if (event !== undefined) {
       this.dragWindow = true;
+      window.getSelection()?.removeAllRanges();
       this.subscriptionsForMouseEvents.push(this.mouseEvents.mouseMove.subscribe((event) => this.onMove(event)));
       this.subscriptionsForMouseEvents.push(this.mouseEvents.mouseUp.subscribe(() => this.onEnd()));
       this.dragOffsetX = event.offsetX;
@@ -184,6 +211,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
 
   public onStartResize(event: MouseEvent | undefined): void {
     if (event !== undefined) {
+      window.getSelection()?.removeAllRanges();
       this.resizeWindow = true;
       this.subscriptionsForMouseEvents.push(this.mouseEvents.mouseMove.subscribe((event) => this.onResize(event)));
       this.subscriptionsForMouseEvents.push(this.mouseEvents.mouseUp.subscribe(() => this.onEnd()));
@@ -199,10 +227,12 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   }
 
   public onEnd(): void {
+    window.getSelection()?.removeAllRanges();
     this.dragWindow = false;
     this.resizeWindow = false;
     this.unsubMouseEvents();
     this.checkStatus();
+    this.detector.markForCheck();
   }
 
   public ngOnDestroy(): void {
@@ -234,11 +264,12 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
     this.popup.style.width = this.savedWidth;
     this.popup.style.height = this.savedHeight;
     this.checkStatus();
+    this.appearAtScreen('center');
   }
 
   public onMinimize(): void {
-    this.popup.style.width = '0px';
-    this.popup.style.height = '0px';
+    this.popup.style.width = '8rem';
+    this.popup.style.height = '2rem';
     this.popup.style.left = '100%';
     this.popup.style.top = '100%';
     this.checkStatus();
@@ -257,6 +288,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
 
   public onClose(): void {
     this.whenClosing.emit();
+    removeEventListener('keydown', this.keyboardEventRef); //oder schon wenn activeWindow false ist?
   }
 
   private moveIntoViewX(): void {

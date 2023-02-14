@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, NgZone, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MouseEventService, TouchEventService, Vector2 } from '@shared/util-global';
+import { TouchEventService, Vector2 } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { FormsModule } from '@angular/forms';
 import { ButtonListComponent, ButtonStandardComponent } from '@shared/ui-global';

@@ -1,6 +1,5 @@
-<div
-  class="fixed z-30 flex flex-col h-full transition-all duration-300 ease-out"
-  (mouseleave)="expanded= false" [ngClass]="expanded ? 'w-72':'w-16'">
+<div class="fixed z-30 flex flex-col h-full transition-all duration-300 ease-out" (mouseleave)="expanded= false"
+  [ngClass]="expanded ? 'w-72':'w-16'">
   <div (click)="showMenu = !showMenu" (mouseenter)="showMenu = true; expanded=true;" class="mt-4 mb-6 mx-2">
     <img src="assets/Logo.jpg" class="rounded-3xl border-2 border-textB pointer-events-none select-none w-60" />
   </div>
@@ -25,7 +24,8 @@
   <div *ngIf="expanded" class="text-subtle text-sm animate-fadeIn">{{version}}</div>
 </div>
 
-<global-popup *ngIf="showLocalSettings" myTitle="Local Settings" [closeable]="true" [minimizeable]="true"
-  [backCovered]="false" [resizeable]="true" (whenClosing)="showLocalSettings = false">
+<global-popup *ngIf="showLocalSettings" myTitle="Local Settings" icon="featherSettings" iconColor="primary"
+  anchor="mouse" position="right" [offset]="64" [closeable]="true" [minimizeable]="true" [backCovered]="false"
+  [resizeable]="true" (whenClosing)="showLocalSettings = false">
   <global-local-settings></global-local-settings>
 </global-popup>

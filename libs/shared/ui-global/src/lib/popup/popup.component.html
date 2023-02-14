@@ -1,18 +1,21 @@
 <div *ngIf="backCovered" (click)="onOutsideClick()" [ngClass]="
     globalUISettings.LowCPU ? 'bg-textB opacity-30' : 'backdrop-blur-[1px] backdrop-brightness-75 animate-fadeIn'
   " class="fixed left-0 top-0 w-screen h-screen z-30"></div>
+<div *ngIf="resizeWindow" class="fixed left-0 top-0 w-screen h-screen z-30"></div>
 <div #popup (mouseleave)="activeWindow = false" (mouseenter)="activeWindow = true"
-  class="fixed flex flex-col max-w-full max-h-full min-w-fit min-h-[2.1rem]"
+  class="fixed flex flex-col max-w-full max-h-full min-w-[8rem] min-h-[2rem]"
   [ngClass]="backCovered || dragWindow || activeWindow ? 'z-40' : 'z-20'">
   <div class="{{ globalUISettings.AnimationType }} h-full bg-bgA shadow-lg shadow-shadow overflow-clip">
     <div class="relative flex bg-bgB z-20 select-none">
-      <div class="flex gap-1 grow text-xl my-auto ml-2 pr-3 whitespace-nowrap truncate"
+      <div class="flex gap-1 grow text-xl my-auto ml-2 pr-3 h-8 whitespace-nowrap truncate"
         [ngClass]="activeWindow ? 'text-primary' : 'text-tertiary'" (mousedown)="onStartMove($event)">
         <div *ngIf="icon.length" class="pr-2 my-auto">
           <global-icon [icon]="icon" [strokeWidth]="iconStroke" [size]="iconSize" [color]="iconColor">
           </global-icon>
         </div>
-        {{ myTitle }}
+        <div *ngIf="status !== 'minimized'">
+          {{ myTitle }}
+        </div>
       </div>
       <global-icon *ngIf="(minimizeable || resizeable) && status !== 'minimized'" icon="featherMinus"
         [color]="iconColors[0]" (mouseenter)="iconColors[0] = 'primary'" (mouseleave)="iconColors[0] = 'tertiary'"
@@ -27,16 +30,16 @@
         (mouseleave)="iconColors[3] = 'tertiary'" (click)="onClose()" class="pr-1 py-1"></global-icon>
     </div>
 
-    <div class="flex flex-col h-full max-h-[calc(100%-2.2rem)] gap-1 elite_v_scrollbar pl-3 py-1"
-      [ngClass]="resizeWindow ? 'pointer-events-none select-none' : ''">
+    <div draggable="false" class="grid h-full max-h-[calc(100%-2.2rem)] gap-1 elite_scrollbar pl-3 py-1"
+      [ngClass]="resizeWindow ? 'pointer-events-none select-none ' : ''">
       <ng-content></ng-content>
     </div>
 
-    <div *ngIf="resizeable && status !== 'minimized'" class="absolute left-[calc(100%-1.3rem)] top-[calc(100%-1.4rem)]">
+    <div *ngIf="resizeable && status !== 'minimized'" class="absolute left-[calc(100%-1.7rem)] top-[calc(100%-1.8rem)]">
       <svg (mousedown)="onStartResize($event)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-        class="w-[1.5rem] h-[1.5rem] stroke-[1.5] stroke-tertiary active:stroke-primary hover:stroke-primary hover:stroke-2 -rotate-45">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
-        <path stroke-linecap="round" stroke-linejoin="round" d="M14 16H9" />
+        class="w-[1.5rem] h-[1.5rem] stroke-[1.5] stroke-tertiary active:stroke-primary hover:stroke-primary hover:stroke-2 cursor-nw-resize">
+        <line stroke-linecap="round" stroke-linejoin="round" x1="19" y1="6" x2="6" y2="19"></line>
+        <line stroke-linecap="round" stroke-linejoin="round" x1="19" y1="12" x2="12" y2="19"></line>
       </svg>
     </div>
   </div>

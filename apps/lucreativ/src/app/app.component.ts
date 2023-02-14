@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NavigationComponent, TooltipComponent } from '@shared/ui-global';
+import { MouseEventService } from '@shared/util-global';
+import { take } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -24,5 +26,7 @@ import { NavigationComponent, TooltipComponent } from '@shared/ui-global';
     </div>`,
 })
 export class AppComponent {
-  constructor(public routerModule: RouterModule) {}
+  constructor(public routerModule: RouterModule, mouseEvents: MouseEventService) {
+    mouseEvents.mouseLastEvent.pipe(take(1)).subscribe();
+  }
 }
