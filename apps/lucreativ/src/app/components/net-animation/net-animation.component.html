@@ -2,9 +2,10 @@
     [height]="screenService.windowHeight$|async" (dblclick)="showSettings = true"></canvas>
 
 <global-popup *ngIf="showSettings" icon="featherSettings" iconColor="primary" anchor="screen" position="top-right"
-    [offset]="0" [backCovered]="false" [closeable]="true" [minimizeable]="true" (whenClosing)="showSettings = false">
+    globalTooltip="Shortcut: 'S'" [offset]="0" [backCovered]="false" [closeable]="true" [minimizeable]="true"
+    (whenClosing)="showSettings = false">
     <div class="flex flex-col gap-1 items-end text-lg">
-        <button list icon="featherAirplay" iconColor="tertiary"
+        <button list icon="featherAirplay" iconColor="tertiary" globalTooltip="Shortcut: 'F11'"
             (click)="setToFullscreen()">{{showSettings?'Fullscreen':''}}
         </button>
         max Speed:
@@ -14,16 +15,17 @@
         Connection:
         <input type="range" min="10" max="300" step="1" [(ngModel)]="connectDist" class="accent-bgB">
         Dots:
-        <input type="number" min="2" max="500" step="1" [(ngModel)]="dots" class="bg-bgB">
+        <global-input-standard standard type="number" min="2" max="2000" step="1" [selectAllOnFocus]="true"
+            [(ngModel)]="dots" (inputTextOutput)="onReload()" class="w-16 bg-bgB"></global-input-standard>
         Range:
         <input type="range" min="10" max="600" step="1" [(ngModel)]="range" class="accent-bgB">
         Damping:
         <input type="range" min="0.001" max="0.1" step="0.001" [(ngModel)]="damping" class="accent-bgB">
         <div>
-            <button standard (click)="onReload()">Reload</button>
+            <button standard (click)="onReload()" globalTooltip="Shortcut: 'Enter'">Reload</button>
         </div>
         <div>
-            <button standard (click)="onTogglePlaying()"
+            <button standard (click)="onTogglePlaying()" globalTooltip="Shortcut: 'Space'"
                 icon="{{(processing|async)?'featherPauseCircle':'featherPlayCircle'}}"
                 iconColor="textB">{{(processing|async)?'Pause':'Play'}}</button>
         </div>

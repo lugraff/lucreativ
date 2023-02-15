@@ -26,7 +26,5 @@ import { take } from 'rxjs';
     </div>`,
 })
 export class AppComponent {
-  constructor(public routerModule: RouterModule, mouseEvents: MouseEventService) {
-    mouseEvents.mouseLastEvent.pipe(take(1)).subscribe();
-  }
+  constructor(public routerModule: RouterModule, public mouseEvents: MouseEventService) {}
 }

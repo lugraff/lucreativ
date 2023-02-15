@@ -1,9 +1,15 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, NgZone, OnDestroy } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, NgZone, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MouseEventService, Vector2 } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { FormsModule } from '@angular/forms';
-import { ButtonListComponent, ButtonStandardComponent, PopupComponent } from '@shared/ui-global';
+import {
+  ButtonListComponent,
+  ButtonStandardComponent,
+  InputStandardComponent,
+  PopupComponent,
+  TooltipDirective,
+} from '@shared/ui-global';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 export interface Ball {
@@ -13,20 +19,26 @@ export interface Ball {
   radius: number;
 }
 
-//TODO Keyboard Space Pause/Play
-
 @Component({
   selector: 'lucreativ-net-animation',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ButtonStandardComponent, ButtonListComponent, PopupComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ButtonStandardComponent,
+    ButtonListComponent,
+    PopupComponent,
+    TooltipDirective,
+    InputStandardComponent,
+  ],
   templateUrl: './net-animation.component.html',
 })
 export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   private canvas: HTMLCanvasElement | undefined = undefined;
   private mousePos: Vector2 = { x: 0, y: 0 };
   private subs: Subscription[] = [];
-  public processing = new BehaviorSubject<boolean>(false);
+  public processing = new BehaviorSubject<boolean>(true);
   public connectDist = 140;
   public dots = 100;
   public minSpeed = 0;
@@ -36,6 +48,18 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   public showSettings = true;
 
   private balls: Ball[] = [];
+
+  @HostListener('window:keydown', ['$event']) onKey(event: KeyboardEvent) {
+    if (event.code === 'Space') {
+      this.onTogglePlaying();
+    }
+    if (event.code === 'Enter') {
+      this.onReload();
+    }
+    if (event.code === 'KeyS') {
+      this.showSettings = !this.showSettings;
+    }
+  }
 
   constructor(private ngZone: NgZone, public screenService: IsMobileScreenService, mouseService: MouseEventService) {
     mouseService.mouseMove.subscribe((event) => (this.mousePos = { x: event.clientX, y: event.clientY }));
@@ -158,15 +182,17 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   }
 
   onReload() {
-    this.balls = [];
-    for (let index = 0; index < this.dots; index++) {
-      const newBall: Ball = {
-        pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
-        dir: { x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2 },
-        speed: Math.random() * this.maxSpeed,
-        radius: Math.random() * 2 + 1,
-      };
-      this.balls.push(newBall);
+    if (this.dots > 1) {
+      this.balls = [];
+      for (let index = 0; index < this.dots; index++) {
+        const newBall: Ball = {
+          pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
+          dir: { x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2 },
+          speed: Math.random() * this.maxSpeed,
+          radius: Math.random() * 2 + 1,
+        };
+        this.balls.push(newBall);
+      }
     }
   }
 
