@@ -16,6 +16,8 @@ export const INJECTION_TOKEN_SMALL_SCREEN_BREAKPOINT = 'SmallScreenBreakpoint';
   providedIn: 'root',
 })
 export class IsMobileScreenService {
+  private readonly regex_mobile = new RegExp(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/, 'i');
+  public readonly isMobile = this.regex_mobile.test(window.navigator.userAgent);
   private isMobileScreen = new BehaviorSubject<boolean>(false);
   public isMobileScreen$ = this.isMobileScreen.asObservable();
 

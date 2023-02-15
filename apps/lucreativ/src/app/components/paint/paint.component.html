@@ -13,13 +13,13 @@
             <input type="color" [(ngModel)]="lineColor" class="bg-bgD">
         </div>
         <div>
-            <input type="range" min="1" max="100" step="1" [(ngModel)]="lineWidth" class="accent-bgB">
+            <input type="range" min="1" max="300" step="1" [(ngModel)]="lineWidth" class="accent-bgB w-64">
         </div>
     </div>
 </div>
 
 <global-popup *ngIf="showLayerPopup" myTitle="Layers" [closeable]="false" [resizeable]="true" [backCovered]="false"
-    appearX="100%" popupWidth="1%" popupHeight="100%" icon="featherLayers">
+    anchor="screen" position="right" [offset]="0" popupWidth="12rem" popupHeight="100%" icon="featherLayers">
     <global-list [data]="layerlist" [notAvailableText]="notAvailableText" [deleteButton]="true"
         (optionSelect)="onLayerSelect($event)" (deleteOption)="onDeleteLayer($event)" [selected]="actualID"
         class="grow">

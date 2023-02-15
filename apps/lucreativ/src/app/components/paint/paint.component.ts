@@ -21,7 +21,7 @@ export class PaintComponent implements AfterViewInit {
   public lineColor = '#ffffff';
   public newNumber = 0;
   public notAvailableText = 'Image';
-  public showLayerPopup = false;
+  public showLayerPopup = true;
 
   constructor(private renderer: Renderer2, private elRef: ElementRef) {}
   ngAfterViewInit(): void {
@@ -36,8 +36,8 @@ export class PaintComponent implements AfterViewInit {
     if (this.actualCanvas) {
       this.actualCanvas.id = 'Layer_' + ++this.newNumber;
       this.actualID = this.actualCanvas.id;
-      this.actualCanvas.width = 500;
-      this.actualCanvas.height = 500;
+      this.actualCanvas.width = innerWidth;
+      this.actualCanvas.height = innerHeight;
       this.actualCanvas.style.position = 'fixed';
       this.actualCanvas.style.backgroundColor = 'transparent';
       this.actualCanvas.style.border = '10px';

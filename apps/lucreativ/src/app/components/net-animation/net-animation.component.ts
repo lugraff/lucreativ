@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, NgZone, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MouseEventService, Vector2 } from '@shared/util-global';
+import { MouseEventService, TouchEventService, Vector2 } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { FormsModule } from '@angular/forms';
 import {
@@ -46,23 +46,50 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   public range = 100;
   public damping = 0.05;
   public showSettings = true;
+  public isTouching = false;
 
   private balls: Ball[] = [];
 
   @HostListener('window:keydown', ['$event']) onKey(event: KeyboardEvent) {
     if (event.code === 'Space') {
       this.onTogglePlaying();
-    }
-    if (event.code === 'Enter') {
+    } else if (event.code === 'Enter') {
       this.onReload();
-    }
-    if (event.code === 'KeyS') {
+    } else if (event.code === 'KeyS') {
       this.showSettings = !this.showSettings;
     }
   }
 
-  constructor(private ngZone: NgZone, public screenService: IsMobileScreenService, mouseService: MouseEventService) {
-    mouseService.mouseMove.subscribe((event) => (this.mousePos = { x: event.clientX, y: event.clientY }));
+  //TODO FPS
+
+  constructor(
+    private ngZone: NgZone,
+    public screenService: IsMobileScreenService,
+    mouseService: MouseEventService,
+    touchService: TouchEventService
+  ) {
+    if (screenService.isMobile) {
+      this.subs.push(
+        touchService.touchStart.subscribe((event) => {
+          this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+          this.isTouching = true;
+        })
+      );
+      this.subs.push(
+        touchService.touchMove.subscribe((event) => {
+          this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+        })
+      );
+      this.subs.push(
+        touchService.touchEnd.subscribe(() => {
+          this.isTouching = false;
+        })
+      );
+    } else {
+      this.subs.push(
+        mouseService.mouseMove.subscribe((event) => (this.mousePos = { x: event.clientX, y: event.clientY }))
+      );
+    }
     for (let index = 0; index < this.dots; index++) {
       const newBall: Ball = {
         pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
@@ -98,9 +125,12 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    for (const ball of this.balls) {
-      this.calcMouseGravity(ball);
+    if ((this.screenService.isMobile && this.isTouching) || !this.screenService.isMobile) {
+      for (const ball of this.balls) {
+        this.calcMouseGravity(ball);
+      }
     }
+
     for (const ball of this.balls) {
       this.calcBallPos(ball);
     }

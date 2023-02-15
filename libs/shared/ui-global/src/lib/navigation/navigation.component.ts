@@ -16,7 +16,7 @@ export class NavigationComponent {
   public showLocalSettings = false;
   public expanded = false;
   public showMenu = true;
-  public version = '1.1.2';
+  public version = '1.2.0';
 
   constructor(public router: Router) {}
 
