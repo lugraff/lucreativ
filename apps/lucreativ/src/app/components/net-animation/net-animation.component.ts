@@ -1,4 +1,12 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, NgZone, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  NgZone,
+  OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MouseEventService, TouchEventService, Vector2 } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
@@ -47,8 +55,19 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   public damping = 0.05;
   public showSettings = true;
   public isTouching = false;
+  public lineWidth = 1;
+  
+  public fps = 0;
+  private fpsStack: number[] = [];
+  private lastDelta = 0;
+  private interval = 0;
 
   private balls: Ball[] = [];
+
+  //TODO Spiegelung
+  //TODO Refactoring
+  //TODO AUTO FPS
+  //TODO mouse und touch service zusammenlegen
 
   @HostListener('window:keydown', ['$event']) onKey(event: KeyboardEvent) {
     if (event.code === 'Space') {
@@ -60,10 +79,9 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  //TODO FPS
-
   constructor(
     private ngZone: NgZone,
+    private detector: ChangeDetectorRef,
     public screenService: IsMobileScreenService,
     mouseService: MouseEventService,
     touchService: TouchEventService
@@ -99,6 +117,9 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
       };
       this.balls.push(newBall);
     }
+    this.interval = setInterval(() => {
+      this.detector.markForCheck();
+    }, 400);
   }
 
   public ngAfterViewInit(): void {
@@ -118,10 +139,21 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private process(): void {
+  private calcFPS(delta: number): void {
+    this.fpsStack.push(delta - this.lastDelta);
+    this.lastDelta = delta;
+    this.fps = Math.round((1 / (this.fpsStack.reduce((a, b) => a + b, 0) / this.fpsStack.length)) * 1000);
+    if (this.fpsStack.length > 9) {
+      this.fpsStack.splice(0, 1);
+    }
+  }
+
+  private process(delta: number = 0): void {
     if (!this.processing.value || !this.canvas) {
       return;
     }
+    this.calcFPS(delta);
+
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
@@ -137,10 +169,18 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     // for (const ball of this.balls) {
     //   this.paintBall(ctx, ball);
     // }
+
+    // ctx.strokeStyle = '#ffffffff';
+    // ctx.fillStyle = '#00ff00aa';
+    ctx.lineWidth = this.lineWidth;
+    ctx.lineCap = 'round';
+    // ctx.lineJoin = 'round';
     for (let index = 0; index < this.balls.length; index++) {
       this.paintLine(ctx, index);
     }
-    requestAnimationFrame(() => this.process());
+
+    // ctx.fill();
+    requestAnimationFrame((val) => this.process(val));
   }
 
   private calcMouseGravity(ball: Ball): void {
@@ -190,25 +230,62 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
 
   private paintLine(ctx: CanvasRenderingContext2D, ballIndex: number): void {
     const posSelf: Vector2 = this.balls[ballIndex].pos;
-
     for (let index = ballIndex; index < this.balls.length; index++) {
       const posOther: Vector2 = this.balls[index].pos;
       const distance = Math.sqrt(
         (posSelf.x - posOther.x) * (posSelf.x - posOther.x) + (posSelf.y - posOther.y) * (posSelf.y - posOther.y)
       );
       if (distance < this.connectDist) {
+        ctx.beginPath();
         ctx.strokeStyle = `rgba(
           ${distance * 4},
           255,
           ${distance * 4},
           ${(this.connectDist - distance) / this.connectDist})`;
-        ctx.beginPath();
-        ctx.moveTo(posSelf.x, posSelf.y);
-        ctx.lineTo(this.balls[index].pos.x, this.balls[index].pos.y);
-        ctx.closePath();
+        this.net(ctx, posSelf, index);
+        // this.kraken(ctx, posSelf, index);
+        // this.rects(ctx, posSelf, index);
+        // this.flower(ctx, posSelf, index);
         ctx.stroke();
+        // ctx.save();
+        // ctx.scale(-1, 1);
+        // ctx.restore();
+        // ctx.stroke();
       }
     }
+  }
+
+  private flower(ctx: CanvasRenderingContext2D, posSelf: Vector2, index: number): void {
+    ctx.moveTo(posSelf.x, posSelf.y);
+    ctx.bezierCurveTo(
+      innerWidth * 0.5,
+      0,
+      innerWidth * 0.5,
+      innerHeight,
+      this.balls[index].pos.x,
+      this.balls[index].pos.y
+    );
+  }
+
+  private kraken(ctx: CanvasRenderingContext2D, posSelf: Vector2, index: number): void {
+    ctx.moveTo(posSelf.x, posSelf.y);
+    ctx.bezierCurveTo(
+      innerWidth * 0.5,
+      innerHeight * 0.5,
+      posSelf.x,
+      posSelf.y,
+      this.balls[index].pos.x,
+      this.balls[index].pos.y
+    );
+  }
+
+  private net(ctx: CanvasRenderingContext2D, posSelf: Vector2, index: number): void {
+    ctx.moveTo(posSelf.x, posSelf.y);
+    ctx.lineTo(this.balls[index].pos.x, this.balls[index].pos.y);
+  }
+
+  private rects(ctx: CanvasRenderingContext2D, posSelf: Vector2, index: number): void {
+    ctx.rect(posSelf.x, posSelf.y, this.balls[index].pos.x, this.balls[index].pos.y);
   }
 
   onReload() {
@@ -231,5 +308,6 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     this.subs.forEach((sub) => {
       sub.unsubscribe();
     });
+    clearInterval(this.interval);
   }
 }
