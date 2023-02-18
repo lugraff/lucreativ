@@ -14,13 +14,14 @@ import { FormsModule } from '@angular/forms';
 import {
   ButtonListComponent,
   ButtonStandardComponent,
+  InputCheckboxComponent,
   InputStandardComponent,
   PopupComponent,
   TooltipDirective,
 } from '@shared/ui-global';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
-export interface Ball {
+interface Dot {
   pos: Vector2;
   dir: Vector2;
   speed: number;
@@ -39,6 +40,7 @@ export interface Ball {
     PopupComponent,
     TooltipDirective,
     InputStandardComponent,
+    InputCheckboxComponent,
   ],
   templateUrl: './net-animation.component.html',
 })
@@ -48,7 +50,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   private subs: Subscription[] = [];
   public processing = new BehaviorSubject<boolean>(true);
   public connectDist = 140;
-  public dots = 100;
+  public dotCount = 100;
   public minSpeed = 0;
   public maxSpeed = 2;
   public range = 100;
@@ -56,13 +58,15 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   public showSettings = true;
   public isTouching = false;
   public lineWidth = 1;
-  
+
+  public autoFps = true;
   public fps = 0;
   private fpsStack: number[] = [];
   private lastDelta = 0;
   private interval = 0;
+  private fpsChecks = 0;
 
-  private balls: Ball[] = [];
+  private dots: Dot[] = [];
 
   //TODO Spiegelung
   //TODO Refactoring
@@ -108,15 +112,9 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
         mouseService.mouseMove.subscribe((event) => (this.mousePos = { x: event.clientX, y: event.clientY }))
       );
     }
-    for (let index = 0; index < this.dots; index++) {
-      const newBall: Ball = {
-        pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
-        dir: { x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2 },
-        speed: Math.random() * this.maxSpeed,
-        radius: Math.random() * 2 + 1,
-      };
-      this.balls.push(newBall);
-    }
+
+    this.onReload();
+
     this.interval = setInterval(() => {
       this.detector.markForCheck();
     }, 400);
@@ -127,8 +125,74 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     this.processing.subscribe(() => this.ngZone.runOutsideAngular(() => this.process()));
   }
 
-  onTogglePlaying() {
+  public onReload(): void {
+    const sum = this.dotCount - this.dots.length;
+    if (sum > 0) {
+      this.onPushDot(sum);
+    } else if (sum < 0) {
+      for (let index = 0; index < Math.abs(sum); index++) {
+        this.dots.pop();
+      }
+    }
+  }
+
+  private onPushDot(amount: number): void {
+    for (let index = 0; index < amount; index++) {
+      const newDot: Dot = {
+        pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
+        dir: { x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2 },
+        speed: Math.random() * this.maxSpeed,
+        radius: Math.random() * 2 + 1,
+      };
+      this.dots.push(newDot);
+    }
+  }
+
+  public onTogglePlaying(): void {
     this.processing.next(!this.processing.value);
+  }
+
+  onstartAutoCalc() {
+    this.fpsChecks = 0;
+    this.autoFps = true;
+  }
+
+  private doAutoFPS(): void {
+    if (this.autoFps) {
+      if (this.fps < 10) {
+        for (let index = 0; index < 150; index++) {
+          this.dots.pop();
+        }
+      } else if (this.fps < 20) {
+        for (let index = 0; index < 100; index++) {
+          this.dots.pop();
+        }
+      } else if (this.fps < 30) {
+        for (let index = 0; index < 50; index++) {
+          this.dots.pop();
+        }
+      } else if (this.fps < 40) {
+        for (let index = 0; index < 10; index++) {
+          this.dots.pop();
+        }
+      } else if (this.fps < 55) {
+        this.dots.pop();
+        this.dots.pop();
+        this.dots.pop();
+      } else if (this.fps < 59) {
+        this.fpsChecks++;
+        if (this.fpsChecks > 30) {
+          this.autoFps = false;
+        }
+      } else if (this.fps > 61) {
+        this.onPushDot(100);
+      } else if (this.fps > 60) {
+        this.onPushDot(50);
+      } else if (this.fps > 59) {
+        this.onPushDot(10);
+      }
+    }
+    this.dotCount = this.dots.length;
   }
 
   public setToFullscreen(): void {
@@ -153,17 +217,20 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
       return;
     }
     this.calcFPS(delta);
+    if (this.autoFps) {
+      this.doAutoFPS();
+    }
 
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
     if ((this.screenService.isMobile && this.isTouching) || !this.screenService.isMobile) {
-      for (const ball of this.balls) {
+      for (const ball of this.dots) {
         this.calcMouseGravity(ball);
       }
     }
 
-    for (const ball of this.balls) {
+    for (const ball of this.dots) {
       this.calcBallPos(ball);
     }
     // for (const ball of this.balls) {
@@ -175,7 +242,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     ctx.lineWidth = this.lineWidth;
     ctx.lineCap = 'round';
     // ctx.lineJoin = 'round';
-    for (let index = 0; index < this.balls.length; index++) {
+    for (let index = 0; index < this.dots.length; index++) {
       this.paintLine(ctx, index);
     }
 
@@ -183,7 +250,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     requestAnimationFrame((val) => this.process(val));
   }
 
-  private calcMouseGravity(ball: Ball): void {
+  private calcMouseGravity(ball: Dot): void {
     const distance = Math.sqrt(
       (ball.pos.x - this.mousePos.x) * (ball.pos.x - this.mousePos.x) +
         (ball.pos.y - this.mousePos.y) * (ball.pos.y - this.mousePos.y)
@@ -202,7 +269,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private calcBallPos(ball: Ball): void {
+  private calcBallPos(ball: Dot): void {
     ball.pos.x += ball.dir.x * ball.speed;
     ball.pos.y += ball.dir.y * ball.speed;
     if (ball.pos.y < ball.radius) {
@@ -221,7 +288,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private paintBall(ctx: CanvasRenderingContext2D, ball: Ball): void {
+  private paintBall(ctx: CanvasRenderingContext2D, ball: Dot): void {
     ctx.fillStyle = '#ffffffaa';
     const circle = new Path2D();
     circle.arc(ball.pos.x, ball.pos.y, ball.radius, 0, 2 * Math.PI);
@@ -229,9 +296,9 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   }
 
   private paintLine(ctx: CanvasRenderingContext2D, ballIndex: number): void {
-    const posSelf: Vector2 = this.balls[ballIndex].pos;
-    for (let index = ballIndex; index < this.balls.length; index++) {
-      const posOther: Vector2 = this.balls[index].pos;
+    const posSelf: Vector2 = this.dots[ballIndex].pos;
+    for (let index = ballIndex; index < this.dots.length; index++) {
+      const posOther: Vector2 = this.dots[index].pos;
       const distance = Math.sqrt(
         (posSelf.x - posOther.x) * (posSelf.x - posOther.x) + (posSelf.y - posOther.y) * (posSelf.y - posOther.y)
       );
@@ -262,8 +329,8 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
       0,
       innerWidth * 0.5,
       innerHeight,
-      this.balls[index].pos.x,
-      this.balls[index].pos.y
+      this.dots[index].pos.x,
+      this.dots[index].pos.y
     );
   }
 
@@ -274,33 +341,18 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
       innerHeight * 0.5,
       posSelf.x,
       posSelf.y,
-      this.balls[index].pos.x,
-      this.balls[index].pos.y
+      this.dots[index].pos.x,
+      this.dots[index].pos.y
     );
   }
 
   private net(ctx: CanvasRenderingContext2D, posSelf: Vector2, index: number): void {
     ctx.moveTo(posSelf.x, posSelf.y);
-    ctx.lineTo(this.balls[index].pos.x, this.balls[index].pos.y);
+    ctx.lineTo(this.dots[index].pos.x, this.dots[index].pos.y);
   }
 
   private rects(ctx: CanvasRenderingContext2D, posSelf: Vector2, index: number): void {
-    ctx.rect(posSelf.x, posSelf.y, this.balls[index].pos.x, this.balls[index].pos.y);
-  }
-
-  onReload() {
-    if (this.dots > 1) {
-      this.balls = [];
-      for (let index = 0; index < this.dots; index++) {
-        const newBall: Ball = {
-          pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
-          dir: { x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2 },
-          speed: Math.random() * this.maxSpeed,
-          radius: Math.random() * 2 + 1,
-        };
-        this.balls.push(newBall);
-      }
-    }
+    ctx.rect(posSelf.x, posSelf.y, this.dots[index].pos.x, this.dots[index].pos.y);
   }
 
   public ngOnDestroy(): void {

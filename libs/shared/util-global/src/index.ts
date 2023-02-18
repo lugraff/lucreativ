@@ -5,6 +5,7 @@ export * from './lib/services/connector.service';
 export * from './lib/services/tooltip.service';
 export * from './lib/services/can-deactivate-guard.service';
 export * from './lib/services/storage.service';
+export * from './lib/services/randomizer.service';
 
 export * from './lib/entities/searchElement';
 export * from './lib/entities/elite-logo-animation';
