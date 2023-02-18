@@ -51,11 +51,11 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   public processing = new BehaviorSubject<boolean>(true);
   public connectDist = 100;
   public dotCount = 100;
-  public minSpeed = 0.3;
-  public maxSpeed = 4;
+  public minSpeed = 0;
   public range = 150;
   public damping = 0.1;
   public lineWidth = 1.5;
+  public power = 0.2;
   public showSettings = true;
   public isPressing = false;
   public style = 'net';
@@ -129,10 +129,17 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
 
   private onPushDot(amount: number): void {
     for (let index = 0; index < amount; index++) {
+      const normalizedVector2: Vector2 = {
+        x: (Math.random() - 0.5) * 2,
+        y: (Math.random() - 0.5) * 2,
+      };
+      const m = Math.sqrt(normalizedVector2.x * normalizedVector2.x + normalizedVector2.y * normalizedVector2.y);
+      normalizedVector2.x /= m;
+      normalizedVector2.y /= m;
       const newDot: Dot = {
         pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
-        dir: { x: (Math.random() - 0.5) * 2, y: (Math.random() - 0.5) * 2 },
-        speed: Math.random() * this.maxSpeed,
+        dir: normalizedVector2,
+        speed: Math.random() * this.minSpeed * 10,
         radius: Math.random() * 2 + 1,
       };
       this.dots.push(newDot);
@@ -210,42 +217,44 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    if (this.isPressing) {
-      for (const ball of this.dots) {
-        this.calcMouseGravity(ball);
-      }
+    for (const ball of this.dots) {
+      this.calcBehavior(ball);
+      this.calcDotPos(ball);
     }
 
-    for (const ball of this.dots) {
-      this.calcBallPos(ball);
-    }
-    // for (const ball of this.balls) {
-    //   this.paintBall(ctx, ball);
+    // for (const ball of this.dots) {
     // }
+    for (const ball of this.dots) {
+      this.paintBall(ctx, ball);
+    }
 
     // ctx.strokeStyle = '#ffffffff';
     // ctx.fillStyle = '#00ff00aa';
     ctx.lineWidth = this.lineWidth;
     ctx.lineCap = 'round';
     // ctx.lineJoin = 'round';
-    for (let index = 0; index < this.dots.length; index++) {
-      this.paintLine(ctx, index);
-    }
-
+    // for (let index = 0; index < this.dots.length; index++) {
+    //   this.paintLine(ctx, index);
+    // }
     requestAnimationFrame((val) => this.process(val));
   }
 
-  private calcMouseGravity(ball: Dot): void {
-    const distance = Math.sqrt(
-      (ball.pos.x - this.pointerPos.x) * (ball.pos.x - this.pointerPos.x) +
-        (ball.pos.y - this.pointerPos.y) * (ball.pos.y - this.pointerPos.y)
-    );
-    if (distance < this.range) {
-      ball.speed += this.range * 0.001;
-      if (ball.speed > this.maxSpeed) {
-        ball.speed = this.maxSpeed;
+  private calcBehavior(ball: Dot): void {
+    let pushing = false;
+    if (this.isPressing) {
+      const distance = Math.sqrt(
+        (ball.pos.x - this.pointerPos.x) * (ball.pos.x - this.pointerPos.x) +
+          (ball.pos.y - this.pointerPos.y) * (ball.pos.y - this.pointerPos.y)
+      );
+      if (distance < this.range) {
+        ball.speed += this.power * distance * 0.01;
+        pushing = true;
       }
-    } else {
+    }
+    // if (ball.speed > this.maxSpeed) {
+    //   ball.speed = this.maxSpeed;
+    // }
+    if (!pushing) {
       if (ball.speed > this.minSpeed) {
         ball.speed -= this.damping;
       } else {
@@ -254,7 +263,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private calcBallPos(ball: Dot): void {
+  private calcDotPos(ball: Dot): void {
     ball.pos.x += ball.dir.x * ball.speed;
     ball.pos.y += ball.dir.y * ball.speed;
     if (ball.pos.y < ball.radius) {

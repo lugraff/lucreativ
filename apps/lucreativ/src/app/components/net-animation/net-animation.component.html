@@ -13,8 +13,6 @@
         </button>
         <global-list [data]="styles" [selected]="this.style" (optionSelect)="this.style = $event"
             height="10rem">Style</global-list>
-        {{maxSpeed}} max Speed:
-        <input type="range" min="2" max="20" step="0.1" [(ngModel)]="maxSpeed" class="accent-bgB">
         {{minSpeed}} min Speed:
         <input type="range" min="0" max="2" step="0.1" [(ngModel)]="minSpeed" class="accent-bgB">
         {{connectDist}} Connection:
@@ -22,10 +20,12 @@
         {{dotCount}} Dots:
         <input [disabled]="fps<30" type="range" min="2" max="2500" step="1" [(ngModel)]="dotCount"
             (ngModelChange)="onReload()" class="accent-bgB">
+        {{power}} Power:
+        <input type="range" min="0" max="1" step="0.01" [(ngModel)]="power" class="accent-bgB">
         {{range}} Range:
-        <input type="range" min="10" max="400" step="1" [(ngModel)]="range" class="accent-bgB">
+        <input type="range" min="50" max="400" step="1" [(ngModel)]="range" class="accent-bgB">
         {{damping}} Damping:
-        <input type="range" min="0.0" max="0.2" step="0.01" [(ngModel)]="damping" class="accent-bgB">
+        <input type="range" min="0" max="1" step="0.01" [(ngModel)]="damping" class="accent-bgB">
         {{lineWidth}} Line Width:
         <input type="range" min="0.5" max="16" step="0.5" [(ngModel)]="lineWidth" class="accent-bgB">
         <div>
