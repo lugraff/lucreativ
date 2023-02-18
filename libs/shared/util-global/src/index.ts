@@ -1,6 +1,6 @@
 export * from './lib/services/cookie-handler.service';
 export * from './lib/services/mouse-event.service';
-export * from './lib/services/touch-event.service';
+export * from './lib/services/pointer-event.service';
 export * from './lib/services/connector.service';
 export * from './lib/services/tooltip.service';
 export * from './lib/services/can-deactivate-guard.service';

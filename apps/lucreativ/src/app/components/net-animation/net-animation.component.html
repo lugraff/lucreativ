@@ -10,24 +10,22 @@
         <button list icon="featherAirplay" iconColor="tertiary" globalTooltip="Shortcut: 'F11'"
             (click)="setToFullscreen()">{{showSettings?'Fullscreen':''}}
         </button>
-        max Speed:
-        <input type="range" min="1" max="20" step="0.1" [(ngModel)]="maxSpeed" class="accent-bgB">
-        min Speed:
+        <global-list [data]="styles" [selected]="this.style" (optionSelect)="this.style = $event" height="10rem">Style</global-list>
+        {{maxSpeed}} max Speed:
+        <input type="range" min="2" max="20" step="0.1" [(ngModel)]="maxSpeed" class="accent-bgB">
+        {{minSpeed}} min Speed:
         <input type="range" min="0" max="2" step="0.1" [(ngModel)]="minSpeed" class="accent-bgB">
-        Connection:
-        <input type="range" min="10" max="300" step="1" [(ngModel)]="connectDist" class="accent-bgB">
-        Dots:
-        <global-input-standard standard type="number" min="2" max="2000" step="1" [selectAllOnFocus]="true"
-            [(ngModel)]="dotCount" (inputTextOutput)="onReload()" class="w-16 bg-bgB"></global-input-standard>
-        Range:
-        <input type="range" min="10" max="600" step="1" [(ngModel)]="range" class="accent-bgB">
-        Damping:
-        <input type="range" min="0.001" max="0.1" step="0.001" [(ngModel)]="damping" class="accent-bgB">
-        Line Width:
-        <input type="range" min="0.1" max="20" step="0.1" [(ngModel)]="lineWidth" class="accent-bgB">
-        <div>
-            <button standard (click)="onReload()" globalTooltip="Shortcut: 'Enter'">Reload</button>
-        </div>
+        {{connectDist}} Connection:
+        <input type="range" min="30" max="400" step="1" [(ngModel)]="connectDist" class="accent-bgB">
+        {{dotCount}} Dots:
+        <input [disabled]="fps<30" type="range" min="2" max="2500" step="1" [(ngModel)]="dotCount"
+            (ngModelChange)="onReload()" class="accent-bgB">
+        {{range}} Range:
+        <input type="range" min="10" max="400" step="1" [(ngModel)]="range" class="accent-bgB">
+        {{damping}} Damping:
+        <input type="range" min="0.0" max="0.2" step="0.01" [(ngModel)]="damping" class="accent-bgB">
+        {{lineWidth}} Line Width:
+        <input type="range" min="0.5" max="16" step="0.5" [(ngModel)]="lineWidth" class="accent-bgB">
         <div>
             <button standard (click)="onTogglePlaying()" globalTooltip="Shortcut: 'Space'"
                 icon="{{(processing|async)?'featherPauseCircle':'featherPlayCircle'}}"

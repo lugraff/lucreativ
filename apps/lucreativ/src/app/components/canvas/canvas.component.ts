@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, NgZone, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TouchEventService, Vector2 } from '@shared/util-global';
+import { PointerEventService, Vector2 } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { FormsModule } from '@angular/forms';
 import { ButtonListComponent, ButtonStandardComponent } from '@shared/ui-global';
@@ -33,7 +33,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private balls: Ball[] = [];
 
-  constructor(private ngZone: NgZone, public screenService: IsMobileScreenService, touchService: TouchEventService) {
+  constructor(private ngZone: NgZone, public screenService: IsMobileScreenService, touchService: PointerEventService) {
     this.subs.push(
       touchService.touchStart.subscribe((event) => {
         this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY };

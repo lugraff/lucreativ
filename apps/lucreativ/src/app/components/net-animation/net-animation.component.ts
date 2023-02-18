@@ -8,14 +8,14 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MouseEventService, TouchEventService, Vector2 } from '@shared/util-global';
+import { PointerEventService, Vector2 } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { FormsModule } from '@angular/forms';
 import {
   ButtonListComponent,
   ButtonStandardComponent,
-  InputCheckboxComponent,
   InputStandardComponent,
+  ListComponent,
   PopupComponent,
   TooltipDirective,
 } from '@shared/ui-global';
@@ -40,24 +40,26 @@ interface Dot {
     PopupComponent,
     TooltipDirective,
     InputStandardComponent,
-    InputCheckboxComponent,
+    ListComponent,
   ],
   templateUrl: './net-animation.component.html',
 })
 export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   private canvas: HTMLCanvasElement | undefined = undefined;
-  private mousePos: Vector2 = { x: 0, y: 0 };
+  private pointerPos: Vector2 = { x: 0, y: 0 };
   private subs: Subscription[] = [];
   public processing = new BehaviorSubject<boolean>(true);
-  public connectDist = 140;
+  public connectDist = 100;
   public dotCount = 100;
-  public minSpeed = 0;
-  public maxSpeed = 2;
-  public range = 100;
-  public damping = 0.05;
+  public minSpeed = 0.3;
+  public maxSpeed = 4;
+  public range = 150;
+  public damping = 0.1;
+  public lineWidth = 1.5;
   public showSettings = true;
   public isTouching = false;
-  public lineWidth = 1;
+  public style = 'net';
+  public styles: string[] = ['net', 'kraken', 'flower', 'rects'];
 
   public autoFps = true;
   public fps = 0;
@@ -70,8 +72,6 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
 
   //TODO Spiegelung
   //TODO Refactoring
-  //TODO AUTO FPS
-  //TODO mouse und touch service zusammenlegen
 
   @HostListener('window:keydown', ['$event']) onKey(event: KeyboardEvent) {
     if (event.code === 'Space') {
@@ -87,37 +87,28 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     private ngZone: NgZone,
     private detector: ChangeDetectorRef,
     public screenService: IsMobileScreenService,
-    mouseService: MouseEventService,
-    touchService: TouchEventService
+    pointerService: PointerEventService
   ) {
-    if (screenService.isMobile) {
-      this.subs.push(
-        touchService.touchStart.subscribe((event) => {
-          this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
-          this.isTouching = true;
-        })
-      );
-      this.subs.push(
-        touchService.touchMove.subscribe((event) => {
-          this.mousePos = { x: event.touches[0].clientX, y: event.touches[0].clientY };
-        })
-      );
-      this.subs.push(
-        touchService.touchEnd.subscribe(() => {
-          this.isTouching = false;
-        })
-      );
-    } else {
-      this.subs.push(
-        mouseService.mouseMove.subscribe((event) => (this.mousePos = { x: event.clientX, y: event.clientY }))
-      );
-    }
+    this.subs.push(
+      pointerService.pointerPosition.subscribe((event) => {
+        this.pointerPos = { x: event.position.x, y: event.position.y };
+        if (event.pressed !== undefined) {
+          this.isTouching = event.pressed;
+        }
+        // event.index
+      })
+    );
 
     this.onReload();
 
     this.interval = setInterval(() => {
       this.detector.markForCheck();
     }, 400);
+    this.interval = setInterval(() => {
+      if (this.autoFps) {
+        this.doAutoFPS();
+      }
+    }, 10);
   }
 
   public ngAfterViewInit(): void {
@@ -160,9 +151,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   private doAutoFPS(): void {
     if (this.autoFps) {
       if (this.fps < 10) {
-        for (let index = 0; index < 150; index++) {
-          this.dots.pop();
-        }
+        this.dots = [];
       } else if (this.fps < 20) {
         for (let index = 0; index < 100; index++) {
           this.dots.pop();
@@ -217,14 +206,11 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
       return;
     }
     this.calcFPS(delta);
-    if (this.autoFps) {
-      this.doAutoFPS();
-    }
 
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    if ((this.screenService.isMobile && this.isTouching) || !this.screenService.isMobile) {
+    if (this.isTouching) {
       for (const ball of this.dots) {
         this.calcMouseGravity(ball);
       }
@@ -246,14 +232,13 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
       this.paintLine(ctx, index);
     }
 
-    // ctx.fill();
     requestAnimationFrame((val) => this.process(val));
   }
 
   private calcMouseGravity(ball: Dot): void {
     const distance = Math.sqrt(
-      (ball.pos.x - this.mousePos.x) * (ball.pos.x - this.mousePos.x) +
-        (ball.pos.y - this.mousePos.y) * (ball.pos.y - this.mousePos.y)
+      (ball.pos.x - this.pointerPos.x) * (ball.pos.x - this.pointerPos.x) +
+        (ball.pos.y - this.pointerPos.y) * (ball.pos.y - this.pointerPos.y)
     );
     if (distance < this.range) {
       ball.speed += this.range * 0.001;
@@ -309,10 +294,16 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
           255,
           ${distance * 4},
           ${(this.connectDist - distance) / this.connectDist})`;
-        this.net(ctx, posSelf, index);
-        // this.kraken(ctx, posSelf, index);
-        // this.rects(ctx, posSelf, index);
-        // this.flower(ctx, posSelf, index);
+        if (this.style === this.styles[0]) {
+          this.net(ctx, posSelf, index);
+        } else if (this.style === this.styles[1]) {
+          this.kraken(ctx, posSelf, index);
+        } else if (this.style === this.styles[2]) {
+          this.flower(ctx, posSelf, index);
+        } else if (this.style === this.styles[3]) {
+          this.rects(ctx, posSelf, index);
+        }
+        // ctx.fill();
         ctx.stroke();
         // ctx.save();
         // ctx.scale(-1, 1);
