@@ -57,7 +57,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   public damping = 0.1;
   public lineWidth = 1.5;
   public showSettings = true;
-  public isTouching = false;
+  public isPressing = false;
   public style = 'net';
   public styles: string[] = ['net', 'kraken', 'flower', 'rects'];
 
@@ -93,7 +93,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
       pointerService.pointerPosition.subscribe((event) => {
         this.pointerPos = { x: event.position.x, y: event.position.y };
         if (event.pressed !== undefined) {
-          this.isTouching = event.pressed;
+          this.isPressing = event.pressed;
         }
         // event.index
       })
@@ -210,7 +210,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    if (this.isTouching) {
+    if (this.isPressing) {
       for (const ball of this.dots) {
         this.calcMouseGravity(ball);
       }
