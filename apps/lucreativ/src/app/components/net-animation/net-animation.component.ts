@@ -143,7 +143,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
         pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
         dir: normalizedVector2,
         speed: Math.random() * this.minSpeed * 10,
-        radius: Math.random() * 10 + 10,
+        radius: Math.random() * 6 + 1,
       };
       this.dots.push(newDot);
     }
@@ -179,6 +179,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
         this.dots.pop();
         this.dots.pop();
       } else if (this.fps < 59) {
+        this.dots.pop();
         this.fpsChecks++;
         if (this.fpsChecks > 30) {
           this.autoFps = false;
@@ -245,7 +246,14 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
           (ball.pos.y - this.pointerPos.y) * (ball.pos.y - this.pointerPos.y)
       );
       if (distance < this.range) {
-        ball.speed += this.power * distance * 0.01;
+        const normalizedVector2: Vector2 = { x: this.pointerPos.x - ball.pos.x, y: this.pointerPos.y - ball.pos.y };
+        console.log(normalizedVector2);
+        const m = Math.sqrt(normalizedVector2.x * normalizedVector2.x + normalizedVector2.y * normalizedVector2.y);
+        normalizedVector2.x /= -m;
+        normalizedVector2.y /= -m;
+        ball.dir = normalizedVector2;
+
+        ball.speed += (this.power / distance) * 10;
         pushing = true;
       }
     }
