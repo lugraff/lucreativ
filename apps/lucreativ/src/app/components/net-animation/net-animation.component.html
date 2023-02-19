@@ -5,7 +5,6 @@
     globalTooltip="Shortcut: 'S'" [offset]="0" [backCovered]="false" [closeable]="true" [minimizeable]="true"
     (whenClosing)="showSettings = false">
     <div class="flex flex-col gap-1 items-end text-lg">
-        isPressing: {{isPressing}}
         <div>{{fps}} FPS</div>
         <button standard [disabled]="autoFps" (click)="onStartAutoCalc()">Auto FPS</button>
         <button list icon="featherAirplay" iconColor="tertiary" globalTooltip="Shortcut: 'F11'"
@@ -20,9 +19,9 @@
         <input type="range" min="30" max="400" step="1" [(ngModel)]="connectDist" class="accent-bgB">
         {{dotCount}} Dots:
         <input [disabled]="fps<30" type="range" min="2" max="2500" step="1" [(ngModel)]="dotCount"
-            (ngModelChange)="onReload()" class="accent-bgB">
+            (ngModelChange)="onReloadDots()" class="accent-bgB">
         {{power}} Power:
-        <input type="range" min="0" max="100" step="1" [(ngModel)]="power" class="accent-bgB">
+        <input type="range" min="-50" max="100" step="1" [(ngModel)]="power" class="accent-bgB">
         {{range}} Range:
         <input type="range" min="50" max="400" step="1" [(ngModel)]="range" class="accent-bgB">
         {{damping}} Damping:

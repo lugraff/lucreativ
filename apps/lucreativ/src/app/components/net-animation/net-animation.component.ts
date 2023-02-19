@@ -75,14 +75,12 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   private dots: Dot[] = [];
 
   //TODO Spiegelung
-  //TODO Refactoring
-  //TODO FPS
 
   @HostListener('window:keydown', ['$event']) onKey(event: KeyboardEvent) {
     if (event.code === 'Space') {
       this.onTogglePlaying();
     } else if (event.code === 'Enter') {
-      this.onReload();
+      this.onReloadDots();
     } else if (event.code === 'KeyS') {
       this.showSettings = !this.showSettings;
     }
@@ -105,7 +103,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
       })
     );
 
-    this.onReload();
+    this.onReloadDots();
 
     this.interval = setInterval(() => {
       this.detector.markForCheck();
@@ -122,7 +120,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     this.processing.subscribe(() => this.ngZone.runOutsideAngular(() => this.process()));
   }
 
-  public onReload(): void {
+  public onReloadDots(): void {
     const sum = this.dotCount - this.dots.length;
     if (sum > 0) {
       this.onPushDot(sum);
@@ -218,9 +216,10 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     this.calcFPS(delta);
 
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     ctx.lineWidth = this.lineWidth;
     ctx.lineCap = 'round';
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    // ctx.
     for (let index = 0; index < this.dots.length; index++) {
       this.calcBehavior(this.dots[index]);
       this.calcDotPos(this.dots[index]);
@@ -242,6 +241,9 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     if (this.isPressing) {
       const distance = this.vec2Service.distance(ball.pos, this.pointerPos);
       if (distance < this.range) {
+        // const dash = this.vec2Service.sub(ball.pos, this.pointerPos);
+        // ball.pos.x += dash.x * 0.1;
+        // ball.pos.y += dash.y * 0.1;
         ball.dir = this.vec2Service.normalize(this.vec2Service.sub(ball.pos, this.pointerPos));
         ball.speed = (this.power / distance) * 10;
         if (ball.speed > this.maxSpeed) {
@@ -279,7 +281,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   }
 
   private paintBall(ctx: CanvasRenderingContext2D, ball: Dot): void {
-    ctx.fillStyle = '#ffffffaa';
+    ctx.fillStyle = '#00ffffaa';
     const circle = new Path2D();
     circle.arc(ball.pos.x, ball.pos.y, ball.radius, 0, 2 * Math.PI);
     ctx.fill(circle);

@@ -25,4 +25,11 @@ export class Vector2Service {
       y: vector2A.y - vector2B.y,
     };
   }
+
+  public multiply(vector2: Vector2, multi: number): Vector2 {
+    return {
+      x: vector2.x * multi,
+      y: vector2.y * multi,
+    };
+  }
 }
