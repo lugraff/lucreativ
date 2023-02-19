@@ -11,6 +11,7 @@
         <button list icon="featherAirplay" iconColor="tertiary" globalTooltip="Shortcut: 'F11'"
             (click)="setToFullscreen()">{{showSettings?'Fullscreen':''}}
         </button>
+        <global-input-checkbox [(ngModel)]="showDots">Draw Dots</global-input-checkbox>
         <global-list [data]="styles" [selected]="this.style" (optionSelect)="this.style = $event"
             height="10rem">Style</global-list>
         {{minSpeed}} min Speed:

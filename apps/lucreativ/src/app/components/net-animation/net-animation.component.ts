@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import {
   ButtonListComponent,
   ButtonStandardComponent,
+  InputCheckboxComponent,
   InputStandardComponent,
   ListComponent,
   PopupComponent,
@@ -40,6 +41,7 @@ interface Dot {
     PopupComponent,
     TooltipDirective,
     InputStandardComponent,
+    InputCheckboxComponent,
     ListComponent,
   ],
   templateUrl: './net-animation.component.html',
@@ -58,8 +60,9 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   public power = 0.2;
   public showSettings = true;
   public isPressing = false;
+  public showDots = false;
   public style = 'net';
-  public styles: string[] = ['net', 'kraken', 'flower', 'rects'];
+  public styles: string[] = ['none', 'net', 'kraken', 'flower', 'rects'];
 
   public autoFps = true;
   public fps = 0;
@@ -140,7 +143,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
         pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
         dir: normalizedVector2,
         speed: Math.random() * this.minSpeed * 10,
-        radius: Math.random() * 2 + 1,
+        radius: Math.random() * 10 + 10,
       };
       this.dots.push(newDot);
     }
@@ -216,26 +219,21 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
 
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
-    for (const ball of this.dots) {
-      this.calcBehavior(ball);
-      this.calcDotPos(ball);
-    }
-
-    // for (const ball of this.dots) {
-    // }
-    for (const ball of this.dots) {
-      this.paintBall(ctx, ball);
-    }
-
-    // ctx.strokeStyle = '#ffffffff';
-    // ctx.fillStyle = '#00ff00aa';
     ctx.lineWidth = this.lineWidth;
     ctx.lineCap = 'round';
+    for (let index = 0; index < this.dots.length; index++) {
+      this.calcBehavior(this.dots[index]);
+      this.calcDotPos(this.dots[index]);
+      if (this.showDots) {
+        this.paintBall(ctx, this.dots[index]);
+      }
+      if (this.style !== 'none') {
+        this.paintLine(ctx, index);
+      }
+    }
+    // ctx.strokeStyle = '#ffffffff';
+    // ctx.fillStyle = '#00ff00aa';
     // ctx.lineJoin = 'round';
-    // for (let index = 0; index < this.dots.length; index++) {
-    //   this.paintLine(ctx, index);
-    // }
     requestAnimationFrame((val) => this.process(val));
   }
 
@@ -303,13 +301,13 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
           255,
           ${distance * 4},
           ${(this.connectDist - distance) / this.connectDist})`;
-        if (this.style === this.styles[0]) {
+        if (this.style === this.styles[1]) {
           this.net(ctx, posSelf, index);
-        } else if (this.style === this.styles[1]) {
-          this.kraken(ctx, posSelf, index);
         } else if (this.style === this.styles[2]) {
-          this.flower(ctx, posSelf, index);
+          this.kraken(ctx, posSelf, index);
         } else if (this.style === this.styles[3]) {
+          this.flower(ctx, posSelf, index);
+        } else if (this.style === this.styles[4]) {
           this.rects(ctx, posSelf, index);
         }
         // ctx.fill();
