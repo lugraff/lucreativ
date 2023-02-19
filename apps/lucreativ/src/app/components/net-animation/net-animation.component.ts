@@ -8,7 +8,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PointerEventService, Vector2 } from '@shared/util-global';
+import { PointerEventService, Vector2, Vector2Service } from '@shared/util-global';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { FormsModule } from '@angular/forms';
 import {
@@ -54,10 +54,11 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   public connectDist = 100;
   public dotCount = 100;
   public minSpeed = 0;
+  private maxSpeed = 50;
   public range = 150;
   public damping = 0.1;
   public lineWidth = 1.5;
-  public power = 0.2;
+  public power = 10;
   public showSettings = true;
   public isPressing = false;
   public showDots = false;
@@ -75,6 +76,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
 
   //TODO Spiegelung
   //TODO Refactoring
+  //TODO FPS
 
   @HostListener('window:keydown', ['$event']) onKey(event: KeyboardEvent) {
     if (event.code === 'Space') {
@@ -90,6 +92,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     private ngZone: NgZone,
     private detector: ChangeDetectorRef,
     public screenService: IsMobileScreenService,
+    private vec2Service: Vector2Service,
     pointerService: PointerEventService
   ) {
     this.subs.push(
@@ -132,16 +135,12 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
 
   private onPushDot(amount: number): void {
     for (let index = 0; index < amount; index++) {
-      const normalizedVector2: Vector2 = {
-        x: (Math.random() - 0.5) * 2,
-        y: (Math.random() - 0.5) * 2,
-      };
-      const m = Math.sqrt(normalizedVector2.x * normalizedVector2.x + normalizedVector2.y * normalizedVector2.y);
-      normalizedVector2.x /= m;
-      normalizedVector2.y /= m;
       const newDot: Dot = {
         pos: { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight },
-        dir: normalizedVector2,
+        dir: this.vec2Service.normalize({
+          x: (Math.random() - 0.5) * 2,
+          y: (Math.random() - 0.5) * 2,
+        }),
         speed: Math.random() * this.minSpeed * 10,
         radius: Math.random() * 6 + 1,
       };
@@ -153,7 +152,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     this.processing.next(!this.processing.value);
   }
 
-  onstartAutoCalc() {
+  public onStartAutoCalc(): void {
     this.fpsChecks = 0;
     this.autoFps = true;
   }
@@ -241,25 +240,16 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
   private calcBehavior(ball: Dot): void {
     let pushing = false;
     if (this.isPressing) {
-      const distance = Math.sqrt(
-        (ball.pos.x - this.pointerPos.x) * (ball.pos.x - this.pointerPos.x) +
-          (ball.pos.y - this.pointerPos.y) * (ball.pos.y - this.pointerPos.y)
-      );
+      const distance = this.vec2Service.distance(ball.pos, this.pointerPos);
       if (distance < this.range) {
-        const normalizedVector2: Vector2 = { x: this.pointerPos.x - ball.pos.x, y: this.pointerPos.y - ball.pos.y };
-        console.log(normalizedVector2);
-        const m = Math.sqrt(normalizedVector2.x * normalizedVector2.x + normalizedVector2.y * normalizedVector2.y);
-        normalizedVector2.x /= -m;
-        normalizedVector2.y /= -m;
-        ball.dir = normalizedVector2;
-
-        ball.speed += (this.power / distance) * 10;
+        ball.dir = this.vec2Service.normalize(this.vec2Service.sub(ball.pos, this.pointerPos));
+        ball.speed = (this.power / distance) * 10;
+        if (ball.speed > this.maxSpeed) {
+          ball.speed = this.maxSpeed;
+        }
         pushing = true;
       }
     }
-    // if (ball.speed > this.maxSpeed) {
-    //   ball.speed = this.maxSpeed;
-    // }
     if (!pushing) {
       if (ball.speed > this.minSpeed) {
         ball.speed -= this.damping;

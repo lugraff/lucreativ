@@ -7,7 +7,7 @@
     <div class="flex flex-col gap-1 items-end text-lg">
         isPressing: {{isPressing}}
         <div>{{fps}} FPS</div>
-        <button standard [disabled]="autoFps" (click)="onstartAutoCalc()">Auto FPS</button>
+        <button standard [disabled]="autoFps" (click)="onStartAutoCalc()">Auto FPS</button>
         <button list icon="featherAirplay" iconColor="tertiary" globalTooltip="Shortcut: 'F11'"
             (click)="setToFullscreen()">{{showSettings?'Fullscreen':''}}
         </button>
@@ -22,7 +22,7 @@
         <input [disabled]="fps<30" type="range" min="2" max="2500" step="1" [(ngModel)]="dotCount"
             (ngModelChange)="onReload()" class="accent-bgB">
         {{power}} Power:
-        <input type="range" min="0" max="1" step="0.01" [(ngModel)]="power" class="accent-bgB">
+        <input type="range" min="0" max="100" step="1" [(ngModel)]="power" class="accent-bgB">
         {{range}} Range:
         <input type="range" min="50" max="400" step="1" [(ngModel)]="range" class="accent-bgB">
         {{damping}} Damping:
