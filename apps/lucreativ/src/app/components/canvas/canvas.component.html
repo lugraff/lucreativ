@@ -1,5 +1,7 @@
-<div class="fixed w-screen h-screen z-50">
+<div class="fixed w-screen h-screen z-50 pointer-events-none">
     <div class="w-full text-end text-textA z-50">{{gamestatus.fps}} FPS</div>
 </div>
-<canvas id="canvas" class="bg-textB cursor-crosshair select-none" [width]="screenService.windowWidth$|async"
-    [height]="screenService.windowHeight$|async"></canvas>
+<div class="h-full overflow-hidden select-none bg-textB rounded">
+    <canvas id="canvas" class="mx-auto cursor-crosshair h-full border rounded" [width]="480"
+        [height]="320"></canvas>
+</div>

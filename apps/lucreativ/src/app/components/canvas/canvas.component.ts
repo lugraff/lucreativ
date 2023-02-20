@@ -1,17 +1,26 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  NgZone,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { FPSService } from '@shared/util-global';
+import { FPSService, Vector2 } from '@shared/util-global';
 
 interface Gamestatus {
   fps: number;
+  tick: number;
+  windowSize: Vector2;
 }
 
 @Component({
   selector: 'lucreativ-canvas',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   templateUrl: './canvas.component.html',
 })
@@ -20,14 +29,29 @@ export class CanvasComponent implements AfterViewInit {
   private ctx: CanvasRenderingContext2D | undefined = undefined;
   private subs: Subscription[] = [];
   public processing = new BehaviorSubject<boolean>(true);
-  public gamestatus: Gamestatus = { fps: 0 };
+  public gamestatus: Gamestatus = { fps: 0, tick: -32, windowSize: { x: 100, y: 100 } };
+
+  private img = new Image();
+  private frame = 0;
 
   constructor(
     private ngZone: NgZone,
     private detector: ChangeDetectorRef,
     public screenService: IsMobileScreenService,
     public fpsService: FPSService
-  ) {}
+  ) {
+    this.img.src = 'assets/game/runner-sheet.png';
+    this.subs.push(this.screenService.windowWidth$.subscribe((width) => (this.gamestatus.windowSize.x = width)));
+    this.subs.push(this.screenService.windowHeight$.subscribe((height) => (this.gamestatus.windowSize.y = height)));
+  }
+
+  @HostListener('window:keydown', ['$event']) onKey(event: KeyboardEvent) {
+    if (event.code === 'Space') {
+      this.processing.next(!this.processing.value);
+    } else if (event.code === 'Enter') {
+      //this.onReloadDots();
+    }
+  }
 
   public ngAfterViewInit(): void {
     this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -46,9 +70,25 @@ export class CanvasComponent implements AfterViewInit {
       return;
     }
     this.fpsService.calcFPS(timestamp);
+    if (this.gamestatus.tick++ > 640) {
+      this.gamestatus.tick = -32;
+    }
     this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    if (this.gamestatus.tick % 8 === 0) {
+      this.frame++;
+    }
+
+    this.ctx.drawImage(this.img, this.frame * 32, 32, 32, 32, this.gamestatus.tick, 200, 32, 32);
+    if (this.frame >= 8) {
+      this.frame = 0;
+    }
+
     this.ctx.strokeStyle = 'white';
-    this.ctx.strokeRect(10, 10, 100, 100);
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, 232);
+    this.ctx.lineTo(640, 232);
+    this.ctx.stroke();
     requestAnimationFrame((timestamp) => this.process(timestamp));
   }
 }
