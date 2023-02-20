@@ -6,6 +6,7 @@ export * from './lib/services/tooltip.service';
 export * from './lib/services/can-deactivate-guard.service';
 export * from './lib/services/storage.service';
 export * from './lib/services/randomizer.service';
+export * from './lib/services/fps.service';
 export * from './lib/services/vector2.service';
 
 export * from './lib/entities/searchElement';

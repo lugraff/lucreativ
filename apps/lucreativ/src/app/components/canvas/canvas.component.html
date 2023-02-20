@@ -1,26 +1,5 @@
+<div class="fixed w-screen h-screen z-50">
+    <div class="w-full text-end text-textA z-50">{{gamestatus.fps}} FPS</div>
+</div>
 <canvas id="canvas" class="bg-textB cursor-crosshair select-none" [width]="screenService.windowWidth$|async"
     [height]="screenService.windowHeight$|async"></canvas>
-
-<div class="fixed left-0 top-0 flex flex-col gap-1 items-start p-1 pl-16">
-    <div class="flex flex-col gap-1">
-        <button list icon="featherAirplay" iconColor="tertiary"
-            (click)="setToFullscreen()">{{showSettings?'Fullscreen':''}}
-        </button>
-        <button list [icon]="showSettings ? 'featherEyeOff':'featherSettings'" (click)="showSettings = !showSettings"
-            [iconColor]="showSettings ? 'danger':'tertiary'">{{showSettings?'Hide Settings':''}}
-        </button>
-    </div>
-    <div *ngIf="showSettings" class="flex flex-col gap-1 items-start text-lg">
-        max Speed:
-        <input type="range" min="1" max="10" step="0.1" [(ngModel)]="maxSpeed" class="accent-bgB">
-        min Speed:
-        <input type="range" min="0" max="2" step="0.1" [(ngModel)]="minSpeed" class="accent-bgB">
-        Connection:
-        <input type="range" min="10" max="300" step="1" [(ngModel)]="connectDist" class="accent-bgB">
-        Dots:
-        <input type="number" min="2" max="500" step="1" [(ngModel)]="dots" class="bg-bgB">
-        <div>
-            <button standard (click)="onReload()">Reload</button>
-        </div>
-    </div>
-</div>

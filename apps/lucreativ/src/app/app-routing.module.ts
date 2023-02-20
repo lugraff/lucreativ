@@ -41,11 +41,11 @@ const ROUTES: Routes = [
     component: NetAnimationComponent,
     data: ['featherFilm', 'Net Animation'],
   },
-  // {
-  //   path: 'canvas',
-  //   component: CanvasComponent,
-  //   data: ['featherBox', 'Canvas'],
-  // },
+  {
+    path: 'canvas',
+    component: CanvasComponent,
+    data: ['featherBox', 'Canvas'],
+  },
   {
     path: 'page-not-found',
     component: PageNotFoundComponent,

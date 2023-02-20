@@ -117,7 +117,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
 
   public ngAfterViewInit(): void {
     this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
-    this.processing.subscribe(() => this.ngZone.runOutsideAngular(() => this.process()));
+    this.subs.push(this.processing.subscribe(() => this.ngZone.runOutsideAngular(() => this.process(0))));
   }
 
   public onReloadDots(): void {
@@ -209,11 +209,11 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private process(delta: number = 0): void {
+  private process(timestamp: number): void {
     if (!this.processing.value || !this.canvas) {
       return;
     }
-    this.calcFPS(delta);
+    this.calcFPS(timestamp);
 
     const ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.lineWidth = this.lineWidth;
@@ -233,7 +233,7 @@ export class NetAnimationComponent implements AfterViewInit, OnDestroy {
     // ctx.strokeStyle = '#ffffffff';
     // ctx.fillStyle = '#00ff00aa';
     // ctx.lineJoin = 'round';
-    requestAnimationFrame((val) => this.process(val));
+    requestAnimationFrame((timestamp) => this.process(timestamp));
   }
 
   private calcBehavior(ball: Dot): void {

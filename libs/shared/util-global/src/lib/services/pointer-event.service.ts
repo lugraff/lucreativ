@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IsMobileScreenService } from '@shared/util-screen';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Vector2 } from '../entities/vector2';
 
 export interface Pointer {
@@ -13,16 +13,6 @@ export interface Pointer {
   providedIn: 'root',
 })
 export class PointerEventService {
-  touchStart = new Subject<TouchEvent>();
-  touchMove = new Subject<TouchEvent>();
-  touchEnd = new Subject<TouchEvent>();
-  touchCancel = new Subject<TouchEvent>();
-
-  mouseLastEvent = new BehaviorSubject<MouseEvent | undefined>(undefined);
-  mouseMove = new Subject<MouseEvent>();
-  mouseUp = new Subject<MouseEvent>();
-  mouseDown = new Subject<MouseEvent>();
-
   public pointerPosition = new Subject<Pointer>();
   public ongoingPointers: Pointer[] = [];
 

@@ -18,6 +18,10 @@ export class Vector2Service {
       (vector2A.x - vector2B.x) * (vector2A.x - vector2B.x) + (vector2A.y - vector2B.y) * (vector2A.y - vector2B.y)
     );
   }
+  //Andere Methode sind dann aber nicht pixel...
+  // public distance(vector2A: Vector2, vector2B: Vector2): number {
+  //   return Math.pow(vector2A.x - vector2B.x, 2) + Math.pow(vector2A.y - vector2B.y, 2);
+  // }
 
   public sub(vector2A: Vector2, vector2B: Vector2): Vector2 {
     return {
