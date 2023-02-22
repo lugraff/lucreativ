@@ -17,10 +17,17 @@ interface Gamestatus {
   windowSize: Vector2;
 }
 
+interface Spritesheet {
+  img: HTMLImageElement;
+  imgPath: string;
+  tileSize: Vector2;
+  tiles: Vector2;
+}
+
 @Component({
   selector: 'lucreativ-canvas',
   standalone: true,
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   templateUrl: './canvas.component.html',
 })
@@ -31,8 +38,23 @@ export class CanvasComponent implements AfterViewInit {
   public processing = new BehaviorSubject<boolean>(true);
   public gamestatus: Gamestatus = { fps: 0, tick: -32, windowSize: { x: 100, y: 100 } };
 
-  private img = new Image();
-  private frame = 0;
+  private frame = 1;
+  private bgTexture: Spritesheet = {
+    img: new Image(),
+    imgPath: 'assets/game/CodeRannerLogo.png',
+    tileSize: { x: 640, y: 480 },
+    tiles: { x: 1, y: 1 },
+  };
+  private playerTexture: Spritesheet = {
+    img: new Image(),
+    imgPath: 'assets/game/runner-sheet.png',
+    tileSize: { x: 32, y: 32 },
+    tiles: { x: 8, y: 3 },
+  };
+  private textures: Spritesheet[] = [this.playerTexture, this.bgTexture];
+
+  //TODO Node Component
+  //TODO Jump und Stand
 
   constructor(
     private ngZone: NgZone,
@@ -40,7 +62,7 @@ export class CanvasComponent implements AfterViewInit {
     public screenService: IsMobileScreenService,
     public fpsService: FPSService
   ) {
-    this.img.src = 'assets/game/runner-sheet.png';
+    this.loadRecources();
     this.subs.push(this.screenService.windowWidth$.subscribe((width) => (this.gamestatus.windowSize.x = width)));
     this.subs.push(this.screenService.windowHeight$.subscribe((height) => (this.gamestatus.windowSize.y = height)));
   }
@@ -50,6 +72,12 @@ export class CanvasComponent implements AfterViewInit {
       this.processing.next(!this.processing.value);
     } else if (event.code === 'Enter') {
       //this.onReloadDots();
+    }
+  }
+
+  private loadRecources(): void {
+    for (const tex of this.textures) {
+      tex.img.src = tex.imgPath;
     }
   }
 
@@ -73,17 +101,38 @@ export class CanvasComponent implements AfterViewInit {
     if (this.gamestatus.tick++ > 640) {
       this.gamestatus.tick = -32;
     }
-    this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
     if (this.gamestatus.tick % 8 === 0) {
       this.frame++;
     }
 
-    this.ctx.drawImage(this.img, this.frame * 32, 32, 32, 32, this.gamestatus.tick, 200, 32, 32);
     if (this.frame >= 8) {
       this.frame = 0;
     }
+    this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
+    this.ctx.drawImage(
+      this.bgTexture.img,
+      0,
+      0,
+      this.bgTexture.tileSize.x,
+      this.bgTexture.tileSize.y,
+      80,
+      0,
+      this.bgTexture.tileSize.x * 0.5,
+      this.bgTexture.tileSize.y * 0.5
+    );
+    this.ctx.drawImage(
+      this.playerTexture.img,
+      this.frame * this.playerTexture.tileSize.x,
+      this.playerTexture.tileSize.y,
+      this.playerTexture.tileSize.x,
+      this.playerTexture.tileSize.y,
+      this.gamestatus.tick, //player.pos.x
+      200, //player.pos.x
+      this.playerTexture.tileSize.x,
+      this.playerTexture.tileSize.y
+    );
     this.ctx.strokeStyle = 'white';
     this.ctx.beginPath();
     this.ctx.moveTo(0, 232);
