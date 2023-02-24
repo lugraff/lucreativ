@@ -9,36 +9,18 @@ import {
 import { CommonModule } from '@angular/common';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { FPSService, Vector2 } from '@shared/util-global';
-
-interface Gamestatus {
-  fps: number;
-  tick: number;
-  windowSize: Vector2;
-}
-
-interface Spritesheet {
-  img: HTMLImageElement;
-  imgPath: string;
-  tileSize: Vector2;
-  tiles: Vector2;
-}
-
-interface Node {
-  sprite: Spritesheet;
-  frame: number;
-  position: Vector2;
-  groups?: string[];
-}
+import { FPSService } from '@shared/util-global';
+import { Gamestatus } from './entities';
+import { LevelsService } from './levels.service';
 
 @Component({
   selector: 'lucreativ-canvas',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
-  templateUrl: './canvas.component.html',
+  templateUrl: './game-engine.component.html',
 })
-export class CanvasComponent implements AfterViewInit {
+export class GameEngineComponent implements AfterViewInit {
   private canvas: HTMLCanvasElement | undefined = undefined;
   private ctx: CanvasRenderingContext2D | undefined = undefined;
   private canvasBG: HTMLCanvasElement | undefined = undefined;
@@ -47,46 +29,14 @@ export class CanvasComponent implements AfterViewInit {
   public processing = new BehaviorSubject<boolean>(false);
   public gamestatus: Gamestatus = { fps: 0, tick: -32, windowSize: { x: 100, y: 100 } };
 
-  private startScreen: Node = {
-    sprite: {
-      img: new Image(),
-      imgPath: 'assets/game/CodeRannerLogo.png',
-      tileSize: { x: 640, y: 480 },
-      tiles: { x: 1, y: 1 },
-    },
-    frame: 0,
-    position: { x: 80, y: 0 },
-  };
-  private player: Node = {
-    sprite: {
-      img: new Image(),
-      imgPath: 'assets/game/runner-sheet.png',
-      tileSize: { x: 32, y: 32 },
-      tiles: { x: 8, y: 3 },
-    },
-    frame: 0,
-    position: { x: 80, y: 200 },
-  };
-  private bug: Node = {
-    sprite: {
-      img: new Image(),
-      imgPath: 'assets/game/bug-sheet.png',
-      tileSize: { x: 50, y: 50 },
-      tiles: { x: 4, y: 4 },
-    },
-    frame: 0,
-    position: { x: 380, y: 195 },
-  };
-  private staticNodes: Node[] = [this.startScreen];
-  private nodes: Node[] = [this.player, this.bug];
-
   //TODO Jump und Stand -> other Animations changeability
 
   constructor(
     private ngZone: NgZone,
     private detector: ChangeDetectorRef,
     public screenService: IsMobileScreenService,
-    public fpsService: FPSService
+    public fpsService: FPSService,
+    private levels: LevelsService
   ) {
     this.loadRecources();
     this.subs.push(this.screenService.windowWidth$.subscribe((width) => (this.gamestatus.windowSize.x = width)));
@@ -105,10 +55,10 @@ export class CanvasComponent implements AfterViewInit {
   }
 
   private loadRecources(): void {
-    for (const tex of this.staticNodes) {
+    for (const tex of this.levels.staticNodes) {
       tex.sprite.img.src = tex.sprite.imgPath;
     }
-    for (const tex of this.nodes) {
+    for (const tex of this.levels.nodes) {
       tex.sprite.img.src = tex.sprite.imgPath;
     }
   }
@@ -136,7 +86,7 @@ export class CanvasComponent implements AfterViewInit {
       return;
     }
     this.ctxBG.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    for (const node of this.staticNodes) {
+    for (const node of this.levels.staticNodes) {
       this.ctxBG.drawImage(
         node.sprite.img,
         0,
@@ -168,7 +118,7 @@ export class CanvasComponent implements AfterViewInit {
 
     this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    for (const node of this.nodes) {
+    for (const node of this.levels.nodes) {
       if (this.gamestatus.tick % node.sprite.tiles.x === 0) {
         node.frame++;
       }

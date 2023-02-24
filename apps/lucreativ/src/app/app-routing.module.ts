@@ -6,7 +6,7 @@ import { DotknotComponent } from './components/dotknot/dotknot.component';
 import { CanDeactivateGuard } from '@shared/util-global';
 import { FileManagerComponent } from './components/file-manager/file-manager.component';
 import { PaintComponent } from './components/paint/paint.component';
-import { CanvasComponent } from './components/canvas/canvas.component';
+import { GameEngineComponent } from './components/game-engine/game-engine.component';
 import { NetAnimationComponent } from './components/net-animation/net-animation.component';
 
 const ROUTES: Routes = [
@@ -43,8 +43,8 @@ const ROUTES: Routes = [
   },
   {
     path: 'canvas',
-    component: CanvasComponent,
-    data: ['featherBox', 'Canvas'],
+    component: GameEngineComponent,
+    data: ['featherBox', 'Games'],
   },
   {
     path: 'page-not-found',
