@@ -2,6 +2,8 @@
     <div class="w-full text-end text-textA z-50">{{gamestatus.fps}} FPS</div>
 </div>
 <div class="h-full overflow-hidden select-none rounded">
-    <canvas id="canvas" class="mx-auto min-h-[320px] h-full border bg-bgD rounded cursor-crosshair" [width]="480"
+    <canvas id="canvas" class="fixed left-16 min-h-[320px] h-full rounded cursor-crosshair z-10" [width]="480"
+        [height]="320"></canvas>
+    <canvas id="canvasBG" class="fixed left-16 min-h-[320px] h-full border bg-bgD rounded pointer-events-none" [width]="480"
         [height]="320"></canvas>
 </div>
