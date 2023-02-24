@@ -94,7 +94,7 @@ export class CanvasComponent implements AfterViewInit {
   }
 
   @HostListener('window:keydown', ['$event']) onKey(event: KeyboardEvent) {
-    console.log(event.code);
+    // console.log(event.code);
     if (event.code === 'Space') {
       this.processing.next(!this.processing.value);
     } else if (event.code === 'ArrowLeft') {
