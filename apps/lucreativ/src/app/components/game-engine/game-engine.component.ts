@@ -5,22 +5,24 @@ import {
   Component,
   HostListener,
   NgZone,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { FPSService } from '@shared/util-global';
-import { Gamestatus } from './entities';
-import { LevelsService } from './levels.service';
+import { Action, Gamestatus } from './entities';
+import { GameService } from './game.service';
 
 @Component({
   selector: 'lucreativ-canvas',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
+  providers: [GameService, FPSService],
   templateUrl: './game-engine.component.html',
 })
-export class GameEngineComponent implements AfterViewInit {
+export class GameEngineComponent implements AfterViewInit, OnDestroy {
   private canvas: HTMLCanvasElement | undefined = undefined;
   private ctx: CanvasRenderingContext2D | undefined = undefined;
   private canvasBG: HTMLCanvasElement | undefined = undefined;
@@ -28,6 +30,7 @@ export class GameEngineComponent implements AfterViewInit {
   private subs: Subscription[] = [];
   public processing = new BehaviorSubject<boolean>(false);
   public gamestatus: Gamestatus = { fps: 0, tick: -32, windowSize: { x: 100, y: 100 } };
+  private actionA: Action = { isPressed: false };
 
   //TODO Jump und Stand -> other Animations changeability
 
@@ -36,30 +39,30 @@ export class GameEngineComponent implements AfterViewInit {
     private detector: ChangeDetectorRef,
     public screenService: IsMobileScreenService,
     public fpsService: FPSService,
-    private levels: LevelsService
+    private game: GameService
   ) {
-    this.loadRecources();
     this.subs.push(this.screenService.windowWidth$.subscribe((width) => (this.gamestatus.windowSize.x = width)));
     this.subs.push(this.screenService.windowHeight$.subscribe((height) => (this.gamestatus.windowSize.y = height)));
   }
 
-  @HostListener('window:keydown', ['$event']) onKey(event: KeyboardEvent) {
+  @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
     // console.log(event.code);
-    if (event.code === 'Space') {
+    if (event.code === 'Escape') {
       this.processing.next(!this.processing.value);
-    } else if (event.code === 'ArrowLeft') {
-      //
+    } else if (event.code === 'Space') {
+      this.actionA.isPressed = true;
     } else if (event.code === 'ArrowRight') {
       //
     }
   }
-
-  private loadRecources(): void {
-    for (const tex of this.levels.staticNodes) {
-      tex.sprite.img.src = tex.sprite.imgPath;
+  @HostListener('window:keyup', ['$event']) onKeyUp(event: KeyboardEvent) {
+    if (event.code === 'Space') {
+      this.actionA.isPressed = false;
     }
-    for (const tex of this.levels.nodes) {
-      tex.sprite.img.src = tex.sprite.imgPath;
+  }
+  @HostListener('window:keypress', ['$event']) onKeyPress(event: KeyboardEvent) {
+    if (event.code === 'Space') {
+      this.actionA.isPressed = true;
     }
   }
 
@@ -76,17 +79,17 @@ export class GameEngineComponent implements AfterViewInit {
       })
     );
     setTimeout(() => {
-      this.drawBG();
+      this.drawStatic();
       this.processing.next(true);
     }, 200);
   }
 
-  private drawBG(): void {
+  private drawStatic(): void {
     if (!this.canvasBG || !this.ctxBG) {
       return;
     }
     this.ctxBG.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    for (const node of this.levels.staticNodes) {
+    for (const node of this.game.staticNodes) {
       this.ctxBG.drawImage(
         node.sprite.img,
         0,
@@ -103,7 +106,7 @@ export class GameEngineComponent implements AfterViewInit {
     this.ctxBG.lineWidth = 1;
     this.ctxBG.beginPath();
     this.ctxBG.moveTo(0, 232);
-    this.ctxBG.lineTo(640, 232);
+    this.ctxBG.lineTo(480, 232);
     this.ctxBG.stroke();
   }
 
@@ -112,19 +115,23 @@ export class GameEngineComponent implements AfterViewInit {
       return;
     }
     this.fpsService.calcFPS(timestamp);
-    if (this.gamestatus.tick++ > 640) {
-      this.gamestatus.tick = -32;
+    if (this.gamestatus.tick++ > 1000) {
+      this.gamestatus.tick = 0;
     }
-
     this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-    for (const node of this.levels.nodes) {
+    for (const node of this.game.nodes) {
       if (this.gamestatus.tick % node.sprite.tiles.x === 0) {
         node.frame++;
       }
       if (node.frame >= node.sprite.tiles.x) {
         node.frame = 0;
       }
+
+      if (node.script) {
+        this.game.runScript(this.gamestatus, node.script, node, this.actionA);
+      }
+
       this.ctx.drawImage(
         node.sprite.img,
         node.frame * node.sprite.tileSize.x,
@@ -139,5 +146,11 @@ export class GameEngineComponent implements AfterViewInit {
     }
 
     requestAnimationFrame((timestamp) => this.process(timestamp));
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach((sub) => {
+      sub.unsubscribe();
+    });
   }
 }

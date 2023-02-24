@@ -6,6 +6,10 @@ export interface Gamestatus {
   windowSize: Vector2;
 }
 
+export interface Action {
+  isPressed: boolean;
+}
+
 export interface Spritesheet {
   img: HTMLImageElement;
   imgPath: string;
@@ -13,7 +17,14 @@ export interface Spritesheet {
   tiles: Vector2;
 }
 
+export interface StaticNode {
+  sprite: Spritesheet;
+  position: Vector2;
+  groups?: string[];
+}
+
 export interface Node {
+  script?: string;
   sprite: Spritesheet;
   frame: number;
   position: Vector2;
