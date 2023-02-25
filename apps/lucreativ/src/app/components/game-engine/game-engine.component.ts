@@ -13,12 +13,13 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { FPSService } from '@shared/util-global';
 import { Action, Gamestatus } from './entities';
 import { GameService } from './game.service';
+import { ButtonLinkComponent } from '@shared/ui-global';
 
 @Component({
   selector: 'lucreativ-canvas',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonLinkComponent],
   providers: [GameService, FPSService],
   templateUrl: './game-engine.component.html',
 })
@@ -64,6 +65,10 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     if (event.code === 'Space') {
       this.actionA.isPressed = true;
     }
+  }
+
+  onActionA(isPressed: boolean) {
+    this.actionA.isPressed = isPressed;
   }
 
   public ngAfterViewInit(): void {
@@ -118,7 +123,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     if (this.gamestatus.tick++ > 1000) {
       this.gamestatus.tick = 0;
     }
-    this.ctx.clearRect(0, 0, 480, 360 );
+    this.ctx.clearRect(0, 0, 480, 360);
 
     for (const node of this.game.nodes) {
       if (this.gamestatus.tick % node.sprite.tiles.x === 0) {

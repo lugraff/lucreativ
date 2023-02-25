@@ -1,10 +1,10 @@
-<div class="fixed z-30 flex flex-col h-full to-transparent bg-gradient-to-r transition-all duration-500 ease-out"
-  (mouseleave)="expanded= false" [ngClass]="expanded ? 'w-72 from-shadow opacity-100':'w-14 from-transparent opacity-30'">
+<div class="fixed z-30 flex flex-col to-transparent bg-gradient-to-r transition-all duration-500 ease-out"
+  (mouseleave)="expanded= false" [ngClass]="expanded ? 'w-72 h-full from-shadow':'w-14 h-14 from-transparent'">
   <div (click)="expanded = !expanded" (mouseenter)="expanded=true;" class="mt-2 mb-2 mx-2">
     <img src="assets/Logo.jpg" class="rounded-3xl border-2 border-textB pointer-events-none select-none w-60" />
   </div>
 
-  <div [ngClass]="expanded ? 'max-h-full':'max-h-0'"
+  <div 
     class="grow flex flex-col gap-2 items-center pt-2 overflow-hidden transition-all duration-1000 ease-in rounded">
     <ng-container *ngFor="let route of router.config">
       <ng-container *ngIf="route.path !== undefined && route.path !== '**' && route.path !== 'page-not-found'">
