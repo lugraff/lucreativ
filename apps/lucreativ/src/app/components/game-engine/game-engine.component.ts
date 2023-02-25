@@ -118,7 +118,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     if (this.gamestatus.tick++ > 1000) {
       this.gamestatus.tick = 0;
     }
-    this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    this.ctx.clearRect(0, 0, 480, 360 );
 
     for (const node of this.game.nodes) {
       if (this.gamestatus.tick % node.sprite.tiles.x === 0) {

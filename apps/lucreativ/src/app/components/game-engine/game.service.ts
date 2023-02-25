@@ -59,7 +59,7 @@ export class GameService extends GameServiceAbstract {
   private playerScript(gamestatus: Gamestatus, node: Node, actionA: Action): void {
     // console.log(node.position.y);
     // console.log(gamestatus.windowSize.y);
-    if (node.position.y < gamestatus.windowSize.y - 700) {
+    if (node.position.y < 200 ) {
       if (this.playerGravity < 6) {
         this.playerGravity++;
       }
@@ -73,7 +73,7 @@ export class GameService extends GameServiceAbstract {
     }
     node.position.y += this.playerGravity;
 
-    if (node.position.x > gamestatus.windowSize.x / 3) {
+    if (node.position.x > 480  ) {
       node.position.x = -32;
     }
     node.position.x += 1.2;
