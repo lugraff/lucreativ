@@ -22,7 +22,7 @@ import { IconComponent } from '../icon/icon.component';
 })
 export class ButtonListComponent {
   private readonly classBase =
-    ' group outline-none whitespace-nowrap disabled:grayscale disabled:pointer-events-none transition-all px-1';
+    'touch-none select-none group outline-none whitespace-nowrap disabled:grayscale disabled:pointer-events-none transition-all px-1';
   @HostBinding('class') public class =
     'active:brightness-75 hover:border-primary hover:text-textA border-y-2 border-transparent rounded-full text-tertiary text-xl font-normal' +
     this.classBase;

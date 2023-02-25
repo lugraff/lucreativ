@@ -38,7 +38,7 @@ export class GameService extends GameServiceAbstract {
     frame: 0,
     position: { x: 380, y: 195 },
   };
-  public override nodes: Node[] = [this.player, this.bug];
+  public override nodes: Node[] = [this.player];
 
   constructor() {
     super();
@@ -50,16 +50,35 @@ export class GameService extends GameServiceAbstract {
     }
   }
 
-  public runScript(gamestatus: Gamestatus, name: string, node: Node, actionA: Action): void {
+  public runScript(
+    gamestatus: Gamestatus,
+    name: string,
+    node: Node,
+    actionA: Action,
+    actionB: Action,
+    actionLeft: Action,
+    actionRight: Action,
+    actionUp: Action,
+    actionDown: Action
+  ): void {
     if (name === 'player') {
-      this.playerScript(gamestatus, node, actionA);
+      this.playerScript(gamestatus, node, actionA, actionB, actionLeft, actionRight, actionUp, actionDown);
     }
   }
 
-  private playerScript(gamestatus: Gamestatus, node: Node, actionA: Action): void {
+  private playerScript(
+    gamestatus: Gamestatus,
+    node: Node,
+    actionA: Action,
+    actionB: Action,
+    actionLeft: Action,
+    actionRight: Action,
+    actionUp: Action,
+    actionDown: Action
+  ): void {
     // console.log(node.position.y);
     // console.log(gamestatus.windowSize.y);
-    if (node.position.y < 200 ) {
+    if (node.position.y < 200) {
       if (this.playerGravity < 6) {
         this.playerGravity++;
       }
@@ -73,9 +92,11 @@ export class GameService extends GameServiceAbstract {
     }
     node.position.y += this.playerGravity;
 
-    if (node.position.x > 480  ) {
-      node.position.x = -32;
+    if (actionRight.isPressed && node.position.x < 400) {
+      node.position.x += 1;
     }
-    node.position.x += 1.2;
+    if (actionLeft.isPressed && node.position.x > 30) {
+      node.position.x -= 1;
+    }
   }
 }

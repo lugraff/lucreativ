@@ -20,7 +20,7 @@ import { IconComponent } from '../icon/icon.component';
 })
 export class ButtonStandardComponent {
   private readonly classBase =
-    'select-none group outline-none whitespace-nowrap disabled:grayscale disabled:pointer-events-none pr-1 grow';
+    'touch-none select-none group outline-none whitespace-nowrap disabled:grayscale disabled:pointer-events-none pr-1 grow';
   @HostBinding('class') public class =
     'active:brightness-75 hover:brightness-125 border from-bgB to-selection bg-gradient-to-tl rounded-sm text-textB text-xl font-normal' +
     this.classBase;

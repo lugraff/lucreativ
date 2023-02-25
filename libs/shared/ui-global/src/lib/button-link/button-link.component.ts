@@ -22,7 +22,7 @@ import { IconComponent } from '../icon/icon.component';
 })
 export class ButtonLinkComponent {
   @HostBinding('class') public class =
-    'disabled:grayscale outline-none disabled:pointer-events-none pr-2 group hover:shadow-selection hover:scale-125 transition-all ring-selection active:bg-textA bg-primary shadow shadow-transparent rounded-full font-semibold text-xl text-textB whitespace-nowrap border-b-2 border-bgB';
+    'touch-none select-none disabled:grayscale outline-none disabled:pointer-events-none pr-2 group hover:shadow-selection hover:scale-125 transition-all ring-selection active:bg-textA bg-primary shadow shadow-transparent rounded-full font-semibold text-xl text-textB whitespace-nowrap border-b-2 border-bgB';
   @Input() public activeButton = false;
   @Input() public icon = '';
   @Input() public iconStroke: string | number | undefined = 1.5;

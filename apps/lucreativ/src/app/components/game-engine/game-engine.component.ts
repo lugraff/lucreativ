@@ -162,7 +162,17 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
       }
 
       if (node.script) {
-        this.game.runScript(this.gamestatus, node.script, node, this.actionA);
+        this.game.runScript(
+          this.gamestatus,
+          node.script,
+          node,
+          this.actionA,
+          this.actionB,
+          this.actionLeft,
+          this.actionRight,
+          this.actionUp,
+          this.actionDown
+        );
       }
 
       this.ctx.drawImage(
