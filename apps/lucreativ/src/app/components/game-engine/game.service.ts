@@ -92,10 +92,10 @@ export class GameService extends GameServiceAbstract {
     }
     node.position.y += this.playerGravity;
 
-    if (actionRight.isPressed && node.position.x < 320) {
+    if (actionRight.isPressed && node.position.x < 320 - node.sprite.tileSize.x) {
       node.position.x += 1;
     }
-    if (actionLeft.isPressed && node.position.x > 30) {
+    if (actionLeft.isPressed && node.position.x > 0) {
       node.position.x -= 1;
     }
 

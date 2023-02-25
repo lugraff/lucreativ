@@ -39,6 +39,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
   private actionRight: Action = { isPressed: false };
 
   //TODO Jump und Stand -> other Animations changeability
+  //TODO Can Deactivate
 
   constructor(
     private ngZone: NgZone,
