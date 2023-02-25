@@ -13,13 +13,13 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { FPSService } from '@shared/util-global';
 import { Action, Gamestatus } from './entities';
 import { GameService } from './game.service';
-import { ButtonLinkComponent } from '@shared/ui-global';
+import { ButtonGameComponent, ButtonStandardComponent } from '@shared/ui-global';
 
 @Component({
   selector: 'lucreativ-canvas',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonLinkComponent],
+  imports: [CommonModule, ButtonStandardComponent, ButtonGameComponent],
   providers: [GameService, FPSService],
   templateUrl: './game-engine.component.html',
 })
@@ -32,6 +32,11 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
   public processing = new BehaviorSubject<boolean>(false);
   public gamestatus: Gamestatus = { fps: 0, tick: -32, windowSize: { x: 100, y: 100 } };
   private actionA: Action = { isPressed: false };
+  private actionB: Action = { isPressed: false };
+  private actionLeft: Action = { isPressed: false };
+  private actionUp: Action = { isPressed: false };
+  private actionDown: Action = { isPressed: false };
+  private actionRight: Action = { isPressed: false };
 
   //TODO Jump und Stand -> other Animations changeability
 
@@ -50,25 +55,48 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     // console.log(event.code);
     if (event.code === 'Escape') {
       this.processing.next(!this.processing.value);
-    } else if (event.code === 'Space') {
-      this.actionA.isPressed = true;
-    } else if (event.code === 'ArrowRight') {
-      //
+      // } else if (event.code === 'Space') {
+      //   this.actionA.isPressed = true;
+      // } else if (event.code === 'ArrowRight') {
+      //   //
     }
   }
-  @HostListener('window:keyup', ['$event']) onKeyUp(event: KeyboardEvent) {
-    if (event.code === 'Space') {
-      this.actionA.isPressed = false;
-    }
-  }
-  @HostListener('window:keypress', ['$event']) onKeyPress(event: KeyboardEvent) {
-    if (event.code === 'Space') {
-      this.actionA.isPressed = true;
+  // @HostListener('window:keyup', ['$event']) onKeyUp(event: KeyboardEvent) {
+  //   if (event.code === 'Space') {
+  //     this.actionA.isPressed = false;
+  //   }
+  // }
+  // @HostListener('window:keypress', ['$event']) onKeyPress(event: KeyboardEvent) {
+  //   if (event.code === 'Space') {
+  //     this.actionA.isPressed = true;
+  //   }
+  // }
+  public setToFullscreen(): void {
+    //->Service!
+    const elem = document.body as HTMLElement;
+    const methodToBeInvoked = elem.requestFullscreen;
+    if (methodToBeInvoked) {
+      methodToBeInvoked.call(elem);
     }
   }
 
   onActionA(isPressed: boolean) {
     this.actionA.isPressed = isPressed;
+  }
+  onActionB(isPressed: boolean) {
+    this.actionB.isPressed = isPressed;
+  }
+  onActionLeft(isPressed: boolean) {
+    this.actionLeft.isPressed = isPressed;
+  }
+  onActionUp(isPressed: boolean) {
+    this.actionUp.isPressed = isPressed;
+  }
+  onActionDown(isPressed: boolean) {
+    this.actionDown.isPressed = isPressed;
+  }
+  onActionRight(isPressed: boolean) {
+    this.actionRight.isPressed = isPressed;
   }
 
   public ngAfterViewInit(): void {
