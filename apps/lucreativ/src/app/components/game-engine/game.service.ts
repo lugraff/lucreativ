@@ -10,7 +10,7 @@ export class GameService extends GameServiceAbstract {
       tileSize: { x: 640, y: 480 },
       tiles: { x: 1, y: 1 },
     },
-    position: { x: 80, y: 0 },
+    position: { x: 0, y: 0 },
   };
   public override staticNodes: StaticNode[] = [this.startScreen];
   //-----------------------------------ANIMATED-------------------------------
@@ -23,7 +23,7 @@ export class GameService extends GameServiceAbstract {
       tiles: { x: 8, y: 3 },
     },
     frame: 0,
-    position: { x: 80, y: 200 },
+    position: { x: 32, y: 200 },
   };
   playerGravity = 1;
   playerIsOnFloor = false;
@@ -78,7 +78,7 @@ export class GameService extends GameServiceAbstract {
   ): void {
     // console.log(node.position.y);
     // console.log(gamestatus.windowSize.y);
-    if (node.position.y < 200) {
+    if (node.position.y < 240 - node.sprite.tileSize.y) {
       if (this.playerGravity < 6) {
         this.playerGravity++;
       }
@@ -92,11 +92,18 @@ export class GameService extends GameServiceAbstract {
     }
     node.position.y += this.playerGravity;
 
-    if (actionRight.isPressed && node.position.x < 400) {
+    if (actionRight.isPressed && node.position.x < 320) {
       node.position.x += 1;
     }
     if (actionLeft.isPressed && node.position.x > 30) {
       node.position.x -= 1;
+    }
+
+    if (actionUp.isPressed && node.position.y > 100) {
+      node.position.y -= 1;
+    }
+    if (actionDown.isPressed && node.position.y < 240 - node.sprite.tileSize.y) {
+      node.position.y += 1;
     }
   }
 }
