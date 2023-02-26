@@ -19,6 +19,11 @@ export class GameService extends GameServiceAbstract {
       img: new Image(),
       imgPath: 'assets/game/runner-sheet.png',
       tiles: { x: 8, y: 3 },
+      animations: [
+        { tile: { x: 0, y: 0 }, length: 4 },
+        { tile: { x: 0, y: 1 }, length: 8 },
+        { tile: { x: 0, y: 2 }, length: 4 },
+      ],
     },
     frame: 0,
     position: { x: 32, y: 200 },
@@ -33,7 +38,7 @@ export class GameService extends GameServiceAbstract {
       tiles: { x: 4, y: 4 },
     },
     frame: 0,
-    position: { x: 200, y: 130 },
+    position: { x: 200, y: 100 },
   };
 
   private cityA: Node = {
@@ -44,7 +49,7 @@ export class GameService extends GameServiceAbstract {
       tiles: { x: 1, y: 1 },
     },
     frame: 0,
-    position: { x: 0, y: 130 },
+    position: { x: 0, y: 100 },
   };
   private cityB: Node = {
     script: 'city',

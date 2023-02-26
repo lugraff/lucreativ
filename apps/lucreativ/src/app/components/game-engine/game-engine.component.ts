@@ -10,7 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { FPSService } from '@shared/util-global';
+import { FPSService, Vector2 } from '@shared/util-global';
 import { Action, Gamestatus } from './entities';
 import { GameService } from './game.service';
 import { ButtonGameComponent, ButtonStandardComponent } from '@shared/ui-global';
@@ -163,6 +163,11 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
       if (this.gamestatus.tick % node.sprite.tiles.x === 0) {
         node.frame++;
       }
+      if (node.sprite.animations) {
+        if (node.frame > node.sprite.animations[1].length) {
+          node.frame = 0;
+        }
+      }
       if (node.frame >= node.sprite.tiles.x) {
         node.frame = 0;
       }
@@ -184,10 +189,16 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
       if (nodeSize === undefined) {
         nodeSize = { x: 0, y: 0 }; //32 fallback?
       }
+
+      const anim: Vector2 = { x: 0, y: 0 };
+      if (node.sprite.animations) {
+        anim.x = node.sprite.animations[1].tile.x * nodeSize.x + node.frame * nodeSize.x;
+        anim.y = node.sprite.animations[1].tile.y * nodeSize.y;
+      }
       this.ctx.drawImage(
         node.sprite.img,
-        node.frame * nodeSize.x,
-        32, //node.sprite.tileSize.y,
+        anim.x,
+        anim.y,
         node.sprite.img.width / node.sprite.tiles.x,
         node.sprite.img.height / node.sprite.tiles.y,
         node.position.x,
