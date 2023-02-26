@@ -1,6 +1,9 @@
 <div class="flex flex-col h-full">
-    <div class="flex justify-end items-start h-14 from-transparent to-shadow bg-gradient-to-b overflow-hidden">
-        <div class="text-subtle text-sm">{{gamestatus.fps}} FPS</div>
+    <div class="flex justify-end gap-2 items-start h-14 from-transparent to-shadow bg-gradient-to-b overflow-hidden">
+        <div>
+            <button standard icon="" iconColor="textB" [iconStroke]="2" (click)="Restart()">Restart</button>
+        </div>
+        <div class="text-subtle text-end text-sm w-16">{{gamestatus.fps}} FPS</div>
         <div class="flex w-10 h-10">
             <button standard icon="featherAirplay" iconColor="textB" [iconStroke]="2"
                 (click)="setToFullscreen()"></button>
@@ -10,8 +13,8 @@
         <canvas id="canvas" class="fixed min-w-[160px] mx-auto w-[100%] rounded cursor-crosshair z-10" [width]="320"
             [height]="240"></canvas>
         <canvas id="canvasBG"
-            class="min-w-[160px] mx-auto w-[100%] border-2 border-textB bg-bgD rounded pointer-events-none" [width]="320"
-            [height]="240"></canvas>
+            class="min-w-[160px] mx-auto w-[100%] border-2 border-textB bg-bgD rounded pointer-events-none"
+            [width]="320" [height]="240"></canvas>
     </div>
     <div class="flex gap-4 justify-between grow p-8 from-transparent to-shadow bg-gradient-to-t">
         <div class="flex h-fit w-full">

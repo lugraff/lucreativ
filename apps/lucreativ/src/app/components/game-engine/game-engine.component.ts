@@ -59,6 +59,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
   ) {
     this.subs.push(this.screenService.windowWidth$.subscribe((width) => (this.gamestatus.windowSize.x = width)));
     this.subs.push(this.screenService.windowHeight$.subscribe((height) => (this.gamestatus.windowSize.y = height)));
+    this.subs.push(game.stopGame.subscribe(() => this.processing.next(false)));
   }
 
   @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
@@ -176,6 +177,10 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     }
 
     requestAnimationFrame((timestamp) => this.process(timestamp));
+  }
+
+  Restart() {
+    window.location.reload();
   }
 
   ngOnDestroy(): void {

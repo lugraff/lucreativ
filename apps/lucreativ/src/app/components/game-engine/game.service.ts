@@ -1,8 +1,10 @@
 import { Vector2 } from '@shared/util-global';
+import { BehaviorSubject } from 'rxjs';
 import { Action, Actions, Gamestatus, Node, StaticNode } from './entities';
 import { GameServiceAbstract } from './game-abstract.service';
 
 export class GameService extends GameServiceAbstract {
+  public stopGame = new BehaviorSubject(false);
   //-----------------------------------STATIC-------------------------------
   private startScreen: StaticNode = {
     sprite: {
@@ -34,15 +36,41 @@ export class GameService extends GameServiceAbstract {
   playerGravity = 1;
   playerIsOnFloor = false;
 
-  private bug: Node = {
+  private bugA: Node = {
+    script: 'bug',
     sprite: {
       img: new Image(),
       imgPath: 'assets/game/bug-sheet.png',
-      tiles: { x: 4, y: 4 },
+      tiles: { x: 8, y: 4 },
+      animations: [{ tile: { x: 0, y: 3 }, length: 4 }],
       actualAnimation: 0,
     },
     frame: 0,
-    position: { x: 200, y: 100 },
+    position: { x: Math.random() * 200 + 320, y: 200 },
+  };
+  private bugB: Node = {
+    script: 'bug',
+    sprite: {
+      img: new Image(),
+      imgPath: 'assets/game/bug-sheet.png',
+      tiles: { x: 8, y: 4 },
+      animations: [{ tile: { x: 0, y: 3 }, length: 4 }],
+      actualAnimation: 0,
+    },
+    frame: 0,
+    position: { x: Math.random() * 200 + 320, y: 200 },
+  };
+  private bugC: Node = {
+    script: 'bug',
+    sprite: {
+      img: new Image(),
+      imgPath: 'assets/game/bug-sheet.png',
+      tiles: { x: 8, y: 4 },
+      animations: [{ tile: { x: 0, y: 3 }, length: 4 }],
+      actualAnimation: 0,
+    },
+    frame: 0,
+    position: { x: Math.random() * 200 + 320, y: 200 },
   };
 
   private cityA: Node = {
@@ -67,7 +95,7 @@ export class GameService extends GameServiceAbstract {
     frame: 0,
     position: { x: 512, y: 130 },
   };
-  public override nodes: Node[] = [this.cityA, this.cityB, this.player];
+  public override nodes: Node[] = [this.cityA, this.cityB, this.player, this.bugA, this.bugB];
 
   constructor() {
     super();
@@ -102,6 +130,8 @@ export class GameService extends GameServiceAbstract {
       );
     } else if (node.script === 'city') {
       this.cityScript(ctx, gamestatus, node);
+    } else if (node.script === 'bug') {
+      this.bugScript(ctx, gamestatus, node);
     }
   }
 
@@ -209,6 +239,61 @@ export class GameService extends GameServiceAbstract {
       node.position.y,
       node.sprite.img.width / node.sprite.tiles.x,
       node.sprite.img.height / node.sprite.tiles.y
+    );
+  }
+
+  private bugScript(ctx: CanvasRenderingContext2D, gamestatus: Gamestatus, node: Node): void {
+    // console.log(node.position.y);
+    // console.log(gamestatus.windowSize.y);
+    let nodeSize = node.sprite.tileSize;
+    if (nodeSize === undefined) {
+      nodeSize = { x: 50, y: 50 };
+    }
+
+    if (gamestatus.nextFrame) {
+      node.frame++;
+    }
+
+    if (node.sprite.animations) {
+      if (node.frame > node.sprite.animations[node.sprite.actualAnimation].length - 1) {
+        node.frame = node.sprite.animations[node.sprite.actualAnimation].tile.x;
+      }
+    } else if (node.frame >= node.sprite.tiles.x) {
+      node.frame = 0;
+    }
+
+    const anim: Vector2 = { x: 0, y: 0 };
+    if (node.sprite.animations) {
+      anim.x = node.sprite.animations[node.sprite.actualAnimation].tile.x * nodeSize.x + node.frame * nodeSize.x;
+      anim.y = node.sprite.animations[node.sprite.actualAnimation].tile.y * nodeSize.y;
+    }
+
+    node.position.x -= 1.25; //TODO Speed
+
+    if (node.position.x < -nodeSize.x) {
+      node.position.x = 320 + Math.random() * 100;
+    }
+
+    if (this.distance(node.position, this.player.position) < 10) {
+      this.stopGame.next(true);
+    }
+
+    ctx.drawImage(
+      node.sprite.img,
+      anim.x,
+      anim.y,
+      node.sprite.img.width / node.sprite.tiles.x,
+      node.sprite.img.height / node.sprite.tiles.y,
+      node.position.x,
+      node.position.y,
+      node.sprite.img.width / node.sprite.tiles.x,
+      node.sprite.img.height / node.sprite.tiles.y
+    );
+  }
+
+  public distance(vector2A: Vector2, vector2B: Vector2): number {
+    return Math.sqrt(
+      (vector2A.x - vector2B.x) * (vector2A.x - vector2B.x) + (vector2A.y - vector2B.y) * (vector2A.y - vector2B.y)
     );
   }
 }
