@@ -22,7 +22,7 @@ export class ButtonGameComponent {
   private readonly classBase =
     'touch-none select-none outline-none whitespace-nowrap disabled:grayscale disabled:pointer-events-none grow';
   @HostBinding('class') public class =
-    'active:brightness-125 border-2 bg-warning rounded-full min-w-[3.5rem] min-h-[3.5rem] text-textB text-4xl font-bold' +
+    'active:brightness-125 border-2 bg-warning rounded-full min-w-[4rem] min-h-[4rem] text-textB text-4xl font-bold' +
     this.classBase;
   @Input() public icon = '';
   @Input() public iconStroke: string | number | undefined = 1.5;
