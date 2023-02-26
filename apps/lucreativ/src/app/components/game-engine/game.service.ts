@@ -156,7 +156,7 @@ export class GameService extends GameServiceAbstract {
       nodeSize = { x: 0, y: 0 }; //32 fallback?
     }
     if (node.position.x < -nodeSize.x) {
-      node.position.x = 512;
+      node.position.x = nodeSize.x;
     }
     node.position.x--;
   }
