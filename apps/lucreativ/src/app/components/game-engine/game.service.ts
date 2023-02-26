@@ -1,4 +1,5 @@
-import { Action, Gamestatus, Node, StaticNode } from './entities';
+import { Vector2 } from '@shared/util-global';
+import { Action, Actions, Gamestatus, Node, StaticNode } from './entities';
 import { GameServiceAbstract } from './game-abstract.service';
 
 export class GameService extends GameServiceAbstract {
@@ -86,25 +87,26 @@ export class GameService extends GameServiceAbstract {
     }
   }
 
-  public runScript(
-    gamestatus: Gamestatus,
-    name: string,
-    node: Node,
-    actionA: Action,
-    actionB: Action,
-    actionLeft: Action,
-    actionRight: Action,
-    actionUp: Action,
-    actionDown: Action
-  ): void {
-    if (name === 'player') {
-      this.playerScript(gamestatus, node, actionA, actionB, actionLeft, actionRight, actionUp, actionDown);
-    } else if (name === 'city') {
-      this.cityScript(gamestatus, node, actionA, actionB, actionLeft, actionRight, actionUp, actionDown);
+  public runNode(ctx: CanvasRenderingContext2D, gamestatus: Gamestatus, node: Node, actions: Actions): void {
+    if (node.script === 'player') {
+      this.playerScript(
+        ctx,
+        gamestatus,
+        node,
+        actions.actionA,
+        actions.actionB,
+        actions.actionLeft,
+        actions.actionRight,
+        actions.actionUp,
+        actions.actionDown
+      );
+    } else if (node.script === 'city') {
+      this.cityScript(ctx, gamestatus, node);
     }
   }
 
   private playerScript(
+    ctx: CanvasRenderingContext2D,
     gamestatus: Gamestatus,
     node: Node,
     actionA: Action,
@@ -114,12 +116,29 @@ export class GameService extends GameServiceAbstract {
     actionUp: Action,
     actionDown: Action
   ): void {
-    // console.log(node.position.y);
-    // console.log(gamestatus.windowSize.y);
     let nodeSize = node.sprite.tileSize;
     if (nodeSize === undefined) {
-      nodeSize = { x: 0, y: 0 }; //32 fallback?
+      nodeSize = { x: 32, y: 32 };
     }
+    if (gamestatus.nextFrame) {
+      node.frame++;
+    }
+
+    if (node.sprite.animations) {
+      if (node.frame > node.sprite.animations[node.sprite.actualAnimation].length - 1) {
+        node.frame = node.sprite.animations[node.sprite.actualAnimation].tile.x;
+      }
+    } else if (node.frame >= node.sprite.tiles.x) {
+      node.frame = 0;
+    }
+
+    const anim: Vector2 = { x: 0, y: 0 };
+    if (node.sprite.animations) {
+      anim.x = node.sprite.animations[node.sprite.actualAnimation].tile.x * nodeSize.x + node.frame * nodeSize.x;
+      anim.y = node.sprite.animations[node.sprite.actualAnimation].tile.y * nodeSize.y;
+    }
+    // console.log(node.position.y);
+    // console.log(gamestatus.windowSize.y);
     if (node.position.y < 240 - nodeSize.y) {
       if (this.playerGravity < 10) {
         this.playerGravity += 0.25;
@@ -131,7 +150,7 @@ export class GameService extends GameServiceAbstract {
     }
     if (actionA.isPressed && this.playerIsOnFloor) {
       this.playerIsOnFloor = false;
-      this.playerGravity = -8;
+      this.playerGravity = -7;
       node.sprite.actualAnimation = 2;
     }
     node.position.y += this.playerGravity;
@@ -154,27 +173,42 @@ export class GameService extends GameServiceAbstract {
     if (actionDown.isPressed && node.position.y < 240 - nodeSize.y) {
       node.position.y += 1;
     }
+
+    ctx.drawImage(
+      node.sprite.img,
+      anim.x,
+      anim.y,
+      node.sprite.img.width / node.sprite.tiles.x,
+      node.sprite.img.height / node.sprite.tiles.y,
+      node.position.x,
+      node.position.y,
+      node.sprite.img.width / node.sprite.tiles.x,
+      node.sprite.img.height / node.sprite.tiles.y
+    );
   }
 
-  private cityScript(
-    gamestatus: Gamestatus,
-    node: Node,
-    actionA: Action,
-    actionB: Action,
-    actionLeft: Action,
-    actionRight: Action,
-    actionUp: Action,
-    actionDown: Action
-  ): void {
+  private cityScript(ctx: CanvasRenderingContext2D, gamestatus: Gamestatus, node: Node): void {
     // console.log(node.position.y);
     // console.log(gamestatus.windowSize.y);
     let nodeSize = node.sprite.tileSize;
     if (nodeSize === undefined) {
-      nodeSize = { x: 0, y: 0 }; //32 fallback?
+      nodeSize = { x: 512, y: 140 };
     }
     if (node.position.x < -nodeSize.x) {
       node.position.x = nodeSize.x;
     }
     node.position.x--;
+
+    ctx.drawImage(
+      node.sprite.img,
+      0,
+      0,
+      node.sprite.img.width / node.sprite.tiles.x,
+      node.sprite.img.height / node.sprite.tiles.y,
+      node.position.x,
+      node.position.y,
+      node.sprite.img.width / node.sprite.tiles.x,
+      node.sprite.img.height / node.sprite.tiles.y
+    );
   }
 }

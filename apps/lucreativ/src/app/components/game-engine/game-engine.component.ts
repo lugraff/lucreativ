@@ -10,8 +10,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { IsMobileScreenService } from '@shared/util-screen';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { FPSService, Vector2 } from '@shared/util-global';
-import { Action, Gamestatus } from './entities';
+import { FPSService } from '@shared/util-global';
+import { Action, Actions, Gamestatus } from './entities';
 import { GameService } from './game.service';
 import { ButtonGameComponent, ButtonStandardComponent } from '@shared/ui-global';
 
@@ -30,13 +30,21 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
   private ctxBG: CanvasRenderingContext2D | undefined = undefined;
   private subs: Subscription[] = [];
   public processing = new BehaviorSubject<boolean>(false);
-  public gamestatus: Gamestatus = { fps: 0, tick: -32, windowSize: { x: 100, y: 100 } };
+  public gamestatus: Gamestatus = { fps: 0, tick: -32, nextFrame: false, windowSize: { x: 100, y: 100 } };
   private actionA: Action = { isPressed: false };
   private actionB: Action = { isPressed: false };
   private actionLeft: Action = { isPressed: false };
   private actionUp: Action = { isPressed: false };
   private actionDown: Action = { isPressed: false };
   private actionRight: Action = { isPressed: false };
+  private actions: Actions = {
+    actionA: this.actionA,
+    actionB: this.actionB,
+    actionLeft: this.actionLeft,
+    actionUp: this.actionUp,
+    actionDown: this.actionDown,
+    actionRight: this.actionRight,
+  };
 
   //TODO Jump und Stand -> other Animations changeability
   //TODO Can Deactivate
@@ -116,7 +124,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.drawStatic();
       this.processing.next(true);
-    }, 200);
+    }, 200); //TODO Wait for loading...
   }
 
   private drawStatic(): void {
@@ -141,12 +149,12 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
         nodeSize.y * 0.5
       );
     }
-    this.ctxBG.strokeStyle = 'white';
-    this.ctxBG.lineWidth = 1;
-    this.ctxBG.beginPath();
-    this.ctxBG.moveTo(0, 240);
-    this.ctxBG.lineTo(320, 240);
-    this.ctxBG.stroke();
+    // this.ctxBG.strokeStyle = 'white';
+    // this.ctxBG.lineWidth = 1;
+    // this.ctxBG.beginPath();
+    // this.ctxBG.moveTo(0, 240);
+    // this.ctxBG.lineTo(320, 240);
+    // this.ctxBG.stroke();
   }
 
   private process(timestamp: number): void {
@@ -154,69 +162,17 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
       return;
     }
     this.fpsService.calcFPS(timestamp);
-    if (this.gamestatus.tick++ > 1000) {
+    if (this.gamestatus.tick++ > 7000) {
       this.gamestatus.tick = 0;
     }
     this.ctx.clearRect(0, 0, 320, 240);
 
+    this.gamestatus.nextFrame = false;
+    if (this.gamestatus.tick % 7 === 0) {
+      this.gamestatus.nextFrame = true;
+    }
     for (const node of this.game.nodes) {
-      if (this.gamestatus.tick % node.sprite.tiles.x === 0) {
-        node.frame++;
-      }
-
-      if (node.script) {
-        this.game.runScript(
-          this.gamestatus,
-          node.script,
-          node,
-          this.actionA,
-          this.actionB,
-          this.actionLeft,
-          this.actionRight,
-          this.actionUp,
-          this.actionDown
-        );
-      }
-      let nodeSize = node.sprite.tileSize;
-      if (nodeSize === undefined) {
-        nodeSize = { x: 0, y: 0 }; //32 fallback?
-      }
-
-      if (node.sprite.animations) {
-        if (node.frame > node.sprite.animations[node.sprite.actualAnimation].length - 1) {
-          node.frame = node.sprite.animations[node.sprite.actualAnimation].tile.x;
-        }
-      } else if (node.frame >= node.sprite.tiles.x) {
-        node.frame = 0;
-      }
-
-      const anim: Vector2 = { x: 0, y: 0 };
-      if (node.sprite.animations) {
-        anim.x = node.sprite.animations[node.sprite.actualAnimation].tile.x * nodeSize.x + node.frame * nodeSize.x;
-        anim.y = node.sprite.animations[node.sprite.actualAnimation].tile.y * nodeSize.y;
-      }
-      this.ctx.drawImage(
-        node.sprite.img,
-        anim.x,
-        anim.y,
-        node.sprite.img.width / node.sprite.tiles.x,
-        node.sprite.img.height / node.sprite.tiles.y,
-        node.position.x,
-        node.position.y,
-        node.sprite.img.width / node.sprite.tiles.x,
-        node.sprite.img.height / node.sprite.tiles.y
-      );
-      // this.ctx.drawImage(
-      //   node.sprite.img,
-      //   0,
-      //   0,
-      //   node.sprite.tileSize.x,
-      //   node.sprite.tileSize.y,
-      //   node.position.x,
-      //   node.position.y,
-      //   node.sprite.tileSize.x,
-      //   node.sprite.tileSize.y
-      // );
+      this.game.runNode(this.ctx, this.gamestatus, node, this.actions);
     }
 
     requestAnimationFrame((timestamp) => this.process(timestamp));

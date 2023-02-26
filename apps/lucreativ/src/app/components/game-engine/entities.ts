@@ -3,11 +3,20 @@ import { Vector2 } from '@shared/util-global';
 export interface Gamestatus {
   fps: number;
   tick: number;
+  nextFrame: boolean;
   windowSize: Vector2;
 }
 
 export interface Action {
   isPressed: boolean;
+}
+export interface Actions {
+  actionA: Action;
+  actionB: Action;
+  actionLeft: Action;
+  actionUp: Action;
+  actionDown: Action;
+  actionRight: Action;
 }
 
 export interface Animation {
@@ -27,7 +36,6 @@ export interface Spritesheet {
 export interface StaticNode {
   sprite: Spritesheet;
   position: Vector2;
-  groups?: string[];
 }
 
 export interface Node {
@@ -35,5 +43,4 @@ export interface Node {
   sprite: Spritesheet;
   frame: number;
   position: Vector2;
-  groups?: string[];
 }
