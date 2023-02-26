@@ -46,7 +46,7 @@ export class GameService extends GameServiceAbstract {
       actualAnimation: 0,
     },
     frame: 0,
-    position: { x: Math.random() * 200 + 320, y: 200 },
+    position: { x: Math.random() * 500 + 320, y: 200 },
   };
   private bugB: Node = {
     script: 'bug',
@@ -58,7 +58,7 @@ export class GameService extends GameServiceAbstract {
       actualAnimation: 0,
     },
     frame: 0,
-    position: { x: Math.random() * 200 + 320, y: 200 },
+    position: { x: Math.random() * 500 + 320, y: 200 },
   };
   private bugC: Node = {
     script: 'bug',
@@ -70,7 +70,7 @@ export class GameService extends GameServiceAbstract {
       actualAnimation: 0,
     },
     frame: 0,
-    position: { x: Math.random() * 200 + 320, y: 200 },
+    position: { x: Math.random() * 500 + 320, y: 200 },
   };
 
   private cityA: Node = {
@@ -95,7 +95,7 @@ export class GameService extends GameServiceAbstract {
     frame: 0,
     position: { x: 512, y: 130 },
   };
-  public override nodes: Node[] = [this.cityA, this.cityB, this.player, this.bugA, this.bugB];
+  public override nodes: Node[] = [this.cityA, this.cityB, this.player, this.bugA, this.bugB, this.bugC];
 
   constructor() {
     super();
@@ -271,11 +271,16 @@ export class GameService extends GameServiceAbstract {
     node.position.x -= 1.25; //TODO Speed
 
     if (node.position.x < -nodeSize.x) {
-      node.position.x = 320 + Math.random() * 100;
+      node.position.x = 320 + Math.random() * 300;
     }
 
     if (this.distance(node.position, this.player.position) < 10) {
       this.stopGame.next(true);
+      setTimeout(() => {
+        this.bugA.position.x = Math.random() * 500 + 320;
+        this.bugB.position.x = Math.random() * 500 + 320;
+        this.bugC.position.x = Math.random() * 500 + 320;
+      });
     }
 
     ctx.drawImage(

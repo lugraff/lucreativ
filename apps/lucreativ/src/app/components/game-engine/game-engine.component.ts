@@ -45,6 +45,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     actionDown: this.actionDown,
     actionRight: this.actionRight,
   };
+  private bgMusic = new Audio();
 
   //TODO Jump und Stand -> other Animations changeability
   //TODO Can Deactivate
@@ -59,7 +60,12 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
   ) {
     this.subs.push(this.screenService.windowWidth$.subscribe((width) => (this.gamestatus.windowSize.x = width)));
     this.subs.push(this.screenService.windowHeight$.subscribe((height) => (this.gamestatus.windowSize.y = height)));
-    this.subs.push(game.stopGame.subscribe(() => this.processing.next(false)));
+    this.subs.push(
+      game.stopGame.subscribe(() => {
+        this.bgMusic.pause();
+        this.processing.next(false);
+      })
+    );
   }
 
   @HostListener('window:keydown', ['$event']) onKeyDown(event: KeyboardEvent) {
@@ -115,17 +121,20 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     this.canvasBG = document.getElementById('canvasBG') as HTMLCanvasElement;
     this.ctxBG = this.canvasBG.getContext('2d') as CanvasRenderingContext2D;
+    this.bgMusic.src = 'assets/game/track01.mp3';
+    this.bgMusic.load();
     this.subs.push(this.processing.subscribe(() => this.ngZone.runOutsideAngular(() => this.process(0))));
     this.subs.push(
       this.fpsService.$fps.subscribe((fps) => {
         this.gamestatus.fps = fps;
-        this.detector.markForCheck();
+        //this.detector.markForCheck();
       })
     );
+
     setTimeout(() => {
       this.drawStatic();
       this.processing.next(true);
-    }, 200); //TODO Wait for loading...
+    }, 3000); //TODO Wait for loading...
   }
 
   private drawStatic(): void {
@@ -180,7 +189,12 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
   }
 
   Restart() {
-    window.location.reload();
+    if (this.processing.value) {
+      return;
+    } else {
+      this.processing.next(true);
+      this.bgMusic.play();
+    }
   }
 
   ngOnDestroy(): void {
