@@ -40,6 +40,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
 
   //TODO Jump und Stand -> other Animations changeability
   //TODO Can Deactivate
+  //TODO Joystick Button
 
   constructor(
     private ngZone: NgZone,
@@ -124,16 +125,20 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     }
     this.ctxBG.clearRect(0, 0, window.innerWidth, window.innerHeight);
     for (const node of this.game.staticNodes) {
+      let nodeSize = node.sprite.tileSize;
+      if (nodeSize === undefined) {
+        nodeSize = { x: 0, y: 0 }; //32 fallback?
+      }
       this.ctxBG.drawImage(
         node.sprite.img,
         0,
         0,
-        node.sprite.tileSize.x,
-        node.sprite.tileSize.y,
+        nodeSize.x,
+        nodeSize.y,
         node.position.x,
         node.position.y,
-        node.sprite.tileSize.x * 0.5,
-        node.sprite.tileSize.y * 0.5
+        nodeSize.x * 0.5,
+        nodeSize.y * 0.5
       );
     }
     this.ctxBG.strokeStyle = 'white';
@@ -175,18 +180,32 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
           this.actionDown
         );
       }
-
+      let nodeSize = node.sprite.tileSize;
+      if (nodeSize === undefined) {
+        nodeSize = { x: 0, y: 0 }; //32 fallback?
+      }
       this.ctx.drawImage(
         node.sprite.img,
-        node.frame * node.sprite.tileSize.x,
-        node.sprite.tileSize.y,
-        node.sprite.tileSize.x,
-        node.sprite.tileSize.y,
+        node.frame * nodeSize.x,
+        32, //node.sprite.tileSize.y,
+        node.sprite.img.width / node.sprite.tiles.x,
+        node.sprite.img.height / node.sprite.tiles.y,
         node.position.x,
         node.position.y,
-        node.sprite.tileSize.x,
-        node.sprite.tileSize.y
+        node.sprite.img.width / node.sprite.tiles.x,
+        node.sprite.img.height / node.sprite.tiles.y
       );
+      // this.ctx.drawImage(
+      //   node.sprite.img,
+      //   0,
+      //   0,
+      //   node.sprite.tileSize.x,
+      //   node.sprite.tileSize.y,
+      //   node.position.x,
+      //   node.position.y,
+      //   node.sprite.tileSize.x,
+      //   node.sprite.tileSize.y
+      // );
     }
 
     requestAnimationFrame((timestamp) => this.process(timestamp));

@@ -7,7 +7,6 @@ export class GameService extends GameServiceAbstract {
     sprite: {
       img: new Image(),
       imgPath: 'assets/game/CodeRannerLogo.png',
-      tileSize: { x: 640, y: 480 },
       tiles: { x: 1, y: 1 },
     },
     position: { x: 0, y: 0 },
@@ -19,7 +18,6 @@ export class GameService extends GameServiceAbstract {
     sprite: {
       img: new Image(),
       imgPath: 'assets/game/runner-sheet.png',
-      tileSize: { x: 32, y: 32 },
       tiles: { x: 8, y: 3 },
     },
     frame: 0,
@@ -32,21 +30,49 @@ export class GameService extends GameServiceAbstract {
     sprite: {
       img: new Image(),
       imgPath: 'assets/game/bug-sheet.png',
-      tileSize: { x: 50, y: 50 },
       tiles: { x: 4, y: 4 },
     },
     frame: 0,
-    position: { x: 380, y: 195 },
+    position: { x: 200, y: 130 },
   };
-  public override nodes: Node[] = [this.player];
+
+  private cityA: Node = {
+    script: 'city',
+    sprite: {
+      img: new Image(),
+      imgPath: 'assets/game/city.png',
+      tiles: { x: 1, y: 1 },
+    },
+    frame: 0,
+    position: { x: 0, y: 130 },
+  };
+  private cityB: Node = {
+    script: 'city',
+    sprite: {
+      img: new Image(),
+      imgPath: 'assets/game/city.png',
+      tiles: { x: 1, y: 1 },
+    },
+    frame: 0,
+    position: { x: 512, y: 130 },
+  };
+  public override nodes: Node[] = [this.cityA, this.cityB, this.player];
 
   constructor() {
     super();
     for (const tex of this.staticNodes) {
       tex.sprite.img.src = tex.sprite.imgPath;
+      tex.sprite.tileSize = {
+        x: tex.sprite.img.width / tex.sprite.tiles.x,
+        y: tex.sprite.img.height / tex.sprite.tiles.y,
+      };
     }
     for (const tex of this.nodes) {
       tex.sprite.img.src = tex.sprite.imgPath;
+      tex.sprite.tileSize = {
+        x: tex.sprite.img.width / tex.sprite.tiles.x,
+        y: tex.sprite.img.height / tex.sprite.tiles.y,
+      };
     }
   }
 
@@ -63,6 +89,8 @@ export class GameService extends GameServiceAbstract {
   ): void {
     if (name === 'player') {
       this.playerScript(gamestatus, node, actionA, actionB, actionLeft, actionRight, actionUp, actionDown);
+    } else if (name === 'city') {
+      this.cityScript(gamestatus, node, actionA, actionB, actionLeft, actionRight, actionUp, actionDown);
     }
   }
 
@@ -78,7 +106,11 @@ export class GameService extends GameServiceAbstract {
   ): void {
     // console.log(node.position.y);
     // console.log(gamestatus.windowSize.y);
-    if (node.position.y < 240 - node.sprite.tileSize.y) {
+    let nodeSize = node.sprite.tileSize;
+    if (nodeSize === undefined) {
+      nodeSize = { x: 0, y: 0 }; //32 fallback?
+    }
+    if (node.position.y < 240 - nodeSize.y) {
       if (this.playerGravity < 6) {
         this.playerGravity++;
       }
@@ -92,7 +124,7 @@ export class GameService extends GameServiceAbstract {
     }
     node.position.y += this.playerGravity;
 
-    if (actionRight.isPressed && node.position.x < 320 - node.sprite.tileSize.x) {
+    if (actionRight.isPressed && node.position.x < 320 - nodeSize.x) {
       node.position.x += 1;
     }
     if (actionLeft.isPressed && node.position.x > 0) {
@@ -102,8 +134,30 @@ export class GameService extends GameServiceAbstract {
     if (actionUp.isPressed && node.position.y > 100) {
       node.position.y -= 1;
     }
-    if (actionDown.isPressed && node.position.y < 240 - node.sprite.tileSize.y) {
+    if (actionDown.isPressed && node.position.y < 240 - nodeSize.y) {
       node.position.y += 1;
     }
+  }
+
+  private cityScript(
+    gamestatus: Gamestatus,
+    node: Node,
+    actionA: Action,
+    actionB: Action,
+    actionLeft: Action,
+    actionRight: Action,
+    actionUp: Action,
+    actionDown: Action
+  ): void {
+    // console.log(node.position.y);
+    // console.log(gamestatus.windowSize.y);
+    let nodeSize = node.sprite.tileSize;
+    if (nodeSize === undefined) {
+      nodeSize = { x: 0, y: 0 }; //32 fallback?
+    }
+    if (node.position.x < -nodeSize.x) {
+      node.position.x = 512;
+    }
+    node.position.x--;
   }
 }

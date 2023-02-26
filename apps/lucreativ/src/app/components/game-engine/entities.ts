@@ -10,11 +10,17 @@ export interface Action {
   isPressed: boolean;
 }
 
+export interface Animation {
+  tile: Vector2;
+  length: number;
+}
+
 export interface Spritesheet {
   img: HTMLImageElement;
   imgPath: string;
-  tileSize: Vector2;
   tiles: Vector2;
+  tileSize?: Vector2;
+  animations?: Animation[];
 }
 
 export interface StaticNode {
