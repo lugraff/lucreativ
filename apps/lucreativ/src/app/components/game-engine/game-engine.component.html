@@ -16,22 +16,22 @@
     <div class="flex gap-4 justify-between grow p-8 from-transparent to-shadow bg-gradient-to-t">
         <div class="flex h-fit w-full">
             <div class="self-center">
-                <button game (pointerenter)="onActionLeft(true)" (pointerup)="onActionLeft(false)"
+                <button game (pointerover)="onActionLeft(true)" (pointerup)="onActionLeft(false)"
                     (pointerleave)="onActionLeft(false)" icon="featherChevronLeft" iconColor="textB" iconStroke="2"
-                    iconSize="3rem"></button>
+                    iconSize="2.5rem"></button>
             </div>
             <div class="flex flex-col items-start justify-start gap-12">
-                <button game (pointerenter)="onActionUp(true)" (pointerup)="onActionUp(false)"
+                <button game (pointerover)="onActionUp(true)" (pointerup)="onActionUp(false)"
                     (pointerleave)="onActionUp(false)" icon="featherChevronUp" iconColor="textB" iconStroke="2"
-                    iconSize="3rem"></button>
-                <button game (pointerenter)="onActionDown(true)" (pointerup)="onActionDown(false)"
+                    iconSize="2.5rem"></button>
+                <button game (pointerover)="onActionDown(true)" (pointerup)="onActionDown(false)"
                     (pointerleave)="onActionDown(false)" icon="featherChevronDown" iconColor="textB" iconStroke="2"
-                    iconSize="3rem"></button>
+                    iconSize="2.5rem"></button>
             </div>
             <div class="self-center">
-                <button game (pointerenter)="onActionRight(true)" (pointerup)="onActionRight(false)"
+                <button game (pointerover)="onActionRight(true)" (pointerup)="onActionRight(false)"
                     (pointerleave)="onActionRight(false)" icon="featherChevronRight" iconColor="textB" iconStroke="2"
-                    iconSize="3rem"></button>
+                    iconSize="2.5rem"></button>
             </div>
             <div class="grow"></div>
             <div class="flex gap-4 py-4">
