@@ -163,14 +163,6 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
       if (this.gamestatus.tick % node.sprite.tiles.x === 0) {
         node.frame++;
       }
-      if (node.sprite.animations) {
-        if (node.frame > node.sprite.animations[1].length) {
-          node.frame = 0;
-        }
-      }
-      if (node.frame >= node.sprite.tiles.x) {
-        node.frame = 0;
-      }
 
       if (node.script) {
         this.game.runScript(
@@ -190,10 +182,18 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
         nodeSize = { x: 0, y: 0 }; //32 fallback?
       }
 
+      if (node.sprite.animations) {
+        if (node.frame > node.sprite.animations[node.sprite.actualAnimation].length - 1) {
+          node.frame = node.sprite.animations[node.sprite.actualAnimation].tile.x;
+        }
+      } else if (node.frame >= node.sprite.tiles.x) {
+        node.frame = 0;
+      }
+
       const anim: Vector2 = { x: 0, y: 0 };
       if (node.sprite.animations) {
-        anim.x = node.sprite.animations[1].tile.x * nodeSize.x + node.frame * nodeSize.x;
-        anim.y = node.sprite.animations[1].tile.y * nodeSize.y;
+        anim.x = node.sprite.animations[node.sprite.actualAnimation].tile.x * nodeSize.x + node.frame * nodeSize.x;
+        anim.y = node.sprite.animations[node.sprite.actualAnimation].tile.y * nodeSize.y;
       }
       this.ctx.drawImage(
         node.sprite.img,

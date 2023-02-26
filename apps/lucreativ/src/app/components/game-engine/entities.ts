@@ -21,6 +21,7 @@ export interface Spritesheet {
   tiles: Vector2;
   tileSize?: Vector2;
   animations?: Animation[];
+  actualAnimation: number;
 }
 
 export interface StaticNode {

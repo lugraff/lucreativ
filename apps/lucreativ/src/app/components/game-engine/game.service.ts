@@ -8,6 +8,7 @@ export class GameService extends GameServiceAbstract {
       img: new Image(),
       imgPath: 'assets/game/CodeRannerLogo.png',
       tiles: { x: 1, y: 1 },
+      actualAnimation: 0,
     },
     position: { x: 0, y: 0 },
   };
@@ -24,6 +25,7 @@ export class GameService extends GameServiceAbstract {
         { tile: { x: 0, y: 1 }, length: 8 },
         { tile: { x: 0, y: 2 }, length: 4 },
       ],
+      actualAnimation: 0,
     },
     frame: 0,
     position: { x: 32, y: 200 },
@@ -36,6 +38,7 @@ export class GameService extends GameServiceAbstract {
       img: new Image(),
       imgPath: 'assets/game/bug-sheet.png',
       tiles: { x: 4, y: 4 },
+      actualAnimation: 0,
     },
     frame: 0,
     position: { x: 200, y: 100 },
@@ -47,6 +50,7 @@ export class GameService extends GameServiceAbstract {
       img: new Image(),
       imgPath: 'assets/game/city.png',
       tiles: { x: 1, y: 1 },
+      actualAnimation: 0,
     },
     frame: 0,
     position: { x: 0, y: 100 },
@@ -57,6 +61,7 @@ export class GameService extends GameServiceAbstract {
       img: new Image(),
       imgPath: 'assets/game/city.png',
       tiles: { x: 1, y: 1 },
+      actualAnimation: 0,
     },
     frame: 0,
     position: { x: 512, y: 130 },
@@ -116,16 +121,18 @@ export class GameService extends GameServiceAbstract {
       nodeSize = { x: 0, y: 0 }; //32 fallback?
     }
     if (node.position.y < 240 - nodeSize.y) {
-      if (this.playerGravity < 6) {
-        this.playerGravity++;
+      if (this.playerGravity < 10) {
+        this.playerGravity += 0.25;
       }
     } else {
       this.playerGravity = 0;
+      this.player.position.y = 240 - nodeSize.y;
       this.playerIsOnFloor = true;
     }
     if (actionA.isPressed && this.playerIsOnFloor) {
       this.playerIsOnFloor = false;
-      this.playerGravity = -10;
+      this.playerGravity = -8;
+      node.sprite.actualAnimation = 2;
     }
     node.position.y += this.playerGravity;
 
@@ -134,6 +141,11 @@ export class GameService extends GameServiceAbstract {
     }
     if (actionLeft.isPressed && node.position.x > 0) {
       node.position.x -= 1;
+      node.sprite.actualAnimation = 0;
+    } else {
+      if (this.playerIsOnFloor) {
+        node.sprite.actualAnimation = 1;
+      }
     }
 
     if (actionUp.isPressed && node.position.y > 100) {
