@@ -93,7 +93,7 @@ export class GameService extends GameServiceAbstract {
       actualAnimation: 0,
     },
     frame: 0,
-    position: { x: 512, y: 130 },
+    position: { x: 512, y: 100 },
   };
   public override nodes: Node[] = [this.cityA, this.cityB, this.player, this.bugA, this.bugB, this.bugC];
 

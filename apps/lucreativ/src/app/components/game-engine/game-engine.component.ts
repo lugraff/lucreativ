@@ -63,6 +63,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     this.subs.push(
       game.stopGame.subscribe(() => {
         this.bgMusic.pause();
+        this.bgMusic.currentTime = 0;
         this.processing.next(false);
       })
     );
@@ -147,24 +148,27 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
       if (nodeSize === undefined) {
         nodeSize = { x: 0, y: 0 }; //32 fallback?
       }
-      this.ctxBG.drawImage(
-        node.sprite.img,
-        0,
-        0,
-        nodeSize.x,
-        nodeSize.y,
-        node.position.x,
-        node.position.y,
-        nodeSize.x * 0.5,
-        nodeSize.y * 0.5
-      );
+      // this.ctxBG.drawImage(
+      //   node.sprite.img,
+      //   0,
+      //   0,
+      //   nodeSize.x,
+      //   nodeSize.y,
+      //   node.position.x,
+      //   node.position.y,
+      //   nodeSize.x * 0.5,
+      //   nodeSize.y * 0.5
+      // );
     }
-    // this.ctxBG.strokeStyle = 'white';
-    // this.ctxBG.lineWidth = 1;
     // this.ctxBG.beginPath();
     // this.ctxBG.moveTo(0, 240);
     // this.ctxBG.lineTo(320, 240);
     // this.ctxBG.stroke();
+    this.ctxBG.lineWidth = 1;
+    this.ctxBG.strokeStyle = 'white';
+    for (let index = 0; index < 30; index++) {
+      this.ctxBG.strokeRect(Math.random() * 320, Math.random() * 120, 0.5, 0.5);
+    }
   }
 
   private process(timestamp: number): void {
