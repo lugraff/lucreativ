@@ -52,11 +52,11 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
   //TODO Joystick Button
 
   constructor(
+    private game: GameService,
     private ngZone: NgZone,
     private detector: ChangeDetectorRef,
     public screenService: IsMobileScreenService,
-    public fpsService: FPSService,
-    private game: GameService
+    public fpsService: FPSService
   ) {
     this.subs.push(this.screenService.windowWidth$.subscribe((width) => (this.gamestatus.windowSize.x = width)));
     this.subs.push(this.screenService.windowHeight$.subscribe((height) => (this.gamestatus.windowSize.y = height)));
@@ -135,7 +135,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.drawStatic();
       this.processing.next(true);
-    }, 3000); //TODO Wait for loading...
+    }, 0); //TODO Wait for loading...
   }
 
   private drawStatic(): void {

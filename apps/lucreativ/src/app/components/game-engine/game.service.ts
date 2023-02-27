@@ -100,18 +100,22 @@ export class GameService extends GameServiceAbstract {
   constructor() {
     super();
     for (const tex of this.staticNodes) {
-      tex.sprite.img.src = tex.sprite.imgPath;
-      tex.sprite.tileSize = {
-        x: tex.sprite.img.width / tex.sprite.tiles.x,
-        y: tex.sprite.img.height / tex.sprite.tiles.y,
-      };
+      while (tex.sprite.tileSize === undefined) {
+        tex.sprite.img.src = tex.sprite.imgPath;
+        tex.sprite.tileSize = {
+          x: tex.sprite.img.width / tex.sprite.tiles.x,
+          y: tex.sprite.img.height / tex.sprite.tiles.y,
+        };
+      }
     }
     for (const tex of this.nodes) {
-      tex.sprite.img.src = tex.sprite.imgPath;
-      tex.sprite.tileSize = {
-        x: tex.sprite.img.width / tex.sprite.tiles.x,
-        y: tex.sprite.img.height / tex.sprite.tiles.y,
-      };
+      while (tex.sprite.tileSize === undefined) {
+        tex.sprite.img.src = tex.sprite.imgPath;
+        tex.sprite.tileSize = {
+          x: tex.sprite.img.width / tex.sprite.tiles.x,
+          y: tex.sprite.img.height / tex.sprite.tiles.y,
+        };
+      }
     }
   }
 
@@ -167,7 +171,7 @@ export class GameService extends GameServiceAbstract {
       anim.x = node.sprite.animations[node.sprite.actualAnimation].tile.x * nodeSize.x + node.frame * nodeSize.x;
       anim.y = node.sprite.animations[node.sprite.actualAnimation].tile.y * nodeSize.y;
     }
-    // console.log(node.position.y);
+
     // console.log(gamestatus.windowSize.y);
     if (node.position.y < 240 - nodeSize.y) {
       if (this.playerGravity < 10) {

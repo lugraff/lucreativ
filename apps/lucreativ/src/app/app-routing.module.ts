@@ -42,7 +42,7 @@ const ROUTES: Routes = [
     data: ['featherFilm', 'Net Animation'],
   },
   {
-    path: 'canvas',
+    path: 'games',
     component: GameEngineComponent,
     data: ['featherBox', 'Games'],
   },
