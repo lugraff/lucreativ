@@ -128,6 +128,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     this.subs.push(
       this.fpsService.$fps.subscribe((fps) => {
         this.gamestatus.fps = fps;
+        this.bgMusic.play();
         //this.detector.markForCheck();
       })
     );
