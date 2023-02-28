@@ -45,6 +45,7 @@ const ROUTES: Routes = [
     path: 'games',
     component: GameEngineComponent,
     data: ['featherBox', 'Games'],
+    canDeactivate: [CanDeactivateGuard],
   },
   {
     path: 'page-not-found',

@@ -48,3 +48,9 @@
     </div>
 
 </div>
+
+<global-popup *ngIf="showExitPopup" [backCovered]="true" [closeable]="false" icon="featherQuestionCircle"
+    [minimizeable]="false" [resizeable]="false">
+    <button standard (click)="onQuit()">Quit</button>
+    <button standard autofocus (click)="onContinue()">Continue</button>
+</global-popup>

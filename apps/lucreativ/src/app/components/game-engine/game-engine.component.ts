@@ -9,26 +9,29 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IsMobileScreenService } from '@shared/util-screen';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { FPSService } from '@shared/util-global';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { CanComponentDeactivate, FPSService } from '@shared/util-global';
 import { Action, Actions, Gamestatus } from './entities';
 import { GameService } from './game.service';
-import { ButtonGameComponent, ButtonStandardComponent } from '@shared/ui-global';
+import { ButtonGameComponent, ButtonStandardComponent, PopupComponent } from '@shared/ui-global';
+import { Router, RouterStateSnapshot } from '@angular/router';
 
 @Component({
   selector: 'lucreativ-canvas',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonStandardComponent, ButtonGameComponent],
+  imports: [CommonModule, ButtonStandardComponent, ButtonGameComponent, PopupComponent],
   providers: [GameService, FPSService],
   templateUrl: './game-engine.component.html',
 })
-export class GameEngineComponent implements AfterViewInit, OnDestroy {
+export class GameEngineComponent implements AfterViewInit, OnDestroy, CanComponentDeactivate {
   private canvas: HTMLCanvasElement | undefined = undefined;
   private ctx: CanvasRenderingContext2D | undefined = undefined;
   private canvasBG: HTMLCanvasElement | undefined = undefined;
   private ctxBG: CanvasRenderingContext2D | undefined = undefined;
   private subs: Subscription[] = [];
+  public showExitPopup = false;
+  private desiredRoute = '';
   public processing = new BehaviorSubject<boolean>(false);
   public gamestatus: Gamestatus = { fps: 0, tick: -32, nextFrame: false, windowSize: { x: 100, y: 100 } };
   private actionA: Action = { isPressed: false };
@@ -47,11 +50,12 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
   };
   private bgMusic = new Audio();
 
-  //TODO Jump und Stand -> other Animations changeability
-  //TODO Can Deactivate
   //TODO Joystick Button
+  //TODO Start Screen
+  //TODO Bug Behavior Speed, Dash, +Animations
 
   constructor(
+    private router: Router,
     private game: GameService,
     private ngZone: NgZone,
     private detector: ChangeDetectorRef,
@@ -202,9 +206,30 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
+  public myCanDeactivate(nextState: RouterStateSnapshot | undefined): boolean | Observable<boolean> | Promise<boolean> {
+    if (this.processing.value) {
+      if (nextState !== undefined) {
+        this.processing.next(false);
+        this.desiredRoute = nextState.url;
+        this.showExitPopup = true;
+        this.detector.markForCheck();
+      }
+      return false;
+    }
+    return true;
+  }
+  public onQuit(): void {
+    this.router.navigate([this.desiredRoute]);
+  }
+  public onContinue(): void {
+    this.showExitPopup = false;
+    this.processing.next(true);
+  }
+
+  public ngOnDestroy(): void {
     this.subs.forEach((sub) => {
       sub.unsubscribe();
     });
+    this.bgMusic.pause();
   }
 }

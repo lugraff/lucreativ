@@ -99,23 +99,27 @@ export class GameService extends GameServiceAbstract {
 
   constructor() {
     super();
+    this.loadImages();
+  }
+
+  private loadImages(): void {
     for (const tex of this.staticNodes) {
-      while (tex.sprite.tileSize === undefined) {
-        tex.sprite.img.src = tex.sprite.imgPath;
+      tex.sprite.img.src = tex.sprite.imgPath;
+      tex.sprite.img.onload = function () {
         tex.sprite.tileSize = {
           x: tex.sprite.img.width / tex.sprite.tiles.x,
           y: tex.sprite.img.height / tex.sprite.tiles.y,
         };
-      }
+      };
     }
     for (const tex of this.nodes) {
-      while (tex.sprite.tileSize === undefined) {
-        tex.sprite.img.src = tex.sprite.imgPath;
+      tex.sprite.img.src = tex.sprite.imgPath;
+      tex.sprite.img.onload = function () {
         tex.sprite.tileSize = {
           x: tex.sprite.img.width / tex.sprite.tiles.x,
           y: tex.sprite.img.height / tex.sprite.tiles.y,
         };
-      }
+      };
     }
   }
 
