@@ -1,5 +1,5 @@
 import { Vector2 } from '@shared/util-global';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, take } from 'rxjs';
 import { Action, Actions, Gamestatus, Node, StaticNode } from './entities';
 import { GameServiceAbstract } from './game-abstract.service';
 
@@ -97,12 +97,20 @@ export class GameService extends GameServiceAbstract {
   };
   public override nodes: Node[] = [this.cityA, this.cityB, this.player, this.bugA, this.bugB, this.bugC];
 
+  private loadingFinished = new Subject<boolean>();
+  public loadingFinished$ = this.loadingFinished.asObservable();
   constructor() {
     super();
     this.loadImages();
   }
 
   private loadImages(): void {
+    const steps = new BehaviorSubject(this.staticNodes.length + this.nodes.length);
+    steps.pipe(take(this.staticNodes.length + this.nodes.length)).subscribe((value) => {
+      if (value === 1) {
+        this.loadingFinished.next(true);
+      }
+    });
     for (const tex of this.staticNodes) {
       tex.sprite.img.src = tex.sprite.imgPath;
       tex.sprite.img.onload = function () {
@@ -110,6 +118,7 @@ export class GameService extends GameServiceAbstract {
           x: tex.sprite.img.width / tex.sprite.tiles.x,
           y: tex.sprite.img.height / tex.sprite.tiles.y,
         };
+        steps.next(steps.value - 1);
       };
     }
     for (const tex of this.nodes) {
@@ -119,6 +128,7 @@ export class GameService extends GameServiceAbstract {
           x: tex.sprite.img.width / tex.sprite.tiles.x,
           y: tex.sprite.img.height / tex.sprite.tiles.y,
         };
+        steps.next(steps.value - 1);
       };
     }
   }

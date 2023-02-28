@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Route, Router, RouterModule } from '@angular/router';
+import { Route, Router, RouterModule, RouterStateSnapshot } from '@angular/router';
 import { ButtonLinkComponent } from '../button-link/button-link.component';
 import { LocalSettingsComponent } from '../local-settings/local-settings.component';
 import { PopupComponent } from '../popup/popup.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
+import { CanComponentDeactivate } from '@shared/util-global';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'global-navigation',

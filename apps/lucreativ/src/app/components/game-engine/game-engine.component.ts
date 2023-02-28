@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IsMobileScreenService } from '@shared/util-screen';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, take } from 'rxjs';
 import { CanComponentDeactivate, FPSService } from '@shared/util-global';
 import { Action, Actions, Gamestatus } from './entities';
 import { GameService } from './game.service';
@@ -30,6 +30,7 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy, CanCompone
   private canvasBG: HTMLCanvasElement | undefined = undefined;
   private ctxBG: CanvasRenderingContext2D | undefined = undefined;
   private subs: Subscription[] = [];
+  public showMenuPopup = false;
   public showExitPopup = false;
   private desiredRoute = '';
   public processing = new BehaviorSubject<boolean>(false);
@@ -66,9 +67,13 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy, CanCompone
     this.subs.push(this.screenService.windowHeight$.subscribe((height) => (this.gamestatus.windowSize.y = height)));
     this.subs.push(
       game.stopGame.subscribe(() => {
-        this.bgMusic.pause();
-        this.bgMusic.currentTime = 0;
-        this.processing.next(false);
+        if (this.processing.value == true) {
+          this.bgMusic.pause();
+          this.bgMusic.currentTime = 0;
+          this.showMenuPopup = true;
+          this.processing.next(false);
+          this.detector.markForCheck();
+        }
       })
     );
   }
@@ -102,22 +107,22 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy, CanCompone
     }
   }
 
-  onActionA(isPressed: boolean) {
+  public onActionA(isPressed: boolean): void {
     this.actionA.isPressed = isPressed;
   }
-  onActionB(isPressed: boolean) {
+  public onActionB(isPressed: boolean): void {
     this.actionB.isPressed = isPressed;
   }
-  onActionLeft(isPressed: boolean) {
+  public onActionLeft(isPressed: boolean): void {
     this.actionLeft.isPressed = isPressed;
   }
-  onActionUp(isPressed: boolean) {
+  public onActionUp(isPressed: boolean): void {
     this.actionUp.isPressed = isPressed;
   }
-  onActionDown(isPressed: boolean) {
+  public onActionDown(isPressed: boolean): void {
     this.actionDown.isPressed = isPressed;
   }
-  onActionRight(isPressed: boolean) {
+  public onActionRight(isPressed: boolean): void {
     this.actionRight.isPressed = isPressed;
   }
 
@@ -132,15 +137,21 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy, CanCompone
     this.subs.push(
       this.fpsService.$fps.subscribe((fps) => {
         this.gamestatus.fps = fps;
-        this.bgMusic.play();
         //this.detector.markForCheck();
       })
     );
-
-    setTimeout(() => {
+    this.game.loadingFinished$.pipe(take(1)).subscribe(() => {
       this.drawStatic();
-      this.processing.next(true);
-    }, 0); //TODO Wait for loading...
+      this.showMenuPopup = true;
+      this.detector.markForCheck();
+    });
+  }
+
+  public onStartGame(): void {
+    this.drawStars();
+    this.bgMusic.play();
+    this.showMenuPopup = false;
+    this.processing.next(true);
   }
 
   private drawStatic(): void {
@@ -151,24 +162,30 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy, CanCompone
     for (const node of this.game.staticNodes) {
       let nodeSize = node.sprite.tileSize;
       if (nodeSize === undefined) {
-        nodeSize = { x: 0, y: 0 }; //32 fallback?
+        nodeSize = { x: 0, y: 0 };
       }
-      // this.ctxBG.drawImage(
-      //   node.sprite.img,
-      //   0,
-      //   0,
-      //   nodeSize.x,
-      //   nodeSize.y,
-      //   node.position.x,
-      //   node.position.y,
-      //   nodeSize.x * 0.5,
-      //   nodeSize.y * 0.5
-      // );
+      this.ctxBG.drawImage(
+        node.sprite.img,
+        0,
+        0,
+        nodeSize.x,
+        nodeSize.y,
+        node.position.x,
+        node.position.y,
+        nodeSize.x * 0.5,
+        nodeSize.y * 0.5
+      );
     }
     // this.ctxBG.beginPath();
     // this.ctxBG.moveTo(0, 240);
     // this.ctxBG.lineTo(320, 240);
     // this.ctxBG.stroke();
+  }
+  private drawStars(): void {
+    if (!this.canvasBG || !this.ctxBG) {
+      return;
+    }
+    this.ctxBG.clearRect(0, 0, window.innerWidth, window.innerHeight);
     this.ctxBG.lineWidth = 1;
     this.ctxBG.strokeStyle = 'white';
     for (let index = 0; index < 30; index++) {
@@ -195,15 +212,6 @@ export class GameEngineComponent implements AfterViewInit, OnDestroy, CanCompone
     }
 
     requestAnimationFrame((timestamp) => this.process(timestamp));
-  }
-
-  Restart() {
-    if (this.processing.value) {
-      return;
-    } else {
-      this.processing.next(true);
-      this.bgMusic.play();
-    }
   }
 
   public myCanDeactivate(nextState: RouterStateSnapshot | undefined): boolean | Observable<boolean> | Promise<boolean> {

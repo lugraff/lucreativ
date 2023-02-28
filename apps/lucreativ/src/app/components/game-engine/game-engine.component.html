@@ -1,9 +1,6 @@
 <div class="flex flex-col h-full">
     <div class="flex justify-end gap-2 items-start h-14 from-transparent to-shadow bg-gradient-to-b overflow-hidden">
         <div class="text-subtle text-xs pl-12">Music from 'RGA-GT' (opengameart.org) under CC0</div>
-        <div>
-            <button standard icon="" iconColor="textB" [iconStroke]="2" (click)="Restart()">Restart</button>
-        </div>
         <div class="text-subtle text-end text-sm w-16">{{gamestatus.fps}} FPS</div>
         <div class="flex w-10 h-10">
             <button standard icon="featherAirplay" iconColor="textB" [iconStroke]="2"
@@ -49,8 +46,15 @@
 
 </div>
 
-<global-popup *ngIf="showExitPopup" [backCovered]="true" [closeable]="false" icon="featherQuestionCircle"
-    [minimizeable]="false" [resizeable]="false">
+<global-popup *ngIf="showExitPopup" [backCovered]="true" [closeable]="false" position="top" [offset]="128"
+    icon="featherQuestionCircle" [minimizeable]="false" [resizeable]="false">
     <button standard (click)="onQuit()">Quit</button>
     <button standard autofocus (click)="onContinue()">Continue</button>
+</global-popup>
+
+<global-popup *ngIf="showMenuPopup" [backCovered]="false" [closeable]="false" position="center" popupWidth="85vw"
+    myTitle="Menü" [minimizeable]="false" [resizeable]="false">
+    <div class="flex items-center">
+        <button standard icon="featherStar" iconColor="textB" (click)="onStartGame()">New Game</button>
+    </div>
 </global-popup>
