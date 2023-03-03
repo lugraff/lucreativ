@@ -58,6 +58,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   private dragOffsetY = 0;
   private savedWidth = '';
   private savedHeight = '';
+  public test = '';
   private keyboardEventRef: (ev: KeyboardEvent) => unknown = (event: KeyboardEvent) => this.OnKeyDownEvent(event);
 
   // @HostListener('window:mouseup', ['$event']) clickedOut(event: PointerEvent) {
@@ -198,6 +199,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
       this.subscriptionsForMouseEvents.push(this.mouseEvents.mouseUp.subscribe(() => this.onEnd()));
       this.dragOffsetX = event.offsetX;
       this.dragOffsetY = event.offsetY;
+      this.test = JSON.stringify(event);
     }
   }
 

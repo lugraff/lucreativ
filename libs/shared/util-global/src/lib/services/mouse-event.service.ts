@@ -13,6 +13,7 @@ export class MouseEventService {
 
   constructor(public machineInfoService: IsMobileScreenService) {
     if (machineInfoService.isMobile) {
+      console.log('Touch');
       window.addEventListener('touchstart', (event) => {
         this.mouseDown.next(new MouseEvent('mouseDown', this.emulateEvent(event.changedTouches[0])));
       });
