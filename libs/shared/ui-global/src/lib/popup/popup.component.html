@@ -33,12 +33,11 @@
 
     <div draggable="false" class="grid h-full max-h-[calc(100%-2.2rem)] gap-1 elite_scrollbar pl-3 py-1"
       [ngClass]="resizeWindow ? 'pointer-events-none select-none ' : ''">
-      {{test}}
       <ng-content></ng-content>
     </div>
 
     <div *ngIf="resizeable && status !== 'minimized'" class="absolute left-[calc(100%-1.7rem)] top-[calc(100%-1.8rem)]">
-      <svg (mousedown)="onStartResize($event)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+      <svg (mousedown)="onStartResize($event)" (pointerdown)="onStartResize($event)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
         class="w-[1.5rem] h-[1.5rem] stroke-[1.5] stroke-tertiary active:stroke-primary hover:stroke-primary hover:stroke-2 cursor-nw-resize">
         <line stroke-linecap="round" stroke-linejoin="round" x1="19" y1="6" x2="6" y2="19"></line>
         <line stroke-linecap="round" stroke-linejoin="round" x1="19" y1="12" x2="12" y2="19"></line>
