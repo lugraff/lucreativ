@@ -24,7 +24,7 @@ import { IconComponent } from '../icon/icon.component';
 
 @Component({
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, IconComponent],
   selector: 'global-popup',
   templateUrl: './popup.component.html',
