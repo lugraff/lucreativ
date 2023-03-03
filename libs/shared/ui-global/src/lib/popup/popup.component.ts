@@ -199,7 +199,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
       this.subscriptionsForMouseEvents.push(this.mouseEvents.mouseUp.subscribe(() => this.onEnd()));
       this.dragOffsetX = event.offsetX;
       this.dragOffsetY = event.offsetY;
-      this.test = JSON.stringify(event);
+      
     }
   }
 
@@ -209,6 +209,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
     }
     this.popup.style.left = this.WithinX(event.clientX - this.dragOffsetX, this.popup.clientWidth).toString() + 'px';
     this.popup.style.top = this.WithinY(event.clientY - this.dragOffsetY, this.popup.clientHeight).toString() + 'px';
+    this.test = JSON.stringify(event.clientX);
   }
 
   public onStartResize(event: MouseEvent | undefined): void {

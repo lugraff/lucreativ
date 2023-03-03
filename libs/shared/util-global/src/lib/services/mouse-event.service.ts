@@ -13,15 +13,20 @@ export class MouseEventService {
 
   constructor(public machineInfoService: IsMobileScreenService) {
     if (machineInfoService.isMobile) {
-      console.log('Touch');
       window.addEventListener('touchstart', (event) => {
-        this.mouseDown.next(new MouseEvent('mouseDown', this.emulateEvent(event.changedTouches[0])));
+        const emulatedEvent: MouseEvent = new MouseEvent('mouseDown', this.emulateEvent(event.changedTouches[0]));
+        this.mouseDown.next(emulatedEvent);
+        this.mouseLastEvent.next(emulatedEvent);
       });
       window.addEventListener('touchmove', (event) => {
-        this.mouseDown.next(new MouseEvent('mousemove', this.emulateEvent(event.changedTouches[0])));
+        const emulatedEvent: MouseEvent = new MouseEvent('mousemove', this.emulateEvent(event.changedTouches[0]));
+        this.mouseDown.next(emulatedEvent);
+        this.mouseLastEvent.next(emulatedEvent);
       });
       window.addEventListener('touchend', (event) => {
-        this.mouseDown.next(new MouseEvent('mouseup', this.emulateEvent(event.changedTouches[0])));
+        const emulatedEvent: MouseEvent = new MouseEvent('mouseup', this.emulateEvent(event.changedTouches[0]));
+        this.mouseDown.next(emulatedEvent);
+        this.mouseLastEvent.next(emulatedEvent);
       });
     } else {
       window.addEventListener('mousedown', (event) => {
