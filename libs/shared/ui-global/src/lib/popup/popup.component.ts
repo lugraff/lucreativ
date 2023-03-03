@@ -192,14 +192,20 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
   }
 
   public onStartMove(event: MouseEvent | undefined): void {
+    
     if (event !== undefined) {
       this.dragWindow = true;
       window.getSelection()?.removeAllRanges();
-      this.subscriptionsForMouseEvents.push(this.mouseEvents.mouseMove.subscribe((event) => this.onMove(event)));
+      this.subscriptionsForMouseEvents.push(
+        this.mouseEvents.mouseMove.subscribe((event) => {
+          console.log('Sub: ' + event);
+          this.onMove(event);
+        })
+      );
+      console.log(event.offsetX);
       this.subscriptionsForMouseEvents.push(this.mouseEvents.mouseUp.subscribe(() => this.onEnd()));
       this.dragOffsetX = event.offsetX;
       this.dragOffsetY = event.offsetY;
-      
     }
   }
 
@@ -207,6 +213,7 @@ export class PopupComponent implements AfterViewInit, OnDestroy {
     if (!this.dragWindow || event === undefined) {
       return;
     }
+    console.log(event);
     this.popup.style.left = this.WithinX(event.clientX - this.dragOffsetX, this.popup.clientWidth).toString() + 'px';
     this.popup.style.top = this.WithinY(event.clientY - this.dragOffsetY, this.popup.clientHeight).toString() + 'px';
     this.test = JSON.stringify(event.clientX);

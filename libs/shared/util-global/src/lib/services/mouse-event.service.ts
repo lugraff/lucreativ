@@ -17,11 +17,13 @@ export class MouseEventService {
         const emulatedEvent: MouseEvent = new MouseEvent('mouseDown', this.emulateEvent(event.changedTouches[0]));
         this.mouseDown.next(emulatedEvent);
         this.mouseLastEvent.next(emulatedEvent);
+        // console.log(event);
       });
       window.addEventListener('touchmove', (event) => {
         const emulatedEvent: MouseEvent = new MouseEvent('mousemove', this.emulateEvent(event.changedTouches[0]));
         this.mouseDown.next(emulatedEvent);
         this.mouseLastEvent.next(emulatedEvent);
+        // console.log(emulatedEvent);
       });
       window.addEventListener('touchend', (event) => {
         const emulatedEvent: MouseEvent = new MouseEvent('mouseup', this.emulateEvent(event.changedTouches[0]));

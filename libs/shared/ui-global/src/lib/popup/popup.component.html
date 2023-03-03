@@ -8,7 +8,8 @@
   <div class="{{ globalUISettings.AnimationType }} h-full bg-bgA shadow-lg shadow-shadow overflow-clip">
     <div class="relative flex bg-bgB z-20 select-none">
       <div class="flex gap-1 grow text-xl my-auto ml-2 pr-3 h-8 whitespace-nowrap truncate"
-        [ngClass]="activeWindow ? 'text-primary' : 'text-tertiary'" (mousedown)="onStartMove($event)">
+        [ngClass]="activeWindow ? 'text-primary' : 'text-tertiary'" (mousedown)="onStartMove($event)"
+        (pointerdown)="onStartMove($event)">
         <div *ngIf="icon.length" class="pr-2 my-auto">
           <global-icon [icon]="icon" [strokeWidth]="iconStroke" [size]="iconSize" [color]="iconColor">
           </global-icon>
