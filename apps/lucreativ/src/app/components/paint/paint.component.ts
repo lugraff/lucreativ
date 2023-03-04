@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { fromEvent, Observable, switchMap, takeUntil } from 'rxjs';
 import { ButtonListComponent, ListComponent, PopupComponent } from '@shared/ui-global';
 import { FormsModule } from '@angular/forms';
+import { IsMobileScreenService } from '@shared/util-screen';
 
 @Component({
   selector: 'lucreativ-paint',
@@ -23,7 +24,7 @@ export class PaintComponent implements AfterViewInit {
   public notAvailableText = 'Image';
   public showLayerPopup = true;
 
-  constructor(private renderer: Renderer2, private elRef: ElementRef) {}
+  constructor(private renderer: Renderer2, private elRef: ElementRef, private machineInfo: IsMobileScreenService) {}
   ngAfterViewInit(): void {
     this.createNewLayer();
   }
@@ -87,39 +88,75 @@ export class PaintComponent implements AfterViewInit {
     const rect = this.actualCanvas?.getBoundingClientRect();
     console.log(rect);
     if (this.actualCanvas !== undefined && rect !== undefined) {
-      fromEvent(this.actualCanvas, 'pointerdown')
-        .pipe(
-          switchMap((e: MouseEvent | any) => {
-            startX = e.clientX - rect.left;
-            startY = e.clientY - rect.top;
-            if (this.actualCanvas !== undefined) {
-              return fromEvent(this.actualCanvas, 'pointermove').pipe(
-                takeUntil(fromEvent(this.actualCanvas, 'pointerup'))
-                // takeUntil(fromEvent(this.actualCanvas, 'mouseleave'))
-              );
+      if (this.machineInfo.isMobile) {
+        fromEvent(this.actualCanvas, 'touchdown')
+          .pipe(
+            switchMap((e: MouseEvent | any) => {
+              startX = e.clientX - rect.left;
+              startY = e.clientY - rect.top;
+              if (this.actualCanvas !== undefined) {
+                return fromEvent(this.actualCanvas, 'touchmove').pipe(
+                  takeUntil(fromEvent(this.actualCanvas, 'toucherup'))
+                  // takeUntil(fromEvent(this.actualCanvas, 'mouseleave'))
+                );
+              }
+              return new Observable();
+            })
+          )
+          .subscribe((event: any) => {
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            if (this.ctx !== undefined && this.actualCanvas !== undefined) {
+              this.ctx.strokeStyle = this.lineColor;
+              this.ctx.lineWidth = this.lineWidth;
+              this.ctx.lineCap = 'round';
+              this.ctx.beginPath();
+              // this.ctx.shadowBlur = 4;
+              // this.ctx.shadowOffsetX = 6;
+              // this.ctx.shadowColor = 'black';
+              this.ctx.moveTo(startX, startY);
+              this.ctx.lineTo(x, y);
+              this.ctx.closePath();
+              this.ctx.stroke();
+              startX = x;
+              startY = y;
             }
-            return new Observable();
-          })
-        )
-        .subscribe((event: any) => {
-          const x = event.clientX - rect.left;
-          const y = event.clientY - rect.top;
-          if (this.ctx !== undefined && this.actualCanvas !== undefined) {
-            this.ctx.strokeStyle = this.lineColor;
-            this.ctx.lineWidth = this.lineWidth;
-            this.ctx.lineCap = 'round';
-            this.ctx.beginPath();
-            // this.ctx.shadowBlur = 4;
-            // this.ctx.shadowOffsetX = 6;
-            // this.ctx.shadowColor = 'black';
-            this.ctx.moveTo(startX, startY);
-            this.ctx.lineTo(x, y);
-            this.ctx.closePath();
-            this.ctx.stroke();
-            startX = x;
-            startY = y;
-          }
-        });
+          });
+      } else {
+        fromEvent(this.actualCanvas, 'pointerdown')
+          .pipe(
+            switchMap((e: MouseEvent | any) => {
+              startX = e.clientX - rect.left;
+              startY = e.clientY - rect.top;
+              if (this.actualCanvas !== undefined) {
+                return fromEvent(this.actualCanvas, 'pointermove').pipe(
+                  takeUntil(fromEvent(this.actualCanvas, 'pointerup'))
+                  // takeUntil(fromEvent(this.actualCanvas, 'mouseleave'))
+                );
+              }
+              return new Observable();
+            })
+          )
+          .subscribe((event: any) => {
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            if (this.ctx !== undefined && this.actualCanvas !== undefined) {
+              this.ctx.strokeStyle = this.lineColor;
+              this.ctx.lineWidth = this.lineWidth;
+              this.ctx.lineCap = 'round';
+              this.ctx.beginPath();
+              // this.ctx.shadowBlur = 4;
+              // this.ctx.shadowOffsetX = 6;
+              // this.ctx.shadowColor = 'black';
+              this.ctx.moveTo(startX, startY);
+              this.ctx.lineTo(x, y);
+              this.ctx.closePath();
+              this.ctx.stroke();
+              startX = x;
+              startY = y;
+            }
+          });
+      }
     }
   }
 
