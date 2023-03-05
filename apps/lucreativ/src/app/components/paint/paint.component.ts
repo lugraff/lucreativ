@@ -1,18 +1,17 @@
-import { AfterViewInit, Component, ElementRef, HostBinding, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { fromEvent, Observable, switchMap, takeUntil } from 'rxjs';
-import { ButtonListComponent, ListComponent, PopupComponent } from '@shared/ui-global';
+import { ButtonListComponent, IconComponent, ListComponent, PopupComponent } from '@shared/ui-global';
 import { FormsModule } from '@angular/forms';
 import { IsMobileScreenService } from '@shared/util-screen';
 
 @Component({
   selector: 'lucreativ-paint',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonListComponent, ListComponent, PopupComponent],
+  imports: [CommonModule, FormsModule, ButtonListComponent, ListComponent, PopupComponent, IconComponent],
   templateUrl: './paint.component.html',
 })
 export class PaintComponent implements AfterViewInit {
-  @HostBinding('class') public class = 'bg-bgD animate-spin w-screen h-screen';
   @ViewChild('layerContainer') layerContainer!: ElementRef;
   private actualCanvas: HTMLCanvasElement | undefined = undefined;
   private ctx: CanvasRenderingContext2D | undefined = undefined;
@@ -24,9 +23,9 @@ export class PaintComponent implements AfterViewInit {
   public notAvailableText = 'Image';
   public showLayerPopup = true;
 
-  constructor(private renderer: Renderer2, private elRef: ElementRef, private machineInfo: IsMobileScreenService) {}
+  constructor(private renderer: Renderer2, private machineInfo: IsMobileScreenService) {}
   ngAfterViewInit(): void {
-    this.createNewLayer();
+    // this.createNewLayer();
   }
 
   onNewLayer() {
@@ -40,10 +39,11 @@ export class PaintComponent implements AfterViewInit {
       this.actualCanvas.width = innerWidth;
       this.actualCanvas.height = innerHeight;
       this.actualCanvas.style.position = 'fixed';
-      this.actualCanvas.style.backgroundColor = 'transparent';
+      this.actualCanvas.style.backgroundColor = 'warning';
       this.actualCanvas.style.border = '10px';
       this.actualCanvas.style.borderWidth = '10';
       this.actualCanvas.style.borderColor = '#ffffff';
+      this.actualCanvas.style.cursor = 'crosshair';
       this.ctx = this.actualCanvas.getContext('2d') as CanvasRenderingContext2D;
       this.layerContainer.nativeElement.appendChild(this.actualCanvas);
       this.layerlist.push(this.actualCanvas.id);
@@ -71,14 +71,14 @@ export class PaintComponent implements AfterViewInit {
     }
   }
 
-  onDeleteLayer(index: number) {
+  public onDeleteLayer(index: number): void {
     document.getElementById(this.layerlist[index])?.remove();
     this.layerlist.splice(index, 1);
     this.actualCanvas = undefined;
     this.actualID = 'Image';
   }
 
-  onSaveImage() {
+  public onSaveImage(): void {
     //
   }
 
@@ -86,26 +86,28 @@ export class PaintComponent implements AfterViewInit {
     let startX = 0;
     let startY = 0;
     const rect = this.actualCanvas?.getBoundingClientRect();
-    console.log(rect);
     if (this.actualCanvas !== undefined && rect !== undefined) {
+      console.log('PEN');
       if (this.machineInfo.isMobile) {
-        fromEvent(this.actualCanvas, 'touchdown')
+        console.log('Mobile');
+        fromEvent<TouchEvent>(this.actualCanvas, 'touchstart')
           .pipe(
-            switchMap((e: MouseEvent | any) => {
-              startX = e.clientX - rect.left;
-              startY = e.clientY - rect.top;
+            switchMap((e: TouchEvent) => {
+              console.log('Mobile Check');
+              startX = e.changedTouches[0].clientX - rect.left;
+              startY = e.changedTouches[0].clientY - rect.top;
               if (this.actualCanvas !== undefined) {
-                return fromEvent(this.actualCanvas, 'touchmove').pipe(
-                  takeUntil(fromEvent(this.actualCanvas, 'toucherup'))
+                return fromEvent<TouchEvent>(this.actualCanvas, 'touchmove').pipe(
+                  takeUntil(fromEvent<TouchEvent>(this.actualCanvas, 'touchend'))
                   // takeUntil(fromEvent(this.actualCanvas, 'mouseleave'))
                 );
               }
-              return new Observable();
+              return new Observable<TouchEvent>();
             })
           )
-          .subscribe((event: any) => {
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
+          .subscribe((event: TouchEvent) => {
+            const x = event.changedTouches[0].clientX - rect.left;
+            const y = event.changedTouches[0].clientY - rect.top;
             if (this.ctx !== undefined && this.actualCanvas !== undefined) {
               this.ctx.strokeStyle = this.lineColor;
               this.ctx.lineWidth = this.lineWidth;
@@ -123,21 +125,23 @@ export class PaintComponent implements AfterViewInit {
             }
           });
       } else {
-        fromEvent(this.actualCanvas, 'pointerdown')
+        console.log('Desktop');
+        fromEvent<MouseEvent>(this.actualCanvas, 'mousedown')
           .pipe(
-            switchMap((e: MouseEvent | any) => {
+            switchMap((e: MouseEvent) => {
+              console.log('Desktop Check');
               startX = e.clientX - rect.left;
               startY = e.clientY - rect.top;
               if (this.actualCanvas !== undefined) {
-                return fromEvent(this.actualCanvas, 'pointermove').pipe(
-                  takeUntil(fromEvent(this.actualCanvas, 'pointerup'))
+                return fromEvent<MouseEvent>(this.actualCanvas, 'mousemove').pipe(
+                  takeUntil(fromEvent<MouseEvent>(this.actualCanvas, 'mouseup'))
                   // takeUntil(fromEvent(this.actualCanvas, 'mouseleave'))
                 );
               }
-              return new Observable();
+              return new Observable<MouseEvent>();
             })
           )
-          .subscribe((event: any) => {
+          .subscribe((event: MouseEvent) => {
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
             if (this.ctx !== undefined && this.actualCanvas !== undefined) {

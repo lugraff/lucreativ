@@ -1,7 +1,10 @@
-<div #layerContainer class="w-screen h-screen overflow-clip p-2 pl-16 bg-bgD animate-fadeIn">
-    <div class="flex items-center gap-1 pb-2">
+<div #layerContainer class="w-screen h-screen overflow-clip bg-bgD animate-fadeIn">
+    <div class="flex flex-col h-full items-center justify-center gap-3 bg-bgB w-16">
         <div>
             <button list icon="featherSave" (click)="onSaveImage()"></button>
+        </div>
+        <div>
+            <br>
         </div>
         <div>
             <button list icon="featherFilePlus" (click)="onNewLayer()"></button>
@@ -10,10 +13,15 @@
             <button list icon="featherPenTool"></button>
         </div>
         <div>
-            <input type="color" [(ngModel)]="lineColor" class="bg-bgD">
+            <br>
         </div>
         <div>
-            <input type="range" min="1" max="300" step="1" [(ngModel)]="lineWidth" class="accent-bgB w-64">
+            <input type="color" [(ngModel)]="lineColor" class="bg-bgB">
+        </div>
+        <global-icon icon="matFormatSize"></global-icon>
+        <div class="flex h-64 overflow-hidden">
+            <input type="range" min="1" max="300" step="1" [(ngModel)]="lineWidth"
+                class="accent-secondary w-64 rotate-90">
         </div>
     </div>
 </div>
