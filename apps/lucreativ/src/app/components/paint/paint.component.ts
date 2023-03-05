@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { fromEvent, Observable, switchMap, takeUntil } from 'rxjs';
 import { ButtonListComponent, IconComponent, ListComponent, PopupComponent } from '@shared/ui-global';
@@ -11,7 +11,7 @@ import { IsMobileScreenService } from '@shared/util-screen';
   imports: [CommonModule, FormsModule, ButtonListComponent, ListComponent, PopupComponent, IconComponent],
   templateUrl: './paint.component.html',
 })
-export class PaintComponent implements AfterViewInit {
+export class PaintComponent {
   @ViewChild('layerContainer') layerContainer!: ElementRef;
   private actualCanvas: HTMLCanvasElement | undefined = undefined;
   private ctx: CanvasRenderingContext2D | undefined = undefined;
@@ -21,11 +21,10 @@ export class PaintComponent implements AfterViewInit {
   public lineColor = '#ffffff';
   public newNumber = 0;
   public notAvailableText = 'Image';
-  public showLayerPopup = true;
+  public isMobile = false;
 
-  constructor(private renderer: Renderer2, private machineInfo: IsMobileScreenService) {}
-  ngAfterViewInit(): void {
-    // this.createNewLayer();
+  constructor(private renderer: Renderer2, private machineInfo: IsMobileScreenService) {
+    this.isMobile = machineInfo.isMobile;
   }
 
   onNewLayer() {
@@ -36,13 +35,9 @@ export class PaintComponent implements AfterViewInit {
     if (this.actualCanvas) {
       this.actualCanvas.id = 'Layer_' + ++this.newNumber;
       this.actualID = this.actualCanvas.id;
-      this.actualCanvas.width = innerWidth;
-      this.actualCanvas.height = innerHeight;
-      this.actualCanvas.style.position = 'fixed';
-      this.actualCanvas.style.backgroundColor = 'warning';
-      this.actualCanvas.style.border = '10px';
-      this.actualCanvas.style.borderWidth = '10';
-      this.actualCanvas.style.borderColor = '#ffffff';
+      this.actualCanvas.width = this.actualCanvas.parentElement?.clientWidth ?? innerWidth;
+      this.actualCanvas.height = this.actualCanvas.parentElement?.clientHeight ?? innerHeight;
+      this.actualCanvas.style.backgroundColor = 'transparent';
       this.actualCanvas.style.cursor = 'crosshair';
       this.ctx = this.actualCanvas.getContext('2d') as CanvasRenderingContext2D;
       this.layerContainer.nativeElement.appendChild(this.actualCanvas);
@@ -87,13 +82,10 @@ export class PaintComponent implements AfterViewInit {
     let startY = 0;
     const rect = this.actualCanvas?.getBoundingClientRect();
     if (this.actualCanvas !== undefined && rect !== undefined) {
-      console.log('PEN');
       if (this.machineInfo.isMobile) {
-        console.log('Mobile');
         fromEvent<TouchEvent>(this.actualCanvas, 'touchstart')
           .pipe(
             switchMap((e: TouchEvent) => {
-              console.log('Mobile Check');
               startX = e.changedTouches[0].clientX - rect.left;
               startY = e.changedTouches[0].clientY - rect.top;
               if (this.actualCanvas !== undefined) {
@@ -125,11 +117,9 @@ export class PaintComponent implements AfterViewInit {
             }
           });
       } else {
-        console.log('Desktop');
         fromEvent<MouseEvent>(this.actualCanvas, 'mousedown')
           .pipe(
             switchMap((e: MouseEvent) => {
-              console.log('Desktop Check');
               startX = e.clientX - rect.left;
               startY = e.clientY - rect.top;
               if (this.actualCanvas !== undefined) {

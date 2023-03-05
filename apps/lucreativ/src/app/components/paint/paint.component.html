@@ -1,36 +1,32 @@
-<div #layerContainer class="w-screen h-screen overflow-clip bg-bgD animate-fadeIn">
-    <div class="flex flex-col h-full items-center justify-center gap-3 bg-bgB w-16">
-        <div>
-            <button list icon="featherSave" (click)="onSaveImage()"></button>
+<div #layerContainer class="w-screen h-screen overflow-hidden bg-bgD"></div>
+
+<global-popup myTitle="Menü" [closeable]="false" [resizeable]="true" [backCovered]="false" anchor="screen"
+    position="{{isMobile?'bottom':'right'}}" [offset]="0" popupWidth="{{isMobile?'100%':'15%'}}"
+    popupHeight="{{isMobile?'330px':'100%'}}" icon="featherLayers">
+    <div class="flex flex-col">
+
+        <div class="flex flex-wrap gap-2">
+            <div>
+                <button list icon="featherSave" (click)="onSaveImage()"></button>
+            </div>
+            <div>
+                <button list icon="featherFilePlus" (click)="onNewLayer()"></button>
+            </div>
+            <div>
+                <button list icon="featherPenTool"></button>
+            </div>
+            <div>
+                <input type="color" [(ngModel)]="lineColor" class="bg-bgB">
+            </div>
+            <global-icon icon="matFormatSize"></global-icon>
+
+            <input type="range" min="1" max="300" step="1" [(ngModel)]="lineWidth" class="accent-secondary">
+
         </div>
-        <div>
-            <br>
-        </div>
-        <div>
-            <button list icon="featherFilePlus" (click)="onNewLayer()"></button>
-        </div>
-        <div>
-            <button list icon="featherPenTool"></button>
-        </div>
-        <div>
-            <br>
-        </div>
-        <div>
-            <input type="color" [(ngModel)]="lineColor" class="bg-bgB">
-        </div>
-        <global-icon icon="matFormatSize"></global-icon>
-        <div class="flex h-64 overflow-hidden">
-            <input type="range" min="1" max="300" step="1" [(ngModel)]="lineWidth"
-                class="accent-secondary w-64 rotate-90">
-        </div>
+        <global-list [data]="layerlist" [notAvailableText]="notAvailableText" [deleteButton]="true"
+            (optionSelect)="onLayerSelect($event)" (deleteOption)="onDeleteLayer($event)" [selected]="actualID"
+            class="grow">
+
+        </global-list>
     </div>
-</div>
-
-<global-popup *ngIf="showLayerPopup" myTitle="Layers" [closeable]="false" [resizeable]="true" [backCovered]="false"
-    anchor="screen" position="right" [offset]="0" popupWidth="12rem" popupHeight="100%" icon="featherLayers">
-    <global-list [data]="layerlist" [notAvailableText]="notAvailableText" [deleteButton]="true"
-        (optionSelect)="onLayerSelect($event)" (deleteOption)="onDeleteLayer($event)" [selected]="actualID"
-        class="grow">
-
-    </global-list>
 </global-popup>
