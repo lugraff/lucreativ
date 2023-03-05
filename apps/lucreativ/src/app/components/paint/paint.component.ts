@@ -35,6 +35,7 @@ export class PaintComponent {
     if (this.actualCanvas) {
       this.actualCanvas.id = 'Layer_' + ++this.newNumber;
       this.actualID = this.actualCanvas.id;
+      this.actualCanvas.style.position = 'fixed';
       this.actualCanvas.width = this.actualCanvas.parentElement?.clientWidth ?? innerWidth;
       this.actualCanvas.height = this.actualCanvas.parentElement?.clientHeight ?? innerHeight;
       this.actualCanvas.style.backgroundColor = 'transparent';
@@ -62,6 +63,12 @@ export class PaintComponent {
       if (this.actualCanvas) {
         this.actualCanvas = undefined;
         this.actualID = 'Image';
+      }
+      for (const layerID of this.layerlist) {
+        const canvas = document.getElementById(layerID);
+        if (canvas) {
+          canvas.style.zIndex = '0';
+        }
       }
     }
   }
@@ -91,7 +98,6 @@ export class PaintComponent {
               if (this.actualCanvas !== undefined) {
                 return fromEvent<TouchEvent>(this.actualCanvas, 'touchmove').pipe(
                   takeUntil(fromEvent<TouchEvent>(this.actualCanvas, 'touchend'))
-                  // takeUntil(fromEvent(this.actualCanvas, 'mouseleave'))
                 );
               }
               return new Observable<TouchEvent>();
@@ -103,6 +109,7 @@ export class PaintComponent {
             if (this.ctx !== undefined && this.actualCanvas !== undefined) {
               this.ctx.strokeStyle = this.lineColor;
               this.ctx.lineWidth = this.lineWidth;
+              this.ctx.lineJoin = 'round';
               this.ctx.lineCap = 'round';
               this.ctx.beginPath();
               // this.ctx.shadowBlur = 4;
@@ -110,7 +117,7 @@ export class PaintComponent {
               // this.ctx.shadowColor = 'black';
               this.ctx.moveTo(startX, startY);
               this.ctx.lineTo(x, y);
-              this.ctx.closePath();
+              // this.ctx.closePath();
               this.ctx.stroke();
               startX = x;
               startY = y;
@@ -125,7 +132,6 @@ export class PaintComponent {
               if (this.actualCanvas !== undefined) {
                 return fromEvent<MouseEvent>(this.actualCanvas, 'mousemove').pipe(
                   takeUntil(fromEvent<MouseEvent>(this.actualCanvas, 'mouseup'))
-                  // takeUntil(fromEvent(this.actualCanvas, 'mouseleave'))
                 );
               }
               return new Observable<MouseEvent>();
@@ -155,7 +161,6 @@ export class PaintComponent {
   }
 
   rectangleDrawing() {
-    // first coordinates when clicked
     let startX = 0;
     let startY = 0;
 

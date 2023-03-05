@@ -1,4 +1,4 @@
-<div #layerContainer class="w-screen h-screen overflow-hidden bg-bgD"></div>
+<div #layerContainer class="w-screen h-screen  bg-bgD"></div>
 
 <global-popup myTitle="Menü" [closeable]="false" [resizeable]="true" [backCovered]="false" anchor="screen"
     position="{{isMobile?'bottom':'right'}}" [offset]="0" popupWidth="{{isMobile?'100%':'15%'}}"
@@ -20,7 +20,7 @@
             </div>
             <global-icon icon="matFormatSize"></global-icon>
 
-            <input type="range" min="1" max="300" step="1" [(ngModel)]="lineWidth" class="accent-secondary">
+            <input type="range" min="1" max="9" step="1" [(ngModel)]="lineWidth" class="accent-secondary">
 
         </div>
         <global-list [data]="layerlist" [notAvailableText]="notAvailableText" [deleteButton]="true"
